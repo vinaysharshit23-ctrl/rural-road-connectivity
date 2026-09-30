@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root, [data-theme="obsidian-neon"] {
+  /* Color Palette - Ultra Modern Obsidian Glassmorphism */
+  --bg-dark: #050811;
+  --bg-surface: #0a0f1d;
+  --bg-card: rgba(13, 20, 36, 0.75);
+  --bg-card-hover: rgba(22, 33, 58, 0.85);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glass-glow: rgba(56, 189, 248, 0.35);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Neon Accent Palette */
+  --accent-emerald: #10b981;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.25);
+  --accent-amber: #f59e0b;
+  --accent-amber-glow: rgba(245, 158, 11, 0.25);
+  --accent-rose: #f43f5e;
+  --accent-rose-glow: rgba(244, 63, 94, 0.25);
+  --accent-cyan: #38bdf8;
+  --accent-cyan-glow: rgba(56, 189, 248, 0.3);
+  --accent-indigo: #6366f1;
+  --accent-purple: #a855f7;
+
+  /* Fonts */
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Shadows & Blur Effects */
+  --shadow-lg: 0 12px 35px -10px rgba(0, 0, 0, 0.65), 0 0 25px rgba(56, 189, 248, 0.08);
+  --shadow-neon: 0 0 20px rgba(56, 189, 248, 0.25);
+  --glass-backdrop: blur(20px) saturate(200%);
+}
+
+/* Theme 2: Cyber Violet & Pink Magenta */
+[data-theme="cyber-violet"] {
+  --bg-dark: #090615;
+  --bg-surface: #100b24;
+  --bg-card: rgba(22, 14, 46, 0.75);
+  --bg-card-hover: rgba(35, 23, 72, 0.85);
+  --border-glass: rgba(255, 255, 255, 0.09);
+  --border-glass-glow: rgba(168, 85, 247, 0.4);
+
+  --accent-cyan: #c084fc;
+  --accent-cyan-glow: rgba(192, 132, 252, 0.35);
+  --accent-emerald: #ec4899;
+  --accent-emerald-glow: rgba(236, 72, 153, 0.3);
+  --accent-amber: #f43f5e;
+  --shadow-lg: 0 12px 35px -10px rgba(0, 0, 0, 0.75), 0 0 25px rgba(168, 85, 247, 0.15);
+  --shadow-neon: 0 0 20px rgba(168, 85, 247, 0.35);
+}
+
+/* Theme 3: Solar Amber & Flame Gold */
+[data-theme="solar-amber"] {
+  --bg-dark: #0c0a07;
+  --bg-surface: #17130e;
+  --bg-card: rgba(32, 23, 13, 0.75);
+  --bg-card-hover: rgba(48, 35, 18, 0.85);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glass-glow: rgba(245, 158, 11, 0.4);
+
+  --accent-cyan: #fbbf24;
+  --accent-cyan-glow: rgba(251, 191, 36, 0.35);
+  --accent-emerald: #f97316;
+  --accent-emerald-glow: rgba(249, 115, 22, 0.3);
+  --accent-amber: #eab308;
+  --shadow-lg: 0 12px 35px -10px rgba(0, 0, 0, 0.75), 0 0 25px rgba(245, 158, 11, 0.15);
+  --shadow-neon: 0 0 20px rgba(245, 158, 11, 0.35);
+}
+
+/* Theme 4: Malnad Forest Teal & Emerald */
+[data-theme="malnad-teal"] {
+  --bg-dark: #030d0e;
+  --bg-surface: #061618;
+  --bg-card: rgba(9, 32, 35, 0.75);
+  --bg-card-hover: rgba(14, 48, 52, 0.85);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glass-glow: rgba(20, 184, 166, 0.4);
+
+  --accent-cyan: #2dd4bf;
+  --accent-cyan-glow: rgba(45, 212, 191, 0.35);
+  --accent-emerald: #10b981;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.3);
+  --accent-amber: #84cc16;
+  --shadow-lg: 0 12px 35px -10px rgba(0, 0, 0, 0.75), 0 0 25px rgba(45, 212, 191, 0.15);
+  --shadow-neon: 0 0 20px rgba(45, 212, 191, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.09) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.07) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Custom Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* App Header & Navigation Bar */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.15rem 2.5rem;
+  background: rgba(5, 8, 17, 0.85);
+  backdrop-filter: var(--glass-backdrop);
+  border-bottom: 1px solid var(--border-glass);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-emerald));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 1.25rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-neon);
+}
+
+.brand-title h1 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #38bdf8 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-title span {
+  font-size: 0.74rem;
+  color: var(--accent-cyan);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex;
+  background: rgba(13, 20, 36, 0.85);
+  padding: 0.3rem;
+  border-radius: 14px;
+  border: 1px solid var(--border-glass);
+}
+
+.nav-tab {
+  padding: 0.65rem 1.25rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-tab.active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(16, 185, 129, 0.2));
+  color: var(--accent-cyan);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 0 12px rgba(56, 189, 248, 0.15);
+}
+
+/* Main Container */
+.main-content {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
+}
+
+/* View Sections */
+.tab-view {
+  display: none;
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.tab-view.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
