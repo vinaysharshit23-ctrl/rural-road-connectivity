@@ -1,49 +1,106 @@
 /**
  * Individual Village Map Inspector Component
- * Dedicated 1-on-1 HTML5 Canvas Spatial Map Renderer centered on a single selected village.
- * Visualizes individual multi-sector routes (Urban Hub, APMC Mandi, Emergency Hospital, KSRTC Bus).
+ * High-performance, realistic Leaflet GIS Map Renderer.
+ * Supports Esri World Imagery (Satellite), OpenStreetMap, CartoDB Dark Mode & Topographic Terrain maps.
+ * Renders interactive village pins, multi-sector destination routes (APMC Mandis, Urban Hubs, Emergency Hospitals, Bus Stops),
+ * bad track distance callouts, and animated layer transitions.
  */
 
-let canvas, ctx;
-let selectedVillageId = null;
+let map = null;
+let currentTileLayer = null;
+let tileLayers = {};
+let activeVillageId = null;
 let villagesData = [];
 let destinationMode = 'ALL';
-let scale = 1;
-let offsetX = 0;
-let offsetY = 0;
-let isDragging = false;
-let startX, startY;
+let currentTileName = 'satellite';
+
+let activeVillageGroup = null;
+let otherVillagesGroup = null;
 
 export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
-  canvas = document.getElementById('mapCanvas');
-  if (!canvas) return;
-
-  ctx = canvas.getContext('2d');
   villagesData = villages;
   destinationMode = initialMode;
 
-  if (villages.length > 0 && !selectedVillageId) {
-    selectedVillageId = villages[0].id;
+  if (villagesData.length > 0 && !activeVillageId) {
+    activeVillageId = villagesData[0].id;
   }
 
   populateVillageDropdown(onSelectVillage);
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
 
-  setupInteractions(onSelectVillage);
-  renderMap();
+  const mapContainer = document.getElementById('leafletMap');
+  if (!mapContainer) return;
+
+  const L = window.L;
+  if (!L) {
+    console.error('Leaflet JS library (L) is not loaded.');
+    return;
+  }
+
+  // Initialize Leaflet Map instance if not already initialized
+  if (!map) {
+    // Default Center on Karnataka: [14.5244, 75.7218], zoom: 7
+    map = L.map('leafletMap', {
+      zoomControl: false,
+      attributionControl: false
+    }).setView([14.2230, 76.3980], 11);
+
+    // 1. Define Realistic Tile Providers
+    tileLayers = {
+      satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri'
+      }),
+      street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+      }),
+      dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        attribution: '&copy; CartoDB'
+      }),
+      topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: '&copy; OpenTopoMap'
+      })
+    };
+
+    // Default to Realistic Satellite View
+    currentTileLayer = tileLayers.satellite;
+    currentTileLayer.addTo(map);
+
+    // Create Feature Groups
+    otherVillagesGroup = L.featureGroup().addTo(map);
+    activeVillageGroup = L.featureGroup().addTo(map);
+
+    setupLayerControls();
+    setupMapInteractions(onSelectVillage);
+  }
+
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+  }, 100);
+
+  renderLeafletMap(onSelectVillage);
 }
 
 export function setSelectedVillageOnMap(villageId) {
-  selectedVillageId = villageId;
+  activeVillageId = villageId;
   const select = document.getElementById('individualVillageSelect');
   if (select) select.value = villageId;
-  renderMap();
+  
+  const village = villagesData.find(v => v.id === activeVillageId);
+  if (village && map && window.L) {
+    const lat = village.lat || 14.2230;
+    const lng = village.lng || 76.3980;
+    map.flyTo([lat, lng], 12, { duration: 1.2 });
+  }
+
+  renderLeafletMap();
 }
 
 export function setMapDestinationMode(mode) {
   destinationMode = mode;
-  renderMap();
+  renderLeafletMap();
 }
 
 function populateVillageDropdown(onSelectVillage) {
@@ -52,279 +109,286 @@ function populateVillageDropdown(onSelectVillage) {
 
   select.innerHTML = villagesData.map(v => {
     const isBad = v.roadConditionCategory === 'SEVERELY_BAD' ? '🔴' : '🟠';
-    return `<option value="${v.id}" ${v.id === selectedVillageId ? 'selected' : ''}>${isBad} ${v.name} (${v.district}) - CAS: ${v.metrics.accessibility ? v.metrics.accessibility.current : ''}/100</option>`;
+    const casScore = v.metrics && v.metrics.accessibility ? v.metrics.accessibility.current : '';
+    return `<option value="${v.id}" ${v.id === activeVillageId ? 'selected' : ''}>
+      ${isBad} ${v.name} (${v.district}) - CAS: ${casScore}/100
+    </option>`;
   }).join('');
 
   select.onchange = (e) => {
-    selectedVillageId = e.target.value;
-    const village = villagesData.find(v => v.id === selectedVillageId);
-    renderMap();
+    activeVillageId = e.target.value;
+    const village = villagesData.find(v => v.id === activeVillageId);
+    if (village && map) {
+      const lat = village.lat || 14.2230;
+      const lng = village.lng || 76.3980;
+      map.flyTo([lat, lng], 12, { duration: 1.2 });
+    }
+    renderLeafletMap();
     if (village && onSelectVillage) {
       onSelectVillage(village);
     }
   };
 }
 
-function resizeCanvas() {
-  const container = canvas.parentElement;
-  if (!container) return;
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
-  renderMap();
+function setupLayerControls() {
+  const btnSat = document.getElementById('btnLayerSat');
+  const btnStreet = document.getElementById('btnLayerStreet');
+  const btnDark = document.getElementById('btnLayerDark');
+  const btnTopo = document.getElementById('btnLayerTopo');
+
+  const layerBtns = [btnSat, btnStreet, btnDark, btnTopo].filter(Boolean);
+
+  const switchLayer = (targetName, activeBtn) => {
+    if (!map || !tileLayers[targetName]) return;
+    
+    if (currentTileLayer) {
+      map.removeLayer(currentTileLayer);
+    }
+    
+    currentTileLayer = tileLayers[targetName];
+    currentTileLayer.addTo(map);
+    currentTileName = targetName;
+
+    layerBtns.forEach(b => b.classList.remove('active'));
+    if (activeBtn) activeBtn.classList.add('active');
+  };
+
+  if (btnSat) btnSat.onclick = () => switchLayer('satellite', btnSat);
+  if (btnStreet) btnStreet.onclick = () => switchLayer('street', btnStreet);
+  if (btnDark) btnDark.onclick = () => switchLayer('dark', btnDark);
+  if (btnTopo) btnTopo.onclick = () => switchLayer('topo', btnTopo);
 }
 
-function setupInteractions(onSelectVillage) {
-  canvas.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    startX = e.clientX - offsetX;
-    startY = e.clientY - offsetY;
-  });
-
-  window.addEventListener('mouseup', () => { isDragging = false; });
-
-  canvas.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-      offsetX = e.clientX - startX;
-      offsetY = e.clientY - startY;
-      renderMap();
-    }
-  });
-
+function setupMapInteractions(onSelectVillage) {
   const btnZoomIn = document.getElementById('btnZoomIn');
   const btnZoomOut = document.getElementById('btnZoomOut');
   const btnResetMap = document.getElementById('btnResetMap');
 
-  if (btnZoomIn) btnZoomIn.onclick = () => { scale *= 1.2; renderMap(); };
-  if (btnZoomOut) btnZoomOut.onclick = () => { scale /= 1.2; renderMap(); };
-  if (btnResetMap) btnResetMap.onclick = () => { scale = 1; offsetX = 0; offsetY = 0; renderMap(); };
+  if (btnZoomIn) btnZoomIn.onclick = () => map.zoomIn();
+  if (btnZoomOut) btnZoomOut.onclick = () => map.zoomOut();
+  if (btnResetMap) {
+    btnResetMap.onclick = () => {
+      const v = villagesData.find(item => item.id === activeVillageId);
+      if (v) {
+        map.flyTo([v.lat || 14.2230, v.lng || 76.3980], 12, { duration: 1.0 });
+      } else {
+        map.setView([14.2230, 76.3980], 11);
+      }
+    };
+  }
 }
 
-function renderMap() {
-  if (!ctx || !canvas) return;
+function renderLeafletMap(onSelectVillage) {
+  const L = window.L;
+  if (!map || !L) return;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.save();
+  // Clear existing layers
+  if (activeVillageGroup) activeVillageGroup.clearLayers();
+  if (otherVillagesGroup) otherVillagesGroup.clearLayers();
 
-  ctx.translate(offsetX, offsetY);
-  ctx.scale(scale, scale);
+  const activeVillage = villagesData.find(v => v.id === activeVillageId) || villagesData[0];
+  if (!activeVillage) return;
 
-  // 1. Canvas Dark Grid Background
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-  ctx.lineWidth = 1;
-  const gridSize = 40;
-  for (let x = 0; x < canvas.width * 2; x += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvas.height * 2);
-    ctx.stroke();
-  }
-  for (let y = 0; y < canvas.height * 2; y += gridSize) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvas.width * 2, y);
-    ctx.stroke();
-  }
+  const vLat = activeVillage.lat || 14.2230;
+  const vLng = activeVillage.lng || 76.3980;
+  const isSeverelyBad = activeVillage.roadConditionCategory === 'SEVERELY_BAD';
+  const villageColor = isSeverelyBad ? '#ef4444' : '#f59e0b';
+  const cas = activeVillage.metrics ? activeVillage.metrics.accessibility : { current: 25, projected: 88 };
 
-  // Active Selected Village
-  const activeVillage = villagesData.find(v => v.id === selectedVillageId) || villagesData[0];
-  if (!activeVillage) {
-    ctx.restore();
-    return;
-  }
+  // 1. Render Other Karnataka Villages as small markers for spatial context
+  villagesData.forEach(v => {
+    if (v.id === activeVillageId) return;
+    const lat = v.lat || 14.2230;
+    const lng = v.lng || 76.3980;
 
-  const v = activeVillage;
-  const m = v.metrics;
-  const isSeverelyBad = v.roadConditionCategory === 'SEVERELY_BAD';
-  const cas = m.accessibility || { current: 20, projected: 85 };
+    const isBad = v.roadConditionCategory === 'SEVERELY_BAD';
+    const markerColor = isBad ? '#ef4444' : '#f59e0b';
 
-  // Center Coordinates for Village Node
-  const vX = canvas.width / 2;
-  const vY = canvas.height / 2;
+    const smallIcon = L.divIcon({
+      className: 'custom-small-pin',
+      html: `<div style="background: ${markerColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 0 6px ${markerColor}; cursor: pointer"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6]
+    });
 
-  // Relative Coordinates for Destination Network Nodes
-  const junctionNode = { x: vX + 110, y: vY - 45, name: 'State Highway Junction' };
-  const urbanNode = { x: vX + 240, y: vY - 110, name: v.nearestUrbanHub || 'Urban Centre' };
-  const mandiNode = { x: vX - 220, y: vY - 130, name: v.nearestMandi || 'APMC Mandi' };
-  const hospitalNode = { x: vX - 210, y: vY + 140, name: v.nearestHospitalHub || 'District Hospital' };
-  const busNode = { x: vX + 210, y: vY + 135, name: `${v.ksrtcDivision || 'KSRTC'} Bus Stop` };
+    const marker = L.marker([lat, lng], { icon: smallIcon });
+    marker.bindTooltip(`<b>${v.name}</b> (${v.district})<br/>CAS: ${v.metrics ? v.metrics.accessibility.current : ''}/100`, { direction: 'top' });
+    marker.on('click', () => {
+      setSelectedVillageOnMap(v.id);
+      if (onSelectVillage) onSelectVillage(v);
+    });
 
-  // --- DRAW ROUTES & CONNECTIONS ---
+    otherVillagesGroup.addLayer(marker);
+  });
 
-  // Pillar 1 & 2: Urban Centre & Highway Corridor
+  // 2. Render Active Target Village Node (Main Marker with Pulsing Aura)
+  const mainPinIcon = L.divIcon({
+    className: 'custom-map-pin',
+    html: `
+      <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+        <div class="${isSeverelyBad ? 'pulse-ring-bad' : 'pulse-ring-amber'}"></div>
+        <div style="background: ${villageColor}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 16px ${villageColor}; z-index: 2"></div>
+      </div>
+    `,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18]
+  });
+
+  const activeMarker = L.marker([vLat, vLng], { icon: mainPinIcon, zIndexOffset: 1000 });
+  
+  // Custom Dark Popup Card for Active Village
+  const popupHtml = `
+    <div style="padding: 0.5rem 0.6rem; min-width: 220px">
+      <div style="font-size: 0.72rem; font-weight: 800; color: ${villageColor}; text-transform: uppercase; letter-spacing: 0.05em">
+        ${isSeverelyBad ? '🔴 Critical Isolation' : '🟠 Poor Road Condition'}
+      </div>
+      <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0.25rem 0">
+        ${activeVillage.name}
+      </div>
+      <div style="font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.5rem">
+        📍 ${activeVillage.district} District • ${activeVillage.terrain} Terrain
+      </div>
+
+      <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); padding: 0.45rem 0.6rem; border-radius: 8px; font-size: 0.75rem; margin-bottom: 0.5rem">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem">
+          <span>Accessibility Score:</span>
+          <strong style="color: ${villageColor}">${cas.current}/100</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+          <span>Monsoon Isolation:</span>
+          <strong style="color: #fca5a5">${activeVillage.monsoonIsolationDays} days/yr</strong>
+        </div>
+      </div>
+
+      <div style="font-size: 0.72rem; color: #94a3b8">
+        🛣️ Track: ${activeVillage.existingRoadType} (${activeVillage.roadLengthKm} km)
+      </div>
+    </div>
+  `;
+
+  activeMarker.bindPopup(popupHtml, { autoClose: false, closeOnClick: false });
+  activeVillageGroup.addLayer(activeMarker);
+
+  // 3. Define Relative Geographic Destination Coordinates
+  const jCoords = activeVillage.junctionCoords || [vLat + 0.015, vLng - 0.012];
+  const uCoords = activeVillage.urbanCoords || [vLat + 0.045, vLng + 0.035];
+  const mCoords = activeVillage.mandiCoords || [vLat + 0.025, vLng + 0.028];
+  const hCoords = activeVillage.hospitalCoords || [vLat - 0.022, vLng - 0.032];
+  const bCoords = activeVillage.busCoords || [vLat + 0.008, vLng + 0.015];
+
+  // --- DESTINATION ROUTES & POLYLINES ---
+
+  // Route A: Urban Job Hub & Highway Corridor
   if (destinationMode === 'ALL' || destinationMode === 'URBAN') {
-    // Unpaved Bad Track to Highway Junction (Red/Orange Alert)
-    ctx.beginPath();
-    ctx.moveTo(vX, vY);
-    ctx.lineTo(junctionNode.x, junctionNode.y);
-    ctx.strokeStyle = isSeverelyBad ? '#ef4444' : '#f59e0b';
-    ctx.lineWidth = 3.5;
-    ctx.setLineDash([6, 4]);
-    ctx.stroke();
+    // 1. Unpaved Bad Track Polyline (Village ➔ Highway Junction)
+    const badTrackPolyline = L.polyline([[vLat, vLng], jCoords], {
+      color: villageColor,
+      weight: 4.5,
+      dashArray: '8, 6',
+      opacity: 0.95
+    });
 
-    // Highway Junction Node
-    ctx.beginPath();
-    ctx.arc(junctionNode.x, junctionNode.y, 5, 0, Math.PI * 2);
-    ctx.fillStyle = isSeverelyBad ? '#ef4444' : '#f59e0b';
-    ctx.fill();
+    badTrackPolyline.bindTooltip(`🔴 ${activeVillage.roadLengthKm}km Unpaved Bad Track (${activeVillage.maxCurrentSpeedKmh} km/h max speed)`, { sticky: true });
+    activeVillageGroup.addLayer(badTrackPolyline);
 
-    // Paved Highway Segment to Urban Place (Cyan Solid Route)
-    ctx.beginPath();
-    ctx.moveTo(junctionNode.x, junctionNode.y);
-    ctx.lineTo(urbanNode.x, urbanNode.y);
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([]);
-    ctx.stroke();
+    // 2. Highway Junction Node Marker
+    const jMarkerIcon = L.divIcon({
+      className: 'custom-j-pin',
+      html: `<div class="pin-badge" style="border-color: ${villageColor}; font-size: 0.7rem">🛑 Highway Junction</div>`,
+      iconSize: [120, 24],
+      iconAnchor: [60, 12]
+    });
+    activeVillageGroup.addLayer(L.marker(jCoords, { icon: jMarkerIcon }));
 
-    // Flow Arrow
-    const angle = Math.atan2(urbanNode.y - junctionNode.y, urbanNode.x - junctionNode.x);
-    const arrowX = junctionNode.x + (urbanNode.x - junctionNode.x) * 0.5;
-    const arrowY = junctionNode.y + (urbanNode.y - junctionNode.y) * 0.5;
+    // 3. Paved Highway Polyline (Junction ➔ Urban Hub)
+    const highwayPolyline = L.polyline([jCoords, uCoords], {
+      color: '#38bdf8',
+      weight: 4,
+      opacity: 0.9
+    });
+    highwayPolyline.bindTooltip(`🌐 State Highway to ${activeVillage.nearestUrbanHub || 'Urban Hub'} (-${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs saved)`, { sticky: true });
+    activeVillageGroup.addLayer(highwayPolyline);
 
-    ctx.save();
-    ctx.translate(arrowX, arrowY);
-    ctx.rotate(angle);
-    ctx.fillStyle = '#38bdf8';
-    ctx.beginPath();
-    ctx.moveTo(0, 0); ctx.lineTo(-8, -4); ctx.lineTo(-8, 4); ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-
-    // Distance Callout
-    drawRouteBadge(ctx, (vX + junctionNode.x) / 2, (vY + junctionNode.y) / 2 - 12, `🔴 ${v.roadLengthKm}km Bad Track`, isSeverelyBad ? '#ef4444' : '#f59e0b');
-    drawNodeBadge(ctx, urbanNode.x, urbanNode.y, `🏙️ ${urbanNode.name}`, `Commute: -${m.urbanTimeSavedHrs} hrs saved`, '#38bdf8');
+    // 4. Urban Hub Marker
+    const uPinIcon = L.divIcon({
+      className: 'custom-u-pin',
+      html: `<div class="pin-badge" style="border-color: #38bdf8">🏙️ ${activeVillage.nearestUrbanHub || 'Urban Hub'}</div>`,
+      iconSize: [180, 28],
+      iconAnchor: [90, 14]
+    });
+    const uMarker = L.marker(uCoords, { icon: uPinIcon });
+    uMarker.bindPopup(`<b>🏙️ ${activeVillage.nearestUrbanHub}</b><br/>Commute Saved: ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs<br/>Opportunities: ${activeVillage.primaryUrbanOpportunity || 'Jobs & Higher Education'}`);
+    activeVillageGroup.addLayer(uMarker);
   }
 
-  // Pillar 3: APMC Agricultural Mandi Route (Purple Dashed Line)
+  // Route B: APMC Agricultural Mandi Corridor (Purple Line)
   if (destinationMode === 'ALL' || destinationMode === 'MANDI') {
-    ctx.beginPath();
-    ctx.moveTo(vX, vY);
-    ctx.lineTo(mandiNode.x, mandiNode.y);
-    ctx.strokeStyle = '#a855f7';
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([5, 4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    const mandiPolyline = L.polyline([[vLat, vLng], mCoords], {
+      color: '#a855f7',
+      weight: 3.5,
+      dashArray: '6, 5',
+      opacity: 0.85
+    });
+    mandiPolyline.bindTooltip(`🌾 Crop Corridor to ${activeVillage.nearestMandi} (-${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : 1.5}h saved)`, { sticky: true });
+    activeVillageGroup.addLayer(mandiPolyline);
 
-    drawNodeBadge(ctx, mandiNode.x, mandiNode.y, `🌾 APMC: ${mandiNode.name}`, `Crop: ${v.primaryCrop} (-${m.timeSavedHrs}h)`, '#a855f7');
+    const mPinIcon = L.divIcon({
+      className: 'custom-m-pin',
+      html: `<div class="pin-badge" style="border-color: #a855f7">🌾 APMC: ${activeVillage.nearestMandi}</div>`,
+      iconSize: [170, 28],
+      iconAnchor: [85, 14]
+    });
+    const mMarker = L.marker(mCoords, { icon: mPinIcon });
+    mMarker.bindPopup(`<b>🌾 ${activeVillage.nearestMandi}</b><br/>Primary Crop: ${activeVillage.primaryCrop}<br/>Annual Yield: ${activeVillage.annualAgriYieldTons} Tons<br/>Spoilage Reduction: ${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0} Lakhs/yr`);
+    activeVillageGroup.addLayer(mMarker);
   }
 
-  // Pillar 4: Emergency Hospital ICU Route (Rose Red Dashed Line)
+  // Route C: Emergency Hospital ICU Corridor (Rose/Red Line)
   if (destinationMode === 'ALL' || destinationMode === 'HOSPITAL') {
-    ctx.beginPath();
-    ctx.moveTo(vX, vY);
-    ctx.lineTo(hospitalNode.x, hospitalNode.y);
-    ctx.strokeStyle = '#f43f5e';
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([3, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    const hospitalPolyline = L.polyline([[vLat, vLng], hCoords], {
+      color: '#f43f5e',
+      weight: 3.5,
+      dashArray: '4, 4',
+      opacity: 0.9
+    });
+    hospitalPolyline.bindTooltip(`🏥 Ambulance Transit to ${activeVillage.nearestHospitalHub} (-${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs saved)`, { sticky: true });
+    activeVillageGroup.addLayer(hospitalPolyline);
 
-    drawNodeBadge(ctx, hospitalNode.x, hospitalNode.y, `🏥 Hospital: ${hospitalNode.name}`, `Emergency: -${m.hospitalTimeSavedHrs} hrs saved`, '#f43f5e');
+    const hPinIcon = L.divIcon({
+      className: 'custom-h-pin',
+      html: `<div class="pin-badge" style="border-color: #f43f5e">🏥 ${activeVillage.nearestHospitalHub}</div>`,
+      iconSize: [190, 28],
+      iconAnchor: [95, 14]
+    });
+    const hMarker = L.marker(hCoords, { icon: hPinIcon });
+    hMarker.bindPopup(`<b>🏥 ${activeVillage.nearestHospitalHub}</b><br/>Emergency Saved: -${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs<br/>Services: ${activeVillage.primaryHealthcareServices}`);
+    activeVillageGroup.addLayer(hMarker);
   }
 
-  // Pillar 5: KSRTC Public Bus Route (Gold/Amber Dashed Line)
+  // Route D: KSRTC Public Bus Route (Gold/Amber Line)
   if (destinationMode === 'ALL' || destinationMode === 'BUS') {
-    ctx.beginPath();
-    ctx.moveTo(vX, vY);
-    ctx.lineTo(busNode.x, busNode.y);
-    ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([4, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    const busPolyline = L.polyline([[vLat, vLng], bCoords], {
+      color: '#eab308',
+      weight: 3.5,
+      dashArray: '6, 4',
+      opacity: 0.9
+    });
+    busPolyline.bindTooltip(`🚌 KSRTC Bus Route (${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.projectedBusFrequencyPerDay} trips/day)`, { sticky: true });
+    activeVillageGroup.addLayer(busPolyline);
 
-    drawNodeBadge(ctx, busNode.x, busNode.y, `🚌 ${busNode.name}`, `Bus: ${m.currentBusFreq} ➔ ${m.projBusFreq} trips/day`, '#f59e0b');
+    const bPinIcon = L.divIcon({
+      className: 'custom-b-pin',
+      html: `<div class="pin-badge" style="border-color: #eab308">🚌 ${activeVillage.ksrtcDivision || 'KSRTC Stop'}</div>`,
+      iconSize: [180, 28],
+      iconAnchor: [90, 14]
+    });
+    const bMarker = L.marker(bCoords, { icon: bPinIcon });
+    bMarker.bindPopup(`<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige Frequency: ${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.projectedBusFrequencyPerDay} trips/day<br/>Walk to Bus Stop: ${activeVillage.walkToBusStopKm} km`);
+    activeVillageGroup.addLayer(bMarker);
   }
 
-  // --- CENTER VILLAGE NODE ---
-
-  // Glow Halo
-  ctx.beginPath();
-  ctx.arc(vX, vY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = isSeverelyBad ? 'rgba(239, 68, 68, 0.25)' : 'rgba(245, 158, 11, 0.25)';
-  ctx.fill();
-
-  // Core Circle
-  ctx.beginPath();
-  ctx.arc(vX, vY, 12, 0, Math.PI * 2);
-  ctx.fillStyle = isSeverelyBad ? '#ef4444' : '#f59e0b';
-  ctx.fill();
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  // Village Header Label Box
-  const villageTitle = `🏡 ${v.name} (${v.district})`;
-  const subTitle = `CAS Score: ${cas.current}/100 ➔ ${cas.projected}/100 • ${v.monsoonIsolationDays}d monsoon cut-off`;
-
-  ctx.font = '800 13px Plus Jakarta Sans';
-  const titleWidth = ctx.measureText(villageTitle).width;
-  ctx.font = '600 10px Plus Jakarta Sans';
-  const subWidth = ctx.measureText(subTitle).width;
-  const boxWidth = Math.max(titleWidth, subWidth) + 24;
-
-  ctx.fillStyle = 'rgba(5, 8, 17, 0.95)';
-  ctx.strokeStyle = isSeverelyBad ? '#ef4444' : '#f59e0b';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(vX - boxWidth / 2, vY - 58, boxWidth, 40, 10);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '800 12px Plus Jakarta Sans';
-  ctx.fillText(villageTitle, vX - titleWidth / 2, vY - 40);
-
-  ctx.fillStyle = isSeverelyBad ? '#fca5a5' : '#fef08a';
-  ctx.font = '600 10px Plus Jakarta Sans';
-  ctx.fillText(subTitle, vX - subWidth / 2, vY - 24);
-
-  ctx.restore();
-}
-
-function drawNodeBadge(ctx, x, y, title, subtitle, color) {
-  ctx.font = '700 11px Plus Jakarta Sans';
-  const titleW = ctx.measureText(title).width;
-  ctx.font = '500 10px Plus Jakarta Sans';
-  const subW = ctx.measureText(subtitle).width;
-  const w = Math.max(titleW, subW) + 20;
-
-  ctx.fillStyle = 'rgba(5, 8, 17, 0.9)';
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(x - w / 2, y - 28, w, 34, 8);
-  ctx.fill();
-  ctx.stroke();
-
-  // Node Point
-  ctx.beginPath();
-  ctx.arc(x, y, 5, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.fill();
-
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '700 11px Plus Jakarta Sans';
-  ctx.fillText(title, x - titleW / 2, y - 14);
-
-  ctx.fillStyle = color;
-  ctx.font = '500 10px Plus Jakarta Sans';
-  ctx.fillText(subtitle, x - subW / 2, y - 2);
-}
-
-function drawRouteBadge(ctx, x, y, text, color) {
-  ctx.font = '600 10px Plus Jakarta Sans';
-  const w = ctx.measureText(text).width + 14;
-
-  ctx.fillStyle = 'rgba(5, 8, 17, 0.9)';
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.roundRect(x - w / 2, y - 8, w, 18, 6);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.fillStyle = color;
-  ctx.fillText(text, x - w / 2 + 7, y + 4);
+  // Open active village marker popup automatically
+  setTimeout(() => {
+    activeMarker.openPopup();
+  }, 300);
 }

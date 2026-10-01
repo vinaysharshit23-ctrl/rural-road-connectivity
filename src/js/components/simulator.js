@@ -92,6 +92,9 @@ export function setupCustomVillageCalculator(onAddVillage) {
     const hasHealthCenter = document.getElementById('inputHealth').checked;
     const hasSecondarySchool = document.getElementById('inputSchool').checked;
 
+    const baseLat = 14.2 + (Math.random() - 0.5) * 3.0;
+    const baseLng = 76.0 + (Math.random() - 0.5) * 3.0;
+
     const newVillage = {
       id: `VIL-CUST-${Date.now().toString().slice(-4)}`,
       name,
@@ -99,6 +102,10 @@ export function setupCustomVillageCalculator(onAddVillage) {
       state,
       population,
       existingRoadType: "Kutcha Track",
+      roadConditionCategory: "SEVERELY_BAD",
+      roadConditionLabel: "Severely Bad (Unpaved Mud Track)",
+      monsoonIsolationDays: 60,
+      maxCurrentSpeedKmh: 10,
       roadLengthKm,
       terrain: "Plains",
       estCostLakhs,
@@ -109,12 +116,25 @@ export function setupCustomVillageCalculator(onAddVillage) {
       perishablePercent,
       avgAgriValuePerTon,
       nearestMandi,
+      nearestUrbanHub: `${district} Regional Hub`,
+      nearestHospitalHub: `${district} District Hospital`,
+      ksrtcDivision: `KSRTC ${district} Division`,
+      currentBusFrequencyPerDay: 0,
+      projectedBusFrequencyPerDay: 6,
+      walkToBusStopKm: roadLengthKm,
       hasHealthCenter,
       hasSecondarySchool,
       coordinates: {
         x: Math.floor(Math.random() * 600) + 200,
         y: Math.floor(Math.random() * 400) + 200
-      }
+      },
+      lat: baseLat,
+      lng: baseLng,
+      junctionCoords: [baseLat + 0.015, baseLng - 0.012],
+      mandiCoords: [baseLat + 0.025, baseLng + 0.028],
+      urbanCoords: [baseLat + 0.045, baseLng + 0.035],
+      hospitalCoords: [baseLat - 0.022, baseLng - 0.032],
+      busCoords: [baseLat + 0.008, baseLng + 0.015]
     };
 
     newVillage.metrics = calculateVillageMetrics(newVillage);

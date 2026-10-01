@@ -2,6 +2,7 @@
  * Karnataka Rural Road Connectivity Dataset
  * Comprehensive dataset focusing on unconnected & poorly connected rural villages across Karnataka:
  * Malnad (Western Ghats), Central Maidan, Kalyana-Karnataka, and Mysuru Region.
+ * Includes precise geographical coordinates (lat, lng) for realistic Leaflet/Google-style spatial mapping.
  */
 
 export const INITIAL_VILLAGES = [
@@ -43,6 +44,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: false,
     hasSecondarySchool: false,
     coordinates: { x: 380, y: 390 },
+    lat: 14.2230,
+    lng: 76.3980,
+    junctionCoords: [14.2400, 76.3800],
+    mandiCoords: [14.2380, 76.4120],
+    urbanCoords: [14.4644, 75.9218],
+    hospitalCoords: [14.2200, 76.3820],
+    busCoords: [14.2290, 76.3950],
     regionCode: "KA-CT"
   },
   {
@@ -83,6 +91,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: false,
     hasSecondarySchool: false,
     coordinates: { x: 310, y: 440 },
+    lat: 13.9299,
+    lng: 75.5681,
+    junctionCoords: [13.9400, 75.5520],
+    mandiCoords: [13.9450, 75.5820],
+    urbanCoords: [13.9200, 75.5900],
+    hospitalCoords: [13.9180, 75.5550],
+    busCoords: [13.9310, 75.5700],
     regionCode: "KA-SM"
   },
   {
@@ -123,6 +138,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: true,
     hasSecondarySchool: false,
     coordinates: { x: 440, y: 510 },
+    lat: 13.3392,
+    lng: 77.1017,
+    junctionCoords: [13.3550, 77.0900],
+    mandiCoords: [13.3520, 77.1150],
+    urbanCoords: [13.0358, 77.5970],
+    hospitalCoords: [13.3410, 77.0880],
+    busCoords: [13.3380, 77.1040],
     regionCode: "KA-TM"
   },
   {
@@ -163,6 +185,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: false,
     hasSecondarySchool: false,
     coordinates: { x: 520, y: 210 },
+    lat: 17.3297,
+    lng: 76.8343,
+    junctionCoords: [17.3450, 76.8150],
+    mandiCoords: [17.3420, 76.8480],
+    urbanCoords: [17.3300, 76.8550],
+    hospitalCoords: [17.3200, 76.8200],
+    busCoords: [17.3320, 76.8380],
     regionCode: "KA-KL"
   },
   {
@@ -203,6 +232,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: true,
     hasSecondarySchool: true,
     coordinates: { x: 360, y: 530 },
+    lat: 13.0068,
+    lng: 76.1004,
+    junctionCoords: [13.0200, 76.0820],
+    mandiCoords: [13.0180, 76.1120],
+    urbanCoords: [12.2958, 76.6394],
+    hospitalCoords: [12.9980, 76.0880],
+    busCoords: [13.0080, 76.1020],
     regionCode: "KA-HS"
   },
   {
@@ -243,6 +279,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: false,
     hasSecondarySchool: false,
     coordinates: { x: 560, y: 290 },
+    lat: 16.2076,
+    lng: 77.3553,
+    junctionCoords: [16.2250, 77.3380],
+    mandiCoords: [16.2200, 77.3680],
+    urbanCoords: [15.1394, 76.9214],
+    hospitalCoords: [16.1980, 77.3420],
+    busCoords: [16.2090, 77.3580],
     regionCode: "KA-RC"
   },
   {
@@ -283,6 +326,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: false,
     hasSecondarySchool: false,
     coordinates: { x: 390, y: 640 },
+    lat: 11.8024,
+    lng: 76.6273,
+    junctionCoords: [11.8250, 76.6120],
+    mandiCoords: [11.9200, 76.9400],
+    urbanCoords: [12.2958, 76.6394],
+    hospitalCoords: [11.9150, 76.9350],
+    busCoords: [11.8050, 76.6300],
     regionCode: "KA-CR"
   },
   {
@@ -323,6 +373,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: true,
     hasSecondarySchool: false,
     coordinates: { x: 420, y: 220 },
+    lat: 16.5801,
+    lng: 75.9678,
+    junctionCoords: [16.6000, 75.9480],
+    mandiCoords: [16.8302, 75.7100],
+    urbanCoords: [15.3647, 75.1240],
+    hospitalCoords: [16.8250, 75.7050],
+    busCoords: [16.5830, 75.9700],
     regionCode: "KA-VJ"
   },
   {
@@ -363,6 +420,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: false,
     hasSecondarySchool: false,
     coordinates: { x: 320, y: 490 },
+    lat: 13.3910,
+    lng: 75.7214,
+    junctionCoords: [13.3650, 75.7380],
+    mandiCoords: [13.3161, 75.7720],
+    urbanCoords: [12.9141, 74.8560],
+    hospitalCoords: [13.3200, 75.7750],
+    busCoords: [13.3880, 75.7250],
     regionCode: "KA-CK"
   },
   {
@@ -403,6 +467,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: true,
     hasSecondarySchool: true,
     coordinates: { x: 510, y: 550 },
+    lat: 13.1367,
+    lng: 78.1291,
+    junctionCoords: [13.1500, 78.1120],
+    mandiCoords: [13.1480, 78.1400],
+    urbanCoords: [12.9866, 77.7314],
+    hospitalCoords: [13.1280, 78.1180],
+    busCoords: [13.1390, 78.1310],
     regionCode: "KA-KL"
   },
   {
@@ -443,6 +514,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: false,
     hasSecondarySchool: false,
     coordinates: { x: 290, y: 260 },
+    lat: 15.6366,
+    lng: 74.5147,
+    junctionCoords: [15.6550, 74.4980],
+    mandiCoords: [15.8497, 74.4977],
+    urbanCoords: [15.8600, 74.5000],
+    hospitalCoords: [15.8700, 74.5100],
+    busCoords: [15.6390, 74.5180],
     regionCode: "KA-BG"
   },
   {
@@ -483,6 +561,13 @@ export const INITIAL_VILLAGES = [
     hasHealthCenter: true,
     hasSecondarySchool: false,
     coordinates: { x: 390, y: 350 },
+    lat: 14.4673,
+    lng: 75.9218,
+    junctionCoords: [14.4820, 75.9080],
+    mandiCoords: [14.4780, 75.9320],
+    urbanCoords: [14.4650, 75.9400],
+    hospitalCoords: [14.4580, 75.9120],
+    busCoords: [14.4690, 75.9240],
     regionCode: "KA-DV"
   }
 ];

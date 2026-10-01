@@ -6,9 +6,11 @@
   <title>Karnataka Rural Road Connectivity & Market Access Index</title>
   <meta name="description" content="Prioritizing unconnected rural villages across Karnataka by economic ROI, travel time saved to agricultural Mandis, urban employment hubs & emergency hospitals." />
   
+  <link rel="stylesheet" href="./src/lib/leaflet.css" />
   <link rel="stylesheet" href="./src/css/style.css" />
   <link rel="stylesheet" href="./src/css/components.css" />
   <link rel="stylesheet" href="./src/css/map.css" />
+  <script src="./src/lib/leaflet.js"></script>
 </head>
 <body>
 
@@ -279,22 +281,44 @@
       </div>
 
       <div class="map-view-container">
-        <div class="canvas-wrapper">
-          <canvas id="mapCanvas"></canvas>
+        <div class="canvas-wrapper" style="position: relative; overflow: hidden; min-height: 600px">
+          <!-- Leaflet Realistic GIS Container -->
+          <div id="leafletMap" style="width: 100%; height: 100%; min-height: 600px; border-radius: 18px; z-index: 1"></div>
 
-          <div class="map-controls-overlay">
-            <button class="map-btn" id="btnZoomIn" title="Zoom In">+</button>
-            <button class="map-btn" id="btnZoomOut" title="Zoom Out">−</button>
-            <button class="map-btn" id="btnResetMap" title="Reset View">🔄</button>
+          <!-- Quick Map Type & Control Overlay -->
+          <div class="map-controls-overlay" style="z-index: 500">
+            <div style="background: rgba(15, 23, 42, 0.92); border: 1px solid var(--border-glass-glow); padding: 0.35rem 0.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.35rem; backdrop-filter: blur(12px)">
+              <button class="map-layer-btn active" id="btnLayerSat" title="Realistic Satellite View (Esri Aerial)">
+                🛰️ Satellite View
+              </button>
+              <button class="map-layer-btn" id="btnLayerStreet" title="Google/OpenStreetMap View">
+                🗺️ Street Map
+              </button>
+              <button class="map-layer-btn" id="btnLayerDark" title="Dark Cyber Spatial Mode">
+                🌙 Dark Cyber Mode
+              </button>
+              <button class="map-layer-btn" id="btnLayerTopo" title="Topographic Elevation / Terrain Mode">
+                ⛰️ Topo Terrain
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 0.35rem; margin-top: 0.25rem">
+              <button class="map-btn" id="btnZoomIn" title="Zoom In">+</button>
+              <button class="map-btn" id="btnZoomOut" title="Zoom Out">−</button>
+              <button class="map-btn" id="btnResetMap" title="Center Selected Village" style="width: auto; padding: 0 0.6rem; font-size: 0.75rem; font-weight: 700">
+                🎯 Center Village
+              </button>
+            </div>
           </div>
 
-          <div class="map-legend">
-            <div class="legend-item"><span class="legend-dot high"></span> High MAI (≥75)</div>
-            <div class="legend-item"><span class="legend-dot med"></span> Medium MAI (50-74)</div>
-            <div class="legend-item"><span class="legend-dot std"></span> Standard MAI (&lt;50)</div>
-            <div class="legend-item"><span class="legend-dot mandi"></span> APMC Mandi Hub</div>
-            <div class="legend-item"><span class="legend-dot std" style="background: #38bdf8"></span> Urban Job & College Hub</div>
-            <div class="legend-item"><span class="legend-dot hospital"></span> District Hospital Hub</div>
+          <!-- Map Legend Overlay -->
+          <div class="map-legend" style="z-index: 500">
+            <div class="legend-item"><span class="legend-dot" style="background: #ef4444; box-shadow: 0 0 8px #ef4444"></span> 🔴 Severely Isolated Village</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #f59e0b; box-shadow: 0 0 8px #f59e0b"></span> 🟠 Bad Potholed Track</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #a855f7; box-shadow: 0 0 8px #a855f7"></span> 🌾 APMC Mandi</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #38bdf8; box-shadow: 0 0 8px #38bdf8"></span> 🏙️ Urban Hub</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #f43f5e; box-shadow: 0 0 8px #f43f5e"></span> 🏥 Emergency Hospital</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #eab308; box-shadow: 0 0 8px #eab308"></span> 🚌 KSRTC Bus Stop</div>
           </div>
         </div>
 
