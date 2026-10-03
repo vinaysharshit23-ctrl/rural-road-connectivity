@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Karnataka Rural Road Connectivity Dataset
  * Comprehensive dataset focusing on unconnected & poorly connected rural villages across Karnataka:
  * Malnad (Western Ghats), Central Maidan, Kalyana-Karnataka, and Mysuru Region.
