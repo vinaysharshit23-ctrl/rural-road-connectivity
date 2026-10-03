@@ -192,11 +192,8 @@ function setupNavigationTabs() {
 
     if (targetViewId === 'tab-map') {
       setTimeout(() => {
-        if (window._leafletMap) {
-          window._leafletMap.invalidateSize();
-        }
         initMapViewer(filterVillages(), renderMapSidebar, currentMapDestMode);
-      }, 100);
+      }, 50);
     }
   };
 

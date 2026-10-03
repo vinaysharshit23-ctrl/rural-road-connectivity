@@ -72,19 +72,13 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
     otherVillagesGroup = L.featureGroup().addTo(map);
     activeVillageGroup = L.featureGroup().addTo(map);
 
-    // Expose map instance for external invalidateSize calls
-    window._leafletMap = map;
-
     setupLayerControls();
     setupMapInteractions(onSelectVillage);
   }
 
-  // Always invalidateSize when initMapViewer is called (tab may have just become visible)
   setTimeout(() => {
-    if (map) {
-      map.invalidateSize();
-    }
-  }, 150);
+    if (map) map.invalidateSize();
+  }, 100);
 
   renderLeafletMap(onSelectVillage);
 }
