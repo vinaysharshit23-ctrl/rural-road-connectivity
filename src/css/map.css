@@ -1,4 +1,4 @@
-/* Spatial Visualizer Map Styles */
+﻿/* Spatial Visualizer Map Styles */
 .map-view-container {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -20,9 +20,10 @@
   position: relative;
   overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
   box-shadow: var(--shadow-lg);
+  height: 620px;
 }
 
 #leafletMap {
