@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Individual Village Map Inspector Component
  * High-performance, realistic Leaflet GIS Map Renderer.
  * Supports Esri World Imagery (Satellite), OpenStreetMap, CartoDB Dark Mode & Topographic Terrain maps.
@@ -72,13 +72,19 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
     otherVillagesGroup = L.featureGroup().addTo(map);
     activeVillageGroup = L.featureGroup().addTo(map);
 
+    // Expose map instance for external invalidateSize calls
+    window._leafletMap = map;
+
     setupLayerControls();
     setupMapInteractions(onSelectVillage);
   }
 
+  // Always invalidateSize when initMapViewer is called (tab may have just become visible)
   setTimeout(() => {
-    if (map) map.invalidateSize();
-  }, 100);
+    if (map) {
+      map.invalidateSize();
+    }
+  }, 150);
 
   renderLeafletMap(onSelectVillage);
 }
@@ -108,7 +114,7 @@ function populateVillageDropdown(onSelectVillage) {
   if (!select) return;
 
   select.innerHTML = villagesData.map(v => {
-    const isBad = v.roadConditionCategory === 'SEVERELY_BAD' ? '🔴' : '🟠';
+    const isBad = v.roadConditionCategory === 'SEVERELY_BAD' ? '≡ƒö┤' : '≡ƒƒá';
     const casScore = v.metrics && v.metrics.accessibility ? v.metrics.accessibility.current : '';
     return `<option value="${v.id}" ${v.id === activeVillageId ? 'selected' : ''}>
       ${isBad} ${v.name} (${v.district}) - CAS: ${casScore}/100
@@ -240,13 +246,13 @@ function renderLeafletMap(onSelectVillage) {
   const popupHtml = `
     <div style="padding: 0.5rem 0.6rem; min-width: 220px">
       <div style="font-size: 0.72rem; font-weight: 800; color: ${villageColor}; text-transform: uppercase; letter-spacing: 0.05em">
-        ${isSeverelyBad ? '🔴 Critical Isolation' : '🟠 Poor Road Condition'}
+        ${isSeverelyBad ? '≡ƒö┤ Critical Isolation' : '≡ƒƒá Poor Road Condition'}
       </div>
       <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0.25rem 0">
         ${activeVillage.name}
       </div>
       <div style="font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.5rem">
-        📍 ${activeVillage.district} District • ${activeVillage.terrain} Terrain
+        ≡ƒôì ${activeVillage.district} District ΓÇó ${activeVillage.terrain} Terrain
       </div>
 
       <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); padding: 0.45rem 0.6rem; border-radius: 8px; font-size: 0.75rem; margin-bottom: 0.5rem">
@@ -261,7 +267,7 @@ function renderLeafletMap(onSelectVillage) {
       </div>
 
       <div style="font-size: 0.72rem; color: #94a3b8">
-        🛣️ Track: ${activeVillage.existingRoadType} (${activeVillage.roadLengthKm} km)
+        ≡ƒ¢ú∩╕Å Track: ${activeVillage.existingRoadType} (${activeVillage.roadLengthKm} km)
       </div>
     </div>
   `;
@@ -280,7 +286,7 @@ function renderLeafletMap(onSelectVillage) {
 
   // Route A: Urban Job Hub & Highway Corridor
   if (destinationMode === 'ALL' || destinationMode === 'URBAN') {
-    // 1. Unpaved Bad Track Polyline (Village ➔ Highway Junction)
+    // 1. Unpaved Bad Track Polyline (Village Γ₧ö Highway Junction)
     const badTrackPolyline = L.polyline([[vLat, vLng], jCoords], {
       color: villageColor,
       weight: 4.5,
@@ -288,36 +294,36 @@ function renderLeafletMap(onSelectVillage) {
       opacity: 0.95
     });
 
-    badTrackPolyline.bindTooltip(`🔴 ${activeVillage.roadLengthKm}km Unpaved Bad Track (${activeVillage.maxCurrentSpeedKmh} km/h max speed)`, { sticky: true });
+    badTrackPolyline.bindTooltip(`≡ƒö┤ ${activeVillage.roadLengthKm}km Unpaved Bad Track (${activeVillage.maxCurrentSpeedKmh} km/h max speed)`, { sticky: true });
     activeVillageGroup.addLayer(badTrackPolyline);
 
     // 2. Highway Junction Node Marker
     const jMarkerIcon = L.divIcon({
       className: 'custom-j-pin',
-      html: `<div class="pin-badge" style="border-color: ${villageColor}; font-size: 0.7rem">🛑 Highway Junction</div>`,
+      html: `<div class="pin-badge" style="border-color: ${villageColor}; font-size: 0.7rem">≡ƒ¢æ Highway Junction</div>`,
       iconSize: [120, 24],
       iconAnchor: [60, 12]
     });
     activeVillageGroup.addLayer(L.marker(jCoords, { icon: jMarkerIcon }));
 
-    // 3. Paved Highway Polyline (Junction ➔ Urban Hub)
+    // 3. Paved Highway Polyline (Junction Γ₧ö Urban Hub)
     const highwayPolyline = L.polyline([jCoords, uCoords], {
       color: '#38bdf8',
       weight: 4,
       opacity: 0.9
     });
-    highwayPolyline.bindTooltip(`🌐 State Highway to ${activeVillage.nearestUrbanHub || 'Urban Hub'} (-${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs saved)`, { sticky: true });
+    highwayPolyline.bindTooltip(`≡ƒîÉ State Highway to ${activeVillage.nearestUrbanHub || 'Urban Hub'} (-${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs saved)`, { sticky: true });
     activeVillageGroup.addLayer(highwayPolyline);
 
     // 4. Urban Hub Marker
     const uPinIcon = L.divIcon({
       className: 'custom-u-pin',
-      html: `<div class="pin-badge" style="border-color: #38bdf8">🏙️ ${activeVillage.nearestUrbanHub || 'Urban Hub'}</div>`,
+      html: `<div class="pin-badge" style="border-color: #38bdf8">≡ƒÅÖ∩╕Å ${activeVillage.nearestUrbanHub || 'Urban Hub'}</div>`,
       iconSize: [180, 28],
       iconAnchor: [90, 14]
     });
     const uMarker = L.marker(uCoords, { icon: uPinIcon });
-    uMarker.bindPopup(`<b>🏙️ ${activeVillage.nearestUrbanHub}</b><br/>Commute Saved: ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs<br/>Opportunities: ${activeVillage.primaryUrbanOpportunity || 'Jobs & Higher Education'}`);
+    uMarker.bindPopup(`<b>≡ƒÅÖ∩╕Å ${activeVillage.nearestUrbanHub}</b><br/>Commute Saved: ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs<br/>Opportunities: ${activeVillage.primaryUrbanOpportunity || 'Jobs & Higher Education'}`);
     activeVillageGroup.addLayer(uMarker);
   }
 
@@ -329,17 +335,17 @@ function renderLeafletMap(onSelectVillage) {
       dashArray: '6, 5',
       opacity: 0.85
     });
-    mandiPolyline.bindTooltip(`🌾 Crop Corridor to ${activeVillage.nearestMandi} (-${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : 1.5}h saved)`, { sticky: true });
+    mandiPolyline.bindTooltip(`≡ƒî╛ Crop Corridor to ${activeVillage.nearestMandi} (-${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : 1.5}h saved)`, { sticky: true });
     activeVillageGroup.addLayer(mandiPolyline);
 
     const mPinIcon = L.divIcon({
       className: 'custom-m-pin',
-      html: `<div class="pin-badge" style="border-color: #a855f7">🌾 APMC: ${activeVillage.nearestMandi}</div>`,
+      html: `<div class="pin-badge" style="border-color: #a855f7">≡ƒî╛ APMC: ${activeVillage.nearestMandi}</div>`,
       iconSize: [170, 28],
       iconAnchor: [85, 14]
     });
     const mMarker = L.marker(mCoords, { icon: mPinIcon });
-    mMarker.bindPopup(`<b>🌾 ${activeVillage.nearestMandi}</b><br/>Primary Crop: ${activeVillage.primaryCrop}<br/>Annual Yield: ${activeVillage.annualAgriYieldTons} Tons<br/>Spoilage Reduction: ${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0} Lakhs/yr`);
+    mMarker.bindPopup(`<b>≡ƒî╛ ${activeVillage.nearestMandi}</b><br/>Primary Crop: ${activeVillage.primaryCrop}<br/>Annual Yield: ${activeVillage.annualAgriYieldTons} Tons<br/>Spoilage Reduction: ${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0} Lakhs/yr`);
     activeVillageGroup.addLayer(mMarker);
   }
 
@@ -351,17 +357,17 @@ function renderLeafletMap(onSelectVillage) {
       dashArray: '4, 4',
       opacity: 0.9
     });
-    hospitalPolyline.bindTooltip(`🏥 Ambulance Transit to ${activeVillage.nearestHospitalHub} (-${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs saved)`, { sticky: true });
+    hospitalPolyline.bindTooltip(`≡ƒÅÑ Ambulance Transit to ${activeVillage.nearestHospitalHub} (-${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs saved)`, { sticky: true });
     activeVillageGroup.addLayer(hospitalPolyline);
 
     const hPinIcon = L.divIcon({
       className: 'custom-h-pin',
-      html: `<div class="pin-badge" style="border-color: #f43f5e">🏥 ${activeVillage.nearestHospitalHub}</div>`,
+      html: `<div class="pin-badge" style="border-color: #f43f5e">≡ƒÅÑ ${activeVillage.nearestHospitalHub}</div>`,
       iconSize: [190, 28],
       iconAnchor: [95, 14]
     });
     const hMarker = L.marker(hCoords, { icon: hPinIcon });
-    hMarker.bindPopup(`<b>🏥 ${activeVillage.nearestHospitalHub}</b><br/>Emergency Saved: -${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs<br/>Services: ${activeVillage.primaryHealthcareServices}`);
+    hMarker.bindPopup(`<b>≡ƒÅÑ ${activeVillage.nearestHospitalHub}</b><br/>Emergency Saved: -${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs<br/>Services: ${activeVillage.primaryHealthcareServices}`);
     activeVillageGroup.addLayer(hMarker);
   }
 
@@ -373,17 +379,17 @@ function renderLeafletMap(onSelectVillage) {
       dashArray: '6, 4',
       opacity: 0.9
     });
-    busPolyline.bindTooltip(`🚌 KSRTC Bus Route (${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.projectedBusFrequencyPerDay} trips/day)`, { sticky: true });
+    busPolyline.bindTooltip(`≡ƒÜî KSRTC Bus Route (${activeVillage.currentBusFrequencyPerDay} Γ₧ö ${activeVillage.projectedBusFrequencyPerDay} trips/day)`, { sticky: true });
     activeVillageGroup.addLayer(busPolyline);
 
     const bPinIcon = L.divIcon({
       className: 'custom-b-pin',
-      html: `<div class="pin-badge" style="border-color: #eab308">🚌 ${activeVillage.ksrtcDivision || 'KSRTC Stop'}</div>`,
+      html: `<div class="pin-badge" style="border-color: #eab308">≡ƒÜî ${activeVillage.ksrtcDivision || 'KSRTC Stop'}</div>`,
       iconSize: [180, 28],
       iconAnchor: [90, 14]
     });
     const bMarker = L.marker(bCoords, { icon: bPinIcon });
-    bMarker.bindPopup(`<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige Frequency: ${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.projectedBusFrequencyPerDay} trips/day<br/>Walk to Bus Stop: ${activeVillage.walkToBusStopKm} km`);
+    bMarker.bindPopup(`<b>≡ƒÜî ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige Frequency: ${activeVillage.currentBusFrequencyPerDay} Γ₧ö ${activeVillage.projectedBusFrequencyPerDay} trips/day<br/>Walk to Bus Stop: ${activeVillage.walkToBusStopKm} km`);
     activeVillageGroup.addLayer(bMarker);
   }
 
