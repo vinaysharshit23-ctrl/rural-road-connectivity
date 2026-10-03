@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Main Application Controller
  * Manages global application state, tab routing, destination toggles, state filters, and component wiring.
  * Supports Mandi Markets, Urban Job Hubs, District Emergency Hospitals AND Road Condition Categories.
@@ -230,17 +230,17 @@ function renderMapSidebar(v) {
     <div style="background: ${isSeverelyBad ? 'rgba(244,63,94,0.12)' : 'rgba(245,158,11,0.12)'}; border: 1px solid ${isSeverelyBad ? 'rgba(244,63,94,0.35)' : 'rgba(245,158,11,0.35)'}; padding: 0.65rem 0.85rem; border-radius: 8px; margin-bottom: 0.85rem">
       <div style="font-size: 0.72rem; text-transform: uppercase; color: ${isSeverelyBad ? '#fb7185' : '#fbbf24'}">Existing Road Condition</div>
       <div style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-top: 0.15rem">
-        ${isSeverelyBad ? '≡ƒö┤ Severely Bad (Critical)' : '≡ƒƒá Bad Surface (Poor Gravel)'}
+        ${isSeverelyBad ? '🔴 Severely Bad (Critical)' : '🟠 Bad Surface (Poor Gravel)'}
       </div>
       <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem">
-        ${v.existingRoadType} ΓÇó Cut off ${v.monsoonIsolationDays}d/yr
+        ${v.existingRoadType} • Cut off ${v.monsoonIsolationDays}d/yr
       </div>
     </div>
 
     <!-- Urban Road Route Breakdown Card -->
     <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 0.75rem 0.85rem; margin-bottom: 1rem">
       <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between">
-        <span>≡ƒÅÖ∩╕Å Urban Hub Access Route</span>
+        <span>🏙️ Urban Hub Access Route</span>
         <span style="font-size: 0.7rem; color: #cbd5e1">${v.urbanHubDistKm} km total</span>
       </div>
       <div style="font-size: 0.85rem; font-weight: 700; color: #fff; margin: 0.3rem 0 0.4rem">
@@ -249,9 +249,9 @@ function renderMapSidebar(v) {
 
       <!-- Segment Visualizer -->
       <div style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; background: rgba(15,23,42,0.6); padding: 0.45rem 0.6rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 0.4rem">
-        <span style="color: ${isSeverelyBad ? '#ef4444' : '#f59e0b'}; font-weight: 700">≡ƒö┤ ${v.roadLengthKm}km bad track</span>
-        <span style="color: var(--text-muted)">Γ₧ö</span>
-        <span style="color: var(--accent-cyan); font-weight: 600">≡ƒîÉ ${highwayDist}km Highway</span>
+        <span style="color: ${isSeverelyBad ? '#ef4444' : '#f59e0b'}; font-weight: 700">🔴 ${v.roadLengthKm}km bad track</span>
+        <span style="color: var(--text-muted)">➔</span>
+        <span style="color: var(--accent-cyan); font-weight: 600">🌐 ${highwayDist}km Highway</span>
       </div>
 
       <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem">
@@ -259,7 +259,7 @@ function renderMapSidebar(v) {
         <span>Post-Road: <strong style="color: var(--accent-emerald)">${v.postUrbanTravelTimeMin} mins</strong></span>
       </div>
       <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.35rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.35rem">
-        ≡ƒÄ» <strong>Access to:</strong> ${v.primaryUrbanOpportunity}
+        🎯 <strong>Access to:</strong> ${v.primaryUrbanOpportunity}
       </div>
     </div>
 
@@ -285,7 +285,7 @@ function renderMapSidebar(v) {
     </div>
 
     <button id="btnMapInspectModal" class="btn-primary" style="margin-top: 1.1rem">
-      Inspect Full Road Audit & Report Γ₧ö
+      Inspect Full Road Audit & Report ➔
     </button>
   `;
 
