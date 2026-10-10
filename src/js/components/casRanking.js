@@ -18,80 +18,69 @@ function renderCasFormulaExplainer() {
   if (!container) return;
 
   container.innerHTML = `
-    <div style="background: rgba(13, 20, 36, 0.85); border: 1px solid var(--border-glass-glow); border-radius: 20px; padding: 1.75rem; margin-bottom: 2rem; box-shadow: var(--shadow-lg)">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem">
+    <div style="background: #fff; border: 2px solid var(--border); padding: 1.75rem; margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
         <div>
-          <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 0.08em; margin-bottom: 0.2rem">
+          <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-2); letter-spacing: 0.1em; margin-bottom: 0.2rem; border-left: 3px solid var(--ink); padding-left: 0.6rem;">
             🧮 Empirical Methodology & Mathematical Formulation
           </div>
-          <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff">
-            Comprehensive Accessibility Score (CAS) Engine
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink); margin-top: 0.35rem;">
+            CAS Scoring Engine
           </h2>
-          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem">
-            Evaluates rural village isolation on a normalized scale of <strong>0.0 to 100.0</strong> (where 0.0 = Total Isolation and 100.0 = Optimal Accessibility) as a weighted linear combination of 7 multi-sector pillars.
+          <p style="font-size: 0.85rem; color: var(--text-2); margin-top: 0.4rem; max-width: 620px;">
+            Evaluates rural village isolation on a normalized scale of <strong>0.0 to 100.0</strong> (0.0 = Total Isolation, 100.0 = Optimal Accessibility) as a weighted linear combination of 7 multi-sector pillars.
           </p>
         </div>
-        <div style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 0.5rem 1rem; border-radius: 12px; text-align: right">
-          <div style="font-size: 0.7rem; color: var(--text-muted)">State Base Average</div>
-          <div style="font-family: var(--font-mono); font-weight: 800; color: #ef4444; font-size: 1.1rem">24.8 / 100</div>
+        <div style="background: #FFF3F0; border: 2px solid var(--coral); padding: 0.5rem 1rem; text-align: right; flex-shrink: 0;">
+          <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-2);">State Base Average</div>
+          <div style="font-family: var(--font-display); font-size: 1.6rem; color: var(--coral); letter-spacing: 0.04em;">24.8 / 100</div>
         </div>
       </div>
 
       <!-- Formula Equation Card -->
-      <div style="background: rgba(5, 8, 17, 0.9); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1.1rem 1.4rem; margin-bottom: 1.25rem; font-family: var(--font-mono); text-align: center; border-left: 4px solid var(--accent-cyan); box-shadow: 0 4px 20px rgba(0,0,0,0.4)">
-        <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem">
+      <div style="background: var(--bg-card2); border: 2px solid var(--border); padding: 1rem 1.4rem; margin-bottom: 1.25rem; font-family: var(--font-mono); text-align: center; border-left: 4px solid var(--ink);">
+        <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">
           📐 Mathematical Formula & Weight Equation
         </div>
-        <div style="font-size: 1.05rem; font-weight: 800; color: #ffffff; letter-spacing: 0.02em; line-height: 1.6">
-          <span style="color: var(--accent-cyan); font-size: 1.15rem">CAS Score</span> = 
-          <span style="color: #38bdf8">0.20 × S<sub>Urban</sub></span> + 
-          <span style="color: #10b981">0.18 × S<sub>Road</sub></span> + 
-          <span style="color: #f59e0b">0.15 × S<sub>Highway</sub></span> + 
-          <span style="color: #f43f5e">0.16 × S<sub>Health</sub></span> + 
-          <span style="color: #c084fc">0.11 × S<sub>Edu</sub></span> + 
-          <span style="color: #fbbf24">0.12 × S<sub>Mandi</sub></span> + 
-          <span style="color: #38bdf8">0.08 × S<sub>Transit</sub></span>
+        <div style="font-size: 1rem; font-weight: 700; color: var(--ink); letter-spacing: 0.01em; line-height: 1.8;">
+          <span style="font-size: 1.1rem; font-weight: 800;">CAS Score</span> = 
+          0.20 × S<sub>Urban</sub> + 0.18 × S<sub>Road</sub> + 0.15 × S<sub>Highway</sub> + 
+          0.16 × S<sub>Health</sub> + 0.11 × S<sub>Edu</sub> + 0.12 × S<sub>Mandi</sub> + 0.08 × S<sub>Transit</sub>
         </div>
-        <div style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 0.45rem; font-family: var(--font-main)">
-          Sum of weights = 1.00 (100%). Each Sub-Score (S<sub>i</sub>) ranges from <strong>0.0</strong> (Extreme Isolation) to <strong>100.0</strong> (High Access).
+        <div style="font-size: 0.74rem; color: var(--text-2); margin-top: 0.4rem; font-family: var(--font-main);">
+          Sum of weights = 1.00. Each Sub-Score ranges from <strong>0.0</strong> (Extreme Isolation) to <strong>100.0</strong> (High Access).
         </div>
       </div>
 
       <!-- 7 Pillars Weight Grid -->
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; font-size: 0.8rem">
-        <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 10px; border-left: 3px solid #38bdf8">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 0.2rem">🏙️ 1. Urban Hub (20%)</div>
-          <div style="color: var(--text-muted); font-size: 0.74rem">Evaluates travel time ($T_{\\text{urban}}$) to nearest urban job & college centre.</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 2px solid var(--border); font-size: 0.8rem;">
+        <div style="padding: 0.85rem; border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);">
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🏙️ Urban Hub — 20%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Travel time to nearest urban job & college centre.</div>
         </div>
-
-        <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 10px; border-left: 3px solid #10b981">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 0.2rem">🛠️ 2. Road Condition (18%)</div>
-          <div style="color: var(--text-muted); font-size: 0.74rem">Penalizes Kutcha mud tracks & monsoon cut-off days (75–100d/yr).</div>
+        <div style="padding: 0.85rem; border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);">
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🛠️ Road Condition — 18%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Kutcha mud tracks & monsoon cut-off days (75–100d/yr).</div>
         </div>
-
-        <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 10px; border-left: 3px solid #f59e0b">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 0.2rem">🛣️ 3. Highway Dist (15%)</div>
-          <div style="color: var(--text-muted); font-size: 0.74rem">Length of unpaved feeder track connecting to state highway.</div>
+        <div style="padding: 0.85rem; border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);">
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🛣️ Highway Dist — 15%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Length of unpaved feeder track to state highway.</div>
         </div>
-
-        <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 10px; border-left: 3px solid #f43f5e">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 0.2rem">🏥 4. Healthcare (16%)</div>
-          <div style="color: var(--text-muted); font-size: 0.74rem">Emergency hospital ICU transit minutes + Health Sub-Center availability.</div>
+        <div style="padding: 0.85rem; border-bottom: 2px solid var(--border);">
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🏥 Healthcare — 16%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Emergency hospital ICU transit + Health Sub-Center.</div>
         </div>
-
-        <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 10px; border-left: 3px solid #c084fc">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 0.2rem">🏫 5. Education (11%)</div>
-          <div style="color: var(--text-muted); font-size: 0.74rem">Secondary school availability & transit to technical colleges.</div>
+        <div style="padding: 0.85rem; border-right: 2px solid var(--border);">
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🏫 Education — 11%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Secondary school & technical college access.</div>
         </div>
-
-        <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 10px; border-left: 3px solid #fbbf24">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 0.2rem">🌾 6. APMC Mandi (12%)</div>
-          <div style="color: var(--text-muted); font-size: 0.74rem">Mandi travel time & perishable produce spoilage penalty.</div>
+        <div style="padding: 0.85rem; border-right: 2px solid var(--border);">
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🌾 APMC Mandi — 12%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Mandi travel time & perishable spoilage penalty.</div>
         </div>
-
-        <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 10px; border-left: 3px solid #38bdf8; grid-column: span 2">
-          <div style="font-weight: 700; color: #fff; margin-bottom: 0.2rem">🚌 7. KSRTC Public Transit (8%)</div>
-          <div style="color: var(--text-muted); font-size: 0.74rem">Daily KSRTC Gramina Sarige bus frequency & walk distance to nearest bus stop.</div>
+        <div style="padding: 0.85rem; grid-column: span 2;">
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🚌 KSRTC Public Transit — 8%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Daily Gramina Sarige bus frequency & walk distance to nearest bus stop.</div>
         </div>
       </div>
     </div>

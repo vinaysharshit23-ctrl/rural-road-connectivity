@@ -72,11 +72,11 @@ export function renderVillageTable(villages, onInspectVillage) {
           <span class="badge ${badgeClass}">MAI: ${v.metrics.maiScore}</span>
         </td>
         <td>
-          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); padding: 0.35rem 0.6rem; border-radius: 8px">
-            <div style="font-size: 0.85rem; font-weight: 700; color: #ef4444">
-              ${cas.current} <span style="font-size: 0.72rem; color: var(--text-muted)">/ 100</span>
+          <div style="background: #FFF3F0; border: 2px solid #ef4444; padding: 0.35rem 0.6rem;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #C03020;">
+              ${cas.current} <span style="font-size: 0.72rem; color: var(--text-2);">/ 100</span>
             </div>
-            <div style="font-size: 0.72rem; font-weight: 600; color: var(--accent-emerald); margin-top: 0.1rem">
+            <div style="font-size: 0.72rem; font-weight: 600; color: #2A6B50; margin-top: 0.1rem;">
               ➔ ${cas.projected} (+${cas.gain})
             </div>
           </div>
