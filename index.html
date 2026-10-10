@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="cyber-violet">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Karnataka Rural Road Connectivity & Market Access Index</title>
-  <meta name="description" content="Prioritizing unconnected rural villages across Karnataka by economic ROI, travel time saved to agricultural Mandis, urban employment hubs & emergency hospitals." />
-  
+  <title>Rural Road Connectivity & Market Access Index</title>
+  <meta name="description" content="Prioritizing unconnected rural villages by economic ROI, travel time saved to agricultural Mandis, urban employment hubs & emergency hospitals." />
+
   <link rel="stylesheet" href="./src/lib/leaflet.css" />
   <link rel="stylesheet" href="./src/css/style.css" />
   <link rel="stylesheet" href="./src/css/components.css" />
@@ -16,142 +16,69 @@
 
   <!-- App Header & Navigation -->
   <header class="app-header">
+    <!-- Logo / Brand -->
     <div class="brand">
       <div class="brand-icon">🛣️</div>
       <div class="brand-title">
-        <h1>Karnataka Rural Connectivity Index</h1>
-        <span>Economic ROI & Market Access Platform • Karnataka State Focus</span>
+        <h1>Rural Connectivity Index</h1>
+        <span>Economic ROI &amp; Market Access Platform</span>
       </div>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 1rem">
-      <!-- Theme Switcher -->
-      <div style="display: flex; align-items: center; gap: 0.4rem; background: rgba(13, 20, 36, 0.85); padding: 0.25rem 0.6rem; border-radius: 12px; border: 1px solid var(--border-glass)">
-        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.2rem">🎨 Theme:</span>
-        <button class="theme-dot" data-theme-btn="obsidian-neon" title="Obsidian Neon (Cyber Blue & Emerald)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #38bdf8, #10b981); cursor: pointer; transition: transform 0.2s;"></button>
-        <button class="theme-dot active" data-theme-btn="cyber-violet" title="Cyber Violet (Electric Purple & Pink)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid #c084fc; background: linear-gradient(135deg, #a855f7, #ec4899); cursor: pointer; transition: transform 0.2s;"></button>
-        <button class="theme-dot" data-theme-btn="solar-amber" title="Solar Amber (Gold & Orange)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #fbbf24, #f97316); cursor: pointer; transition: transform 0.2s;"></button>
-        <button class="theme-dot" data-theme-btn="malnad-teal" title="Malnad Teal (Teal & Emerald)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #2dd4bf, #10b981); cursor: pointer; transition: transform 0.2s;"></button>
-      </div>
-
+    <!-- Nav tabs + actions -->
+    <div style="display:flex;align-items:center;gap:.75rem">
       <nav class="nav-tabs">
-        <button class="nav-tab active" data-tab="tab-home" id="navHomeBtn">
-          🏠 Overview
-        </button>
-        <button class="nav-tab" data-tab="tab-ranking" id="navRankingBtn">
-          📊 Priority Leaderboard
-        </button>
-        <button class="nav-tab" data-tab="tab-cas-ranking" id="navCasRankingBtn">
-          🎯 CAS Accessibility Ranking
-        </button>
-        <button class="nav-tab" data-tab="tab-map" id="navMapBtn">
-          🗺️ Individual Village Map
-        </button>
-        <button class="nav-tab" data-tab="tab-simulator" id="navSimBtn">
-          🧮 Budget & ROI Simulator
-        </button>
+        <button class="nav-tab active" data-tab="tab-home"        id="navHomeBtn">Overview</button>
+        <button class="nav-tab"        data-tab="tab-ranking"     id="navRankingBtn">Priority Leaderboard</button>
+        <button class="nav-tab"        data-tab="tab-cas-ranking" id="navCasRankingBtn">CAS Ranking</button>
+        <button class="nav-tab"        data-tab="tab-map"         id="navMapBtn">Village Map</button>
+        <button class="nav-tab"        data-tab="tab-simulator"   id="navSimBtn">Budget Simulator</button>
       </nav>
+
+      <!-- Black pill CTA -->
+      <button class="atrium-btn cta-btn" data-target-tab="tab-ranking">
+        <span class="ab-disc" aria-hidden="true">→</span>
+        Explore Data
+      </button>
     </div>
   </header>
 
   <!-- Main Workspace Content -->
   <main class="main-content">
 
-    <!-- Tab 0: Introductory Landing Hero Page -->
+    <!-- Tab 0: Hero - Atrium MTL brutalist editorial -->
     <section id="tab-home" class="tab-view active">
-      <!-- Hero Banner -->
-      <div style="background: rgba(13, 20, 36, 0.85); border: 1px solid var(--border-glass-glow); border-radius: 24px; padding: 3rem 2.5rem; margin-bottom: 2rem; position: relative; overflow: hidden; box-shadow: var(--shadow-lg)">
-        <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%); pointer-events: none"></div>
-        <div style="position: absolute; bottom: -50px; left: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%); pointer-events: none"></div>
-
-        <div style="max-width: 960px; position: relative; z-index: 2">
-          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.25rem">
-            ✨ KARNATAKA STATE RURAL ROAD CONNECTIVITY & MARKET ACCESS INDEX
+      <div class="atrium-hero">
+        <div class="atrium-hero-left">
+          <p class="atrium-label">Rural Infrastructure Decision Platform</p>
+          <h1 class="atrium-headline">A DATA<br>ARCHIVE<br>OF RURAL<br>ROADS</h1>
+          <p class="atrium-lede">Thousands of villages remain cut off from markets, hospitals, and employment. With limited budgets, planners need to know <strong>which villages to connect first</strong> and what the return on investment would be.<br><br>This platform answers exactly that &mdash; ranked, data-backed, ready for RDPR, PMGSY, and district planners.</p>
+          <div class="atrium-cta-row">
+            <button class="atrium-btn cta-btn" data-target-tab="tab-ranking"><span class="ab-disc">&rarr;</span>Priority Leaderboard</button>
+            <button class="atrium-link cta-btn" data-target-tab="tab-cas-ranking">CAS Ranking <span class="ab-disc">&rarr;</span></button>
+            <button class="atrium-link cta-btn" data-target-tab="tab-simulator">Budget Simulator <span class="ab-disc">&rarr;</span></button>
           </div>
-
-          <h1 style="font-size: 2.5rem; font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 1rem; letter-spacing: -0.02em">
-            Karnataka Rural Connectivity Index
-          </h1>
-
-          <!-- Classy Tagline -->
-          <div style="font-size: 1.35rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #38bdf8 50%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.15rem; line-height: 1.4">
-            “Bridging the Last Mile: Transforming Rural Isolation into Economic Growth & Life-Saving Access Across Karnataka.”
-          </div>
-
-          <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; max-width: 880px">
-            A specialized decision-support platform for infrastructure planners to prioritize last-mile rural road construction. By combining empirical economic ROI analytics, APMC agricultural mandi access, emergency hospital transit times, and KSRTC public bus mobility, the platform transforms raw geographic data into actionable infrastructure investment roadmaps.
-          </p>
-
-          <!-- Quick Action CTA Buttons -->
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap">
-            <button class="btn-primary cta-btn" data-target-tab="tab-ranking" style="width: auto; padding: 0.85rem 1.6rem; margin-top: 0; display: inline-flex; align-items: center; gap: 0.5rem">
-              📊 Explore Priority Leaderboard ➔
-            </button>
-            <button class="btn-inspect cta-btn" data-target-tab="tab-cas-ranking" style="padding: 0.85rem 1.4rem; font-size: 0.9rem">
-              🎯 View CAS Accessibility Ranking ➔
-            </button>
-            <button class="btn-inspect cta-btn" data-target-tab="tab-map" style="padding: 0.85rem 1.4rem; font-size: 0.9rem">
-              🗺️ Inspect Individual Village Maps ➔
-            </button>
-            <button class="btn-inspect cta-btn" data-target-tab="tab-simulator" style="padding: 0.85rem 1.4rem; font-size: 0.9rem">
-              🧮 Launch Budget Simulator ➔
-            </button>
-          </div>
+        </div>
+        <div class="atrium-hero-right">
+          <div class="atrium-cell coral"><div class="cell-stat"><span class="cell-val">MAI</span><span class="cell-lbl">Market Accessibility Index</span></div></div>
+          <div class="atrium-cell dark"><div class="cell-stat"><span class="cell-val">30+</span><span class="cell-lbl">Villages Ranked</span></div></div>
+          <div class="atrium-cell sky"><div class="cell-stat"><span class="cell-val">CAS</span><span class="cell-lbl">Accessibility Score</span></div></div>
+          <div class="atrium-cell white" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">7</span><span class="cell-lbl">Isolation Pillars</span></div></div>
+          <div class="atrium-cell coral" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">ROI</span><span class="cell-lbl">10-Year Return</span></div></div>
+          <div class="atrium-cell paper" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val" style="font-size:1.8rem">&#8377;/km</span><span class="cell-lbl">Cost-Benefit</span></div></div>
+          <div class="atrium-cell yellow" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">4</span><span class="cell-lbl">Data Sectors</span></div></div>
+          <div class="atrium-cell white" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">5</span><span class="cell-lbl">Platform Modules</span></div></div>
+          <div class="atrium-cell dark" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val" style="font-size:1.6rem">GIS</span><span class="cell-lbl">Village Map Inspector</span></div></div>
         </div>
       </div>
-
-      <!-- Core Impact Pillars Showcase Cards -->
-      <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 0.08em; margin-bottom: 1rem">
-        📌 Four Pillars of Rural Infrastructure Evaluation
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem">
-        <!-- Pillar 1 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
-            🌾
-          </div>
-          <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">APMC Agricultural Access</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5">
-            Eliminating post-harvest crop spoilage by reducing travel times to APMC Agricultural Mandis (Tur, Paddy, Cotton, Tomatoes).
-          </p>
-        </div>
-
-        <!-- Pillar 2 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
-            🏙️
-          </div>
-          <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">Urban Jobs & Higher Education</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5">
-            Slashing commute delays for rural youth to regional smart cities, garment parks, industrial corridors, and technical institutes.
-          </p>
-        </div>
-
-        <!-- Pillar 3 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
-            🏥
-          </div>
-          <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">Emergency Hospital Transit</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5">
-            Dramatically reducing emergency ambulance transit times to District ICU Hospitals for maternal care and life-saving medical needs.
-          </p>
-        </div>
-
-        <!-- Pillar 4 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
-            🚌
-          </div>
-          <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">KSRTC Bus Access & Shakti Yojna</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5">
-            Unlocking Gramina Sarige bus frequency and enabling free KSRTC bus pass travel for rural women, school students, and senior citizens.
-          </p>
-        </div>
+      <div class="section-label">Four Pillars of Rural Infrastructure Evaluation</div>
+      <div class="pillars-grid">
+        <div class="pillar-card"><div class="pillar-icon">&#127807;</div><h3>APMC Agricultural Access</h3><p>Eliminating post-harvest crop spoilage by reducing travel times to APMC Mandis &mdash; Tur, Paddy, Cotton, Tomatoes.</p></div>
+        <div class="pillar-card"><div class="pillar-icon">&#127963;</div><h3>Urban Jobs &amp; Education</h3><p>Slashing commute delays for rural youth to smart cities, garment parks, industrial corridors, and technical institutes.</p></div>
+        <div class="pillar-card"><div class="pillar-icon">&#127973;</div><h3>Emergency Hospital Transit</h3><p>Reducing ambulance transit times to District ICU Hospitals for maternal care and life-saving medical access.</p></div>
+        <div class="pillar-card"><div class="pillar-icon">&#128652;</div><h3>KSRTC Bus Access</h3><p>Unlocking Gramina Sarige bus frequency and free KSRTC bus travel for rural women, students, and senior citizens.</p></div>
       </div>
     </section>
-
     <!-- Tab 1: Village Ranking Leaderboard -->
     <section id="tab-ranking" class="tab-view">
       <!-- KPI Summary Grid -->

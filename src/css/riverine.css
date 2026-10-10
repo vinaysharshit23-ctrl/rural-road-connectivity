@@ -1,0 +1,416 @@
+/* ═══════════════════════════════════════════════════════════
+   riverine.css  –  Riverine-aesthetic layer for the Rural
+   Connectivity Index app. Loaded after base styles; overrides
+   header, hero, body background, and card surfaces.
+   All app data/JS functionality is untouched.
+═══════════════════════════════════════════════════════════ */
+
+/* ── Custom font declarations ─────────────────────────────── */
+@font-face {
+  font-family: "RV Display";
+  src: url("../fonts/rv-display.woff2") format("woff2");
+  font-weight: 300;
+  font-display: block;
+}
+@font-face {
+  font-family: "RV Brand";
+  src: url("../fonts/rv-brand.woff2") format("woff2");
+  font-weight: 600;
+  font-display: block;
+}
+@font-face {
+  font-family: "RV Text";
+  src: url("../fonts/rv-text.woff2") format("woff2");
+  font-weight: 400;
+  font-display: block;
+}
+
+/* ── Design token overrides ───────────────────────────────── */
+:root,
+[data-theme="obsidian-neon"],
+[data-theme="malnad-teal"] {
+  --rv-teal:        #88DECC;
+  --rv-teal-dim:    #7EC4B5;
+  --rv-cream:       #EEF1EA;
+  --rv-pine:        #122B2A;
+  --rv-moth:        #315352;
+  --rv-bg:          #03080B;
+  --rv-ink:         #F5FAF6;
+  --rv-ink2:        #ECF1EF;
+  --rv-shade:       5, 15, 12;
+
+  /* Override app accent to Riverine teal */
+  --accent-cyan:       #88DECC;
+  --accent-cyan-glow:  rgba(136, 222, 204, 0.28);
+  --bg-dark:           #03080B;
+  --bg-surface:        #061412;
+  --bg-card:           rgba(6, 18, 16, 0.72);
+  --bg-card-hover:     rgba(10, 28, 25, 0.85);
+  --border-glass:      rgba(136, 222, 204, 0.09);
+  --border-glass-glow: rgba(136, 222, 204, 0.32);
+  --shadow-lg:         0 12px 35px -10px rgba(0,0,0,.7), 0 0 25px rgba(136,222,204,.08);
+  --shadow-neon:       0 0 20px rgba(136,222,204,.22);
+  --text-secondary:    #94a3b8;
+  --text-muted:        #5a7a77;
+}
+
+/* ── Full-page video background ───────────────────────────── */
+body {
+  background-color: var(--rv-bg) !important;
+  background-image: none !important;
+  position: relative;
+}
+
+#rv-video-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  pointer-events: none;
+  z-index: -3;
+}
+@media (min-aspect-ratio: 16/9) {
+  #rv-video-bg { object-position: 50% 24%; }
+}
+
+/* Shade layers over video, below app content */
+.rv-shade {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+}
+.rv-shade-h {
+  background: linear-gradient(to right,
+    rgba(var(--rv-shade),.68) 0%,
+    rgba(var(--rv-shade),.58) 20%,
+    rgba(var(--rv-shade),.44) 40%,
+    rgba(var(--rv-shade),.22) 60%,
+    rgba(var(--rv-shade),.04) 80%,
+    rgba(var(--rv-shade),.05) 100%
+  );
+}
+.rv-shade-v {
+  background: linear-gradient(to bottom,
+    rgba(var(--rv-shade),.06) 0%,
+    rgba(var(--rv-shade),.02) 20%,
+    rgba(var(--rv-shade),.15) 40%,
+    rgba(var(--rv-shade),.30) 60%,
+    rgba(var(--rv-shade),.40) 80%,
+    rgba(var(--rv-shade),.72) 100%
+  );
+}
+
+/* ── Header — Riverine style ──────────────────────────────── */
+.app-header {
+  background: rgba(3, 8, 11, 0.75) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(136, 222, 204, 0.12) !important;
+  padding: 0 2.5rem !important;
+  height: 64px;
+  box-shadow: 0 1px 0 rgba(136,222,204,.06), 0 8px 24px rgba(0,0,0,.45) !important;
+}
+
+/* Brand pill — Riverine glass pill */
+.brand {
+  background: rgba(150, 220, 130, .035);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(136,222,204,.14);
+  border-radius: 100px;
+  padding: 0 14px 0 8px;
+  height: 46px;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(136,222,204,.12) !important;
+  border: 1px solid rgba(136,222,204,.25) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-size: 1.1rem !important;
+}
+
+.brand-title h1 {
+  font-family: "RV Brand", "Urbanist", "Helvetica Neue", Arial, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  letter-spacing: .02em !important;
+  background: linear-gradient(135deg, var(--rv-teal) 0%, #a8f0e4 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.brand-title span {
+  font-size: .68rem !important;
+  color: var(--rv-teal-dim) !important;
+  letter-spacing: .06em !important;
+}
+
+/* Nav tabs — Riverine pill style */
+.nav-tabs {
+  background: rgba(0,0,0,.55) !important;
+  border: 1px solid rgba(136,222,204,.12) !important;
+  border-radius: 100px !important;
+  padding: 4px !important;
+  gap: 2px;
+}
+
+.nav-tab {
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: .82rem !important;
+  font-weight: 500 !important;
+  border-radius: 100px !important;
+  padding: .45rem 1rem !important;
+  color: var(--rv-ink2) !important;
+  transition: color .2s, background .2s !important;
+}
+
+.nav-tab:hover {
+  color: var(--rv-teal) !important;
+  background: rgba(136,222,204,.06) !important;
+}
+
+.nav-tab.active {
+  background: rgba(136,222,204,.14) !important;
+  color: var(--rv-teal) !important;
+  border: 1px solid rgba(136,222,204,.32) !important;
+  box-shadow: 0 2px 12px rgba(136,222,204,.1) !important;
+}
+
+/* Theme switcher — smaller, float right */
+.rv-theme-switcher {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(136,222,204,.1);
+  border-radius: 100px;
+  padding: 4px 10px;
+}
+
+/* ── Hero (tab-home) — Riverine layout ───────────────────── */
+.rv-hero {
+  position: relative;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 0 3.5rem;
+  overflow: visible;
+}
+
+.rv-hero-content {
+  max-width: 760px;
+}
+
+.rv-brand-label {
+  font-family: "RV Brand", "Urbanist", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  font-size: .9rem;
+  color: var(--rv-teal);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.rv-brand-label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rv-teal);
+  box-shadow: 0 0 8px var(--rv-teal);
+  animation: rv-pulse 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes rv-pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+.rv-headline {
+  font-family: "RV Display", "Poppins", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 300;
+  font-size: clamp(2.8rem, 5.5vw, 5rem);
+  line-height: 1.08;
+  color: var(--rv-ink);
+  letter-spacing: -.02em;
+  margin-bottom: 1.5rem;
+}
+
+.rv-headline em {
+  font-style: normal;
+  color: var(--rv-teal);
+}
+
+.rv-lede {
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: clamp(.95rem, 1.4vw, 1.1rem);
+  color: var(--rv-ink2);
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+  max-width: 580px;
+}
+
+/* CTA pill */
+.rv-cta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--rv-cream);
+  border-radius: 100px;
+  padding: 6px 18px 6px 6px;
+  color: #0a1a18;
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: .92rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s;
+  height: 46px;
+  white-space: nowrap;
+}
+.rv-cta-pill:hover {
+  background: #dde8e4;
+  box-shadow: 0 4px 18px rgba(136,222,204,.18);
+}
+.rv-cta-pill .rv-disc {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--rv-pine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.rv-cta-pill:hover .rv-disc { background: #26504d; }
+
+.rv-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.rv-text-link {
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: .9rem;
+  color: var(--rv-ink2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color .2s;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  text-decoration: none;
+}
+.rv-text-link:hover { color: var(--rv-teal); }
+.rv-text-link svg { width: 10px; height: 10px; }
+
+/* ── Content cards over video ─────────────────────────────── */
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cards get deeper glass */
+[style*="background: rgba(13, 20, 36"],
+[style*="background: var(--bg-card)"] {
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+}
+
+/* Generic card upgrade */
+.kpi-card,
+.sim-card,
+.table-container {
+  background: rgba(6,18,16,.72) !important;
+  border: 1px solid rgba(136,222,204,.12) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+/* Scrollbar teal */
+::-webkit-scrollbar-thumb { background: rgba(136,222,204,.22) !important; }
+::-webkit-scrollbar-thumb:hover { background: var(--rv-teal) !important; }
+
+/* Focus outline teal */
+:focus-visible { outline-color: var(--rv-teal) !important; }
+
+/* ── Pillar cards on Overview ─────────────────────────────── */
+.rv-pillars {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 900px) { .rv-pillars { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 560px) { .rv-pillars { grid-template-columns: 1fr; } }
+
+.rv-pillar-card {
+  background: rgba(6,18,16,.72);
+  border: 1px solid rgba(136,222,204,.12);
+  border-radius: 18px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: border-color .25s, transform .25s;
+}
+.rv-pillar-card:hover {
+  border-color: rgba(136,222,204,.3);
+  transform: translateY(-2px);
+}
+.rv-pillar-icon {
+  width: 44px; height: 44px;
+  background: rgba(136,222,204,.12);
+  border: 1px solid rgba(136,222,204,.25);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+}
+.rv-pillar-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: .5rem;
+}
+.rv-pillar-card p {
+  font-size: .82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ── Section label style ──────────────────────────────────── */
+.rv-section-label {
+  font-size: .78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--rv-teal);
+  letter-spacing: .1em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .app-header { padding: 0 1rem !important; height: auto !important; min-height: 56px; flex-wrap: wrap; gap: .5rem; padding-top: .5rem !important; padding-bottom: .5rem !important; }
+  .rv-headline { font-size: clamp(2rem, 8vw, 3rem); }
+  .nav-tabs { flex-wrap: wrap; border-radius: 14px !important; }
+  .nav-tab { border-radius: 10px !important; }
+  .rv-actions { flex-direction: column; align-items: flex-start; }
+}

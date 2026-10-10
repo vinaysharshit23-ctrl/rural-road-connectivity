@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#03080B">
+<title>riverine.ai — Where Regeneration Fuels Future Thinking</title>
+<style>
+/* ── Custom fonts ─────────────────────────────────────────── */
+@font-face {
+  font-family: "RV Display";
+  src: url("assets/fonts/rv-display.woff2") format("woff2");
+  font-weight: 300;
+  font-display: block;
+}
+@font-face {
+  font-family: "RV Brand";
+  src: url("assets/fonts/rv-brand.woff2") format("woff2");
+  font-weight: 600;
+  font-display: block;
+}
+@font-face {
+  font-family: "RV Text";
+  src: url("assets/fonts/rv-text.woff2") format("woff2");
+  font-weight: 400;
+  font-display: block;
+}
+
+/* ── Reset & base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  background: #03080B;
+  color: #F5FAF6;
+  overflow: hidden;
+}
+
+/* ── Design unit ──────────────────────────────────────────── */
+:root {
+  --u: max(0.62px, min(100vw / 1280, 100dvh / 960));
+
+  /* Colors */
+  --shade: 5, 15, 12;          /* r g b for shade overlays */
+  --ink:   #F5FAF6;
+  --ink2:  #ECF1EF;
+  --teal:  #88DECC;
+  --icon-teal: #7EC4B5;
+  --chevron: #7CCBBA;
+  --moth:  #315352;
+  --cream: #EEF1EA;
+  --pine:  #122B2A;
+  --logo-disc: #030909;
+}
+
+/* ── Stage ────────────────────────────────────────────────── */
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #03080B;
+}
+
+/* ── Video background ─────────────────────────────────────── */
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  pointer-events: none;
+  z-index: 0;
+}
+@media (min-aspect-ratio: 16/9) {
+  .bg-video { object-position: 50% 24%; }
+}
+
+/* ── Shade overlays ───────────────────────────────────────── */
+.shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.shade-h {
+  background: linear-gradient(
+    to right,
+    rgba(var(--shade), .683) 0%,
+    rgba(var(--shade), .595) 20%,
+    rgba(var(--shade), .458) 40%,
+    rgba(var(--shade), .221) 60%,
+    rgba(var(--shade), .039) 80%,
+    rgba(var(--shade), .054) 100%
+  );
+}
+.shade-v {
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--shade), .060) 0%,
+    rgba(var(--shade), .023) 20%,
+    rgba(var(--shade), .152) 40%,
+    rgba(var(--shade), .300) 60%,
+    rgba(var(--shade), .394) 80%,
+    rgba(var(--shade), .632) 100%
+  );
+}
+.shade-r {
+  background: radial-gradient(
+    ellipse 93.8% 41.3% at 0% 100%,
+    rgba(var(--shade), 1) 0%,
+    rgba(var(--shade), 0) 100%
+  );
+}
+
+/* ── Content layer ────────────────────────────────────────── */
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(22 * var(--u)) calc(32 * var(--u)) 0;
+  flex-shrink: 0;
+}
+
+/* Logo pill */
+.logo-pill {
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--u));
+  background: rgba(150, 220, 130, .035);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: calc(100 * var(--u));
+  padding: 0 calc(14 * var(--u));
+  width: calc(104 * var(--u));
+  height: calc(46 * var(--u));
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+/* Tree SVG disc */
+.logo-disc {
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-disc svg {
+  width: calc(46 * var(--u));
+  height: calc(46 * var(--u));
+}
+
+/* Moth */
+.moth-svg {
+  width: calc(39 * var(--u));
+  height: calc(30 * var(--u));
+  flex-shrink: 0;
+}
+
+/* Nav pill */
+.nav-pill {
+  position: absolute;
+  left: 50%;
+  transform: translateX(calc(-50% + 60 * var(--u)));
+  top: calc(22 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #000;
+  border-radius: calc(100 * var(--u));
+  width: calc(442 * var(--u));
+  height: calc(47 * var(--u));
+  padding: 0 calc(8 * var(--u));
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: calc(4 * var(--u));
+  flex: 1;
+  padding: 0 calc(8 * var(--u));
+}
+.nav-links a {
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: calc(13 * var(--u));
+  color: var(--ink2);
+  text-decoration: none;
+  padding: calc(6 * var(--u)) calc(10 * var(--u));
+  border-radius: calc(8 * var(--u));
+  white-space: nowrap;
+  transition: color .2s;
+  display: flex;
+  align-items: center;
+  gap: calc(4 * var(--u));
+}
+.nav-links a:hover, .nav-links a:focus-visible { color: var(--teal); }
+.nav-links a.current { color: var(--ink); }
+.nav-links a.current .nav-chevron { opacity: 1; }
+.nav-chevron {
+  display: inline-block;
+  opacity: 0.5;
+}
+.nav-chevron svg { width: calc(8 * var(--u)); height: calc(8 * var(--u)); vertical-align: middle; }
+
+/* Partner pill */
+.partner-pill {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  background: var(--cream);
+  border-radius: calc(100 * var(--u));
+  padding: calc(5 * var(--u)) calc(10 * var(--u)) calc(5 * var(--u)) calc(6 * var(--u));
+  text-decoration: none;
+  color: #0a1a18;
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: calc(12.5 * var(--u));
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.partner-pill .disc {
+  width: calc(26 * var(--u));
+  height: calc(26 * var(--u));
+  border-radius: 50%;
+  background: var(--pine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.partner-pill:hover .disc,
+.partner-pill:focus-visible .disc { background: #26504d; }
+
+/* Sound button */
+.sound-btn {
+  width: calc(48 * var(--u));
+  height: calc(48 * var(--u));
+  border-radius: 50%;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.sound-btn:hover { background: rgba(0,0,0,.75); }
+.sound-btn svg { width: calc(24 * var(--u)); height: calc(24 * var(--u)); }
+.sound-btn .wave { transition: opacity .2s; }
+.sound-btn[aria-pressed="false"] .wave { opacity: .25; }
+
+/* ── Hero area ────────────────────────────────────────────── */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 calc(48 * var(--u)) calc(52 * var(--u));
+  position: relative;
+}
+
+.brand {
+  font-family: "RV Brand", "Urbanist", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  font-size: calc(15 * var(--u));
+  color: var(--teal);
+  letter-spacing: .08em;
+  margin-bottom: calc(16 * var(--u));
+}
+
+/* Headline */
+.headline {
+  font-family: "RV Display", "Poppins", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 300;
+  font-size: calc(72 * var(--u));
+  line-height: 1.06;
+  color: var(--ink);
+  margin-bottom: calc(24 * var(--u));
+}
+.hl-line {
+  display: block;
+  overflow: hidden;
+}
+.hl-inner {
+  display: block;
+}
+.hl-1 { letter-spacing: -.01em; }
+.hl-2 { letter-spacing: -.02em; }
+.hl-3 { letter-spacing: -.025em; }
+
+/* Lede */
+.lede {
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: calc(16 * var(--u));
+  line-height: 1.6;
+  color: var(--ink2);
+  margin-bottom: calc(36 * var(--u));
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: calc(20 * var(--u));
+  flex-wrap: wrap;
+}
+
+.cta-pill {
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--u));
+  background: var(--cream);
+  border-radius: calc(100 * var(--u));
+  padding: calc(6 * var(--u)) calc(12 * var(--u)) calc(6 * var(--u)) calc(6 * var(--u));
+  text-decoration: none;
+  color: #0a1a18;
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: calc(14 * var(--u));
+  font-weight: 500;
+  white-space: nowrap;
+  height: calc(46 * var(--u));
+}
+.cta-pill .disc {
+  width: calc(34 * var(--u));
+  height: calc(34 * var(--u));
+  border-radius: 50%;
+  background: var(--pine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.cta-pill:hover .disc,
+.cta-pill:focus-visible .disc { background: #26504d; }
+
+.text-link {
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: calc(14 * var(--u));
+  color: var(--ink2);
+  text-decoration: none;
+  transition: color .2s;
+  padding: calc(8 * var(--u)) 0;
+}
+.text-link:hover,
+.text-link:focus-visible { color: var(--teal); }
+
+/* ── Scroll cue ───────────────────────────────────────────── */
+.scroll-cue {
+  position: absolute;
+  bottom: calc(48 * var(--u));
+  right: calc(48 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  text-decoration: none;
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: calc(12 * var(--u));
+  color: var(--ink2);
+  transition: color .2s;
+  letter-spacing: .04em;
+}
+.scroll-cue:hover,
+.scroll-cue:focus-visible { color: var(--teal); }
+.scroll-cue svg { width: calc(11 * var(--u)); height: calc(11 * var(--u)); }
+
+/* ── Focus styles ─────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Mobile menu button ───────────────────────────────────── */
+.menu-btn {
+  display: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #000;
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.menu-btn svg { width: 18px; height: 13px; overflow: visible; }
+.menu-btn .bar { transition: opacity .2s, transform .2s; transform-origin: center; }
+.menu-btn[aria-expanded="true"] .bar-1 { transform: translateY(5px) rotate(45deg); }
+.menu-btn[aria-expanded="true"] .bar-2 { opacity: 0; }
+.menu-btn[aria-expanded="true"] .bar-3 { transform: translateY(-5px) rotate(-45deg); }
+
+/* Mobile nav panel */
+.nav-panel {
+  display: none;
+  background: #000;
+  border-radius: 16px;
+  margin: 8px 16px 0;
+  padding: 8px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .25s ease;
+}
+.nav-panel.is-open { max-height: 500px; }
+.nav-panel a {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  color: var(--ink2);
+  text-decoration: none;
+  border-radius: 10px;
+  transition: color .15s;
+}
+.nav-panel a:hover,
+.nav-panel a:focus-visible { color: var(--teal); }
+.nav-panel .partner-pill-mobile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 16px;
+  color: #0a1a18;
+  background: var(--cream);
+  border-radius: 10px;
+  font-family: "RV Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+/* ── Entrance (opacity 0 before animation) ────────────────── */
+.pre-enter {
+  opacity: 0;
+}
+
+/* ── Responsive: tablet ───────────────────────────────────── */
+@media (min-width: 650px) and (max-width: 1100px) and (min-height: 501px),
+       (min-width: 650px) and (max-aspect-ratio: 4/5) and (min-height: 501px) {
+  :root { --u: 0.94px; }
+}
+@media (min-width: 650px) and (orientation: portrait) and (max-aspect-ratio: 4/5) and (min-height: 501px) {
+  .hero { transform: scale(1.1); transform-origin: bottom left; }
+  .scroll-cue { transform: scale(1.1); transform-origin: bottom right; }
+  .bg-video { object-position: 58% 50%; }
+}
+
+/* ── Responsive: mobile (<= 649px or height <= 500px) ──────── */
+@media (max-width: 649.98px), (max-height: 500px) {
+  :root {
+    --u: clamp(0.94px, 100vw / 390, 1.2px);
+  }
+  .nav-pill { display: none; }
+  .menu-btn { display: flex; }
+  .nav-panel { display: block; }
+  header {
+    padding: max(env(safe-area-inset-top, 0px), 16px) max(env(safe-area-inset-right, 0px), 16px) 0 max(env(safe-area-inset-left, 0px), 16px);
+    gap: 8px;
+  }
+  .logo-pill { width: auto; }
+  .hero {
+    padding: 0 max(env(safe-area-inset-left, 0px), clamp(18px, 5.6vw, 32px))
+               calc(max(env(safe-area-inset-bottom, 0px), 52px))
+               max(env(safe-area-inset-left, 0px), clamp(18px, 5.6vw, 32px));
+  }
+  .headline {
+    font-size: min(clamp(32px, 10.4vw, 60px), calc((100vw - 2 * clamp(18px, 5.6vw, 32px)) / 8.7));
+  }
+  .hl-1 { letter-spacing: -0.01em; }
+  .hl-2 { letter-spacing: -0.015em; }
+  .hl-3 { letter-spacing: -0.02em; }
+  .actions { flex-wrap: wrap; }
+  .text-link { padding: 12px 0; }
+  .scroll-cue {
+    bottom: max(env(safe-area-inset-bottom, 0px), 24px);
+    right: max(env(safe-area-inset-right, 0px), clamp(18px, 5.6vw, 32px));
+    padding: 8px 0;
+  }
+  .bg-video { object-position: 63% 50%; }
+  .shade-r { display: none; }
+  .shade-h {
+    background: linear-gradient(
+      to right,
+      rgba(var(--shade), .55) 0%,
+      rgba(var(--shade), .45) 30%,
+      rgba(var(--shade), .2) 60%,
+      rgba(var(--shade), .05) 100%
+    );
+  }
+  .shade-v {
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--shade), .04) 0%,
+      rgba(var(--shade), .02) 20%,
+      rgba(var(--shade), .18) 40%,
+      rgba(var(--shade), .38) 60%,
+      rgba(var(--shade), .55) 80%,
+      rgba(var(--shade), .78) 100%
+    );
+  }
+}
+
+/* Short landscape phones */
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  :root { --u: clamp(0.82px, 100dvh / 415, 0.94px); }
+  .headline { font-size: clamp(28px, 10dvh, 44px); }
+  .actions { flex-wrap: nowrap; }
+  .bg-video { object-position: 50% 30%; }
+}
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) and (max-width: 649.98px) {
+  .nav-panel { columns: 2; }
+  .nav-panel a { break-inside: avoid; }
+}
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) and (min-width: 650px) {
+  .nav-pill { display: flex; }
+  .menu-btn { display: none; }
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .pre-enter { opacity: 1 !important; }
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <!-- Background video -->
+  <video class="bg-video"
+         autoplay muted loop playsinline
+         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20261005_182346_a590ff3b-72e5-41ce-8f69-a8c823eaecaa.mp4">
+  </video>
+
+  <!-- Shade overlays -->
+  <div class="shade shade-h" aria-hidden="true"></div>
+  <div class="shade shade-v" aria-hidden="true"></div>
+  <div class="shade shade-r" aria-hidden="true"></div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Header -->
+    <header>
+      <!-- Logo pill -->
+      <a href="#" class="logo-pill pre-enter" id="el-logo" aria-label="riverine.ai home">
+        <!-- Tree disc -->
+        <div class="logo-disc">
+          <svg viewBox="0 0 46 46" fill="none" aria-hidden="true">
+            <path id="tree-0" d="M24.2 37V24" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round"/>
+            <path id="tree-1" d="M19.8 39.3c1.2-1.9 2.8-2.7 4.4-2.7s3.2.8 4.4 2.7" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round"/>
+            <path id="tree-2" d="M23.8 30.2c-2.8-.6-5.5-2.6-7.2-5-2-1.8-5.2-2-7-4.2-1.4-1.8-1.4-4.2 0-6 2-3 5.8-5.2 8.8-6.2 1.4-.5 2.8-1 4.2-1.3" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round"/>
+            <path id="tree-3" d="M14.8 23V13.2c0-1.4.8-2.6 2.4-3.4" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round"/>
+            <path id="tree-4" d="M24 24.2c-1.8-1.8-3.2-3.8-3.7-6.4-.5-2.6-.6-5.2-.3-7.2" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round"/>
+            <path id="tree-5" d="M24.3 23.2c1.5-3 3.5-6.4 4.3-10.2.4-2.6 1.2-4.1 2.8-4.3H35" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round"/>
+            <path id="tree-6" d="M24.6 25.7c3-.7 5.8-2.1 7.4-4.5 1.2-1.8 1.4-3.8 2.8-5.2 1.4-1.4 3.2-2.1 5.2-2.4" stroke="#7CC6B5" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <!-- Moth -->
+        <svg class="moth-svg" viewBox="0 0 39 30" fill="none" aria-hidden="true">
+          <path d="M19.5 12.4C17.5 9.5 14 5 10.8 3 9.6 2.4 8 2.2 6 2.3 4.2 2.4 3.1 3 3 4.8L3.1 9.8C3.2 12.4 5 15 8.3 17.3 6.6 19.5 5.6 21.8 5.4 24.2 5.2 26.2 5.8 27.6 7.3 28 8.8 28.3 10.2 27.3 11.4 25.8 14.2 22.6 17.2 19.8 19.5 17.1Z" fill="#315352"/>
+          <path d="M19.5 12.4C17.5 9.5 14 5 10.8 3 9.6 2.4 8 2.2 6 2.3 4.2 2.4 3.1 3 3 4.8L3.1 9.8C3.2 12.4 5 15 8.3 17.3 6.6 19.5 5.6 21.8 5.4 24.2 5.2 26.2 5.8 27.6 7.3 28 8.8 28.3 10.2 27.3 11.4 25.8 14.2 22.6 17.2 19.8 19.5 17.1Z" fill="#315352" transform="matrix(-1 0 0 1 39 0)"/>
+        </svg>
+      </a>
+
+      <!-- Nav pill (desktop) -->
+      <nav class="nav-pill pre-enter" id="el-nav" aria-label="Primary navigation">
+        <div class="nav-links">
+          <a href="#work" id="nav-0">Work</a>
+          <a href="#regenerate" class="current" id="nav-1">
+            Regenerate
+            <span class="nav-chevron" aria-hidden="true">
+              <svg viewBox="0 0 11 11" fill="none">
+                <path d="M.7.7 5.5 5.3 10.3.7" stroke="#7CCBBA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </a>
+          <a href="#nature" id="nav-2">Nature</a>
+          <a href="#earth" id="nav-3">Earth</a>
+          <a href="#news" id="nav-4">News</a>
+        </div>
+        <!-- Partner pill -->
+        <a href="#partner" class="partner-pill">
+          <span class="disc" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 7 7" fill="none" aria-hidden="true">
+              <path d="M.5.5 3.5 3.5.5 6.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Partner
+        </a>
+      </nav>
+
+      <!-- Mobile menu button -->
+      <button class="menu-btn pre-enter" id="el-menu" aria-label="Open menu" aria-expanded="false" aria-controls="nav-panel">
+        <svg viewBox="0 0 18 13" fill="none" aria-hidden="true">
+          <line class="bar bar-1" x1="1" y1="1" x2="17" y2="1" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line class="bar bar-2" x1="1" y1="6" x2="17" y2="6" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line class="bar bar-3" x1="1" y1="11" x2="17" y2="11" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- Sound button -->
+      <button class="sound-btn pre-enter" id="el-sound"
+              aria-label="Ambient river sound" aria-pressed="true">
+        <svg viewBox="0 0 40 52" fill="none" stroke="#7EC4B5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <!-- Speaker body -->
+          <path d="M14.6 19.6h3.6l5.9-4.9v18.6l-5.9-4.9h-3.6z" fill="#7EC4B5" stroke="none"/>
+          <!-- Wave 1 -->
+          <path class="wave" d="M27.6 19.6c1.9 2.8 1.9 6 0 8.8"/>
+          <!-- Wave 2 -->
+          <path class="wave" d="M31.2 16.2c3.4 4.9 3.4 10.7 0 15.6"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Mobile nav panel -->
+    <nav class="nav-panel" id="nav-panel" aria-label="Mobile navigation" aria-hidden="true">
+      <a href="#work">Work</a>
+      <a href="#regenerate">Regenerate</a>
+      <a href="#nature">Nature</a>
+      <a href="#earth">Earth</a>
+      <a href="#news">News</a>
+      <a href="#partner" class="partner-pill-mobile">
+        <span style="width:26px;height:26px;border-radius:50%;background:var(--pine);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="8" height="8" viewBox="0 0 7 7" fill="none" aria-hidden="true">
+            <path d="M.5.5 3.5 3.5.5 6.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Partner
+      </a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Hero">
+      <p class="brand pre-enter" id="el-brand">riverine.ai</p>
+
+      <h1 class="headline">
+        <span class="hl-line hl-1"><span class="hl-inner pre-enter" id="el-hl-0">Where</span></span>
+        <span class="hl-line hl-2"><span class="hl-inner pre-enter" id="el-hl-1">Regeneration Fuels</span></span>
+        <span class="hl-line hl-3"><span class="hl-inner pre-enter" id="el-hl-2">Future Thinking</span></span>
+      </h1>
+
+      <p class="lede">
+        <span class="pre-enter" id="el-lede-0" style="display:block">Living waterways reveal a hidden logic of renewal</span>
+        <span class="pre-enter" id="el-lede-1" style="display:block">Nature's patterns guide more caring AI</span>
+      </p>
+
+      <div class="actions">
+        <a href="#future" class="cta-pill pre-enter" id="el-cta">
+          <span class="disc" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 8.6 8.6" fill="none" aria-hidden="true">
+              <path d="M.6.6 4 4 .6 7.4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Shape our Future
+        </a>
+        <a href="#rivers" class="text-link pre-enter" id="el-txtlink">Discover the Rivers</a>
+      </div>
+
+      <!-- Scroll cue -->
+      <a href="#details" class="scroll-cue pre-enter" id="el-cue">
+        Scroll for Details
+        <svg viewBox="0 0 11 11" fill="none" aria-hidden="true">
+          <path d="M.7.7 5.5 5.3 10.3.7" stroke="#7CCBBA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /stage -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Sound toggle ─────────────────────────────────────────── */
+  const soundBtn = document.getElementById('el-sound');
+  soundBtn.addEventListener('click', () => {
+    const pressed = soundBtn.getAttribute('aria-pressed') === 'true';
+    soundBtn.setAttribute('aria-pressed', String(!pressed));
+  });
+
+  /* ── Mobile menu ──────────────────────────────────────────── */
+  const menuBtn  = document.getElementById('el-menu');
+  const navPanel = document.getElementById('nav-panel');
+
+  function openMenu() {
+    menuBtn.setAttribute('aria-expanded', 'true');
+    navPanel.classList.add('is-open');
+    navPanel.setAttribute('aria-hidden', 'false');
+    const first = navPanel.querySelector('a');
+    if (first) first.focus();
+  }
+  function closeMenu() {
+    menuBtn.setAttribute('aria-expanded', 'false');
+    navPanel.classList.remove('is-open');
+    navPanel.setAttribute('aria-hidden', 'true');
+    menuBtn.focus();
+  }
+
+  menuBtn.addEventListener('click', () => {
+    menuBtn.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') closeMenu();
+  });
+  document.addEventListener('click', e => {
+    if (menuBtn.getAttribute('aria-expanded') === 'true' &&
+        !menuBtn.contains(e.target) && !navPanel.contains(e.target)) closeMenu();
+  });
+  navPanel.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+  /* ── Entrance animation ───────────────────────────────────── */
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    document.querySelectorAll('.pre-enter').forEach(el => el.classList.remove('pre-enter'));
+    return;
+  }
+
+  // --u in px
+  function getU() {
+    return parseFloat(getComputedStyle(document.documentElement)
+      .getPropertyValue('--u')) || 1;
+  }
+
+  // CTA height reference for scaling travel distances
+  function ctaHeight() {
+    const cta = document.getElementById('el-cta');
+    return cta ? cta.offsetHeight || 46 : 46;
+  }
+
+  function scaleDist(px) {
+    const u = getU();
+    const mobile = window.innerWidth < 650;
+    const scale = (ctaHeight() / 46) * (mobile ? 0.8 : 1);
+    return Math.round(px * scale);
+  }
+
+  // Easing definitions
+  const QUART = [0.25, 1, 0.5, 1];
+  const EXPO  = [0.16, 1, 0.3, 1];
+  const GROW  = [0.45, 0, 0.2, 1];
+
+  function ease(arr) {
+    return `cubic-bezier(${arr.join(',')})`;
+  }
+
+  // Fade + lift helper
+  function animate(el, delay, duration, dy, easing) {
+    if (!el) return Promise.resolve();
+    el.classList.remove('pre-enter');
+    return el.animate([
+      { opacity: 0, transform: `translateY(${dy}px)` },
+      { opacity: 1, transform: 'translateY(0)' }
+    ], {
+      delay,
+      duration,
+      easing,
+      fill: 'backwards'
+    }).finished.then(() => {
+      el.style.opacity = '';
+      el.style.transform = '';
+    });
+  }
+
+  function runEntrance() {
+    const u = getU();
+
+    // Setup tree stroke-dashoffset animation
+    const treePaths = [0,1,2,3,4,5,6].map(i => document.getElementById('tree-' + i));
+    treePaths.forEach(path => {
+      if (!path) return;
+      const len = path.getTotalLength ? path.getTotalLength() : 50;
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+    });
+
+    // Logo fade
+    const logo = document.getElementById('el-logo');
+    if (logo) logo.classList.remove('pre-enter');
+    logo && logo.animate([
+      { opacity: 0 },
+      { opacity: 1 }
+    ], { delay: 0, duration: 500, easing: ease(QUART), fill: 'backwards' })
+    .finished.then(() => { logo.style.opacity = ''; });
+
+    // Tree strokes draw on
+    treePaths.forEach((path, i) => {
+      if (!path) return;
+      const len = path.getTotalLength ? path.getTotalLength() : 50;
+      const d = 80 + i * 45;
+      path.animate([
+        { strokeDashoffset: len },
+        { strokeDashoffset: 0 }
+      ], {
+        delay: d,
+        duration: 820,
+        easing: ease(GROW),
+        fill: 'backwards'
+      }).finished.then(() => {
+        path.style.strokeDashoffset = '';
+        path.style.strokeDasharray  = '';
+      });
+    });
+
+    // Moth fade + scale
+    const mothSvg = document.querySelector('.moth-svg');
+    if (mothSvg) {
+      mothSvg.classList.remove('pre-enter');
+      mothSvg.animate([
+        { opacity: 0, transform: 'scale(0.92)' },
+        { opacity: 1, transform: 'scale(1)' }
+      ], { delay: 420, duration: 650, easing: ease(EXPO), fill: 'backwards' })
+      .finished.then(() => {
+        mothSvg.style.opacity = '';
+        mothSvg.style.transform = '';
+      });
+    }
+
+    // Nav lifts
+    const nav = document.getElementById('el-nav');
+    animate(nav, 120, 700, -scaleDist(8), ease(EXPO));
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach((a, i) => {
+      a.classList.remove('pre-enter');
+      animate(a, 260 + i * 45, 700, -scaleDist(4), ease(EXPO));
+    });
+    animate(document.getElementById('el-sound'), 200, 700, -scaleDist(8), ease(EXPO));
+    animate(document.getElementById('el-menu'), 200, 700, -scaleDist(8), ease(EXPO));
+
+    // Brand
+    animate(document.getElementById('el-brand'), 300, 650, scaleDist(10), ease(EXPO));
+
+    // Headline lines — each line inner rises from translateY(115%) inside clip
+    [0,1,2].forEach((i) => {
+      const inner = document.getElementById('el-hl-' + i);
+      if (!inner) return;
+      inner.classList.remove('pre-enter');
+      const delay = 380 + i * 90;
+      inner.animate([
+        { transform: 'translateY(115%)' },
+        { transform: 'translateY(0)' }
+      ], {
+        delay,
+        duration: 1050,
+        easing: ease(EXPO),
+        fill: 'backwards'
+      }).finished.then(() => { inner.style.transform = ''; });
+    });
+
+    // Lede lines
+    animate(document.getElementById('el-lede-0'), 800, 800, scaleDist(14), ease(EXPO));
+    animate(document.getElementById('el-lede-1'), 860, 800, scaleDist(14), ease(EXPO));
+
+    // CTA + text link
+    const ctaAnim  = animate(document.getElementById('el-cta'), 1000, 800, scaleDist(12), ease(EXPO));
+    const tlAnim   = animate(document.getElementById('el-txtlink'), 1100, 600, scaleDist(8), ease(QUART));
+
+    // Scroll cue
+    const cueAnim  = animate(document.getElementById('el-cue'), 1250, 700, -scaleDist(6), ease(EXPO));
+
+    // After all done, force redraw of logo and action row
+    Promise.all([ctaAnim, tlAnim, cueAnim]).then(() => {
+      [document.getElementById('el-logo'), document.getElementById('el-cta')]
+        .forEach(el => { if (el) { void el.offsetWidth; } });
+    });
+  }
+
+  /* Wait for fonts + video data */
+  let fontsReady = false;
+  let videoReady = false;
+  let started    = false;
+  const failsafe = setTimeout(() => {
+    if (!started) {
+      started = true;
+      document.querySelectorAll('.pre-enter').forEach(el => el.classList.remove('pre-enter'));
+      runEntrance();
+    }
+  }, 3500);
+
+  function maybeStart() {
+    if (fontsReady && videoReady && !started) {
+      started = true;
+      clearTimeout(failsafe);
+      runEntrance();
+    }
+  }
+
+  document.fonts.ready.then(() => { fontsReady = true; maybeStart(); });
+
+  const video = document.querySelector('.bg-video');
+  if (video.readyState >= 2) {
+    videoReady = true; maybeStart();
+  } else {
+    video.addEventListener('loadeddata', () => { videoReady = true; maybeStart(); }, { once: true });
+  }
+
+})();
+</script>
+</body>
+</html>
