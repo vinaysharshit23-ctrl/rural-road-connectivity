@@ -36,6 +36,11 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
     return;
   }
 
+  // Force an explicit pixel height BEFORE Leaflet reads the container,
+  // so it never sees a 0px box regardless of display:block propagation timing.
+  mapContainer.style.height = '620px';
+  mapContainer.style.minHeight = '620px';
+
   // Initialize Leaflet Map instance if not already initialized
   if (!map) {
     // Default Center on Karnataka: [14.5244, 75.7218], zoom: 7
@@ -77,14 +82,11 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
   }
 
   // Force Leaflet to recalculate container size after the tab is visible.
-  // Uses requestAnimationFrame to wait for the browser paint cycle, then
-  // a 200ms fallback — this covers both localhost and CDN-served deployments
-  // where display:block hasn't propagated at call time.
   const forceResize = () => {
     if (!map) return;
     map.invalidateSize({ animate: false });
-    // Second pass after layout settles
-    setTimeout(() => { if (map) map.invalidateSize({ animate: false }); }, 250);
+    setTimeout(() => { if (map) map.invalidateSize({ animate: false }); }, 500);
+    setTimeout(() => { if (map) map.invalidateSize({ animate: false }); }, 1000);
   };
   requestAnimationFrame(() => requestAnimationFrame(forceResize));
 
