@@ -41,8 +41,18 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
   mapContainer.style.height = '620px';
   mapContainer.style.minHeight = '620px';
 
-  // Initialize Leaflet Map instance if not already initialized
-  if (!map) {
+  // If a stale map instance exists (e.g. initialized into a hidden container),
+  // destroy it and start fresh so Leaflet reads the correct container size.
+  if (map) {
+    map.remove();
+    map = null;
+    currentTileLayer = null;
+    tileLayers = {};
+    activeVillageGroup = null;
+    otherVillagesGroup = null;
+  }
+
+  // Initialize Leaflet Map instance
     // Default Center on Karnataka: [14.5244, 75.7218], zoom: 7
     map = L.map('leafletMap', {
       zoomControl: false,
@@ -79,7 +89,6 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
 
     setupLayerControls();
     setupMapInteractions(onSelectVillage);
-  }
 
   // Force Leaflet to recalculate container size after the tab is visible.
   const forceResize = () => {
