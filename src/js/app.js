@@ -191,9 +191,11 @@ function setupNavigationTabs() {
     if (targetView) targetView.classList.add('active');
 
     if (targetViewId === 'tab-map') {
+      // Delay must be long enough for display:block to paint before Leaflet
+      // reads the container dimensions — 150ms covers CDN-served deployments.
       setTimeout(() => {
         initMapViewer(filterVillages(), renderMapSidebar, currentMapDestMode);
-      }, 50);
+      }, 150);
     }
   };
 

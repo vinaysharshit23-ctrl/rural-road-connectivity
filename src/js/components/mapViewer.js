@@ -76,9 +76,17 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
     setupMapInteractions(onSelectVillage);
   }
 
-  setTimeout(() => {
-    if (map) map.invalidateSize();
-  }, 100);
+  // Force Leaflet to recalculate container size after the tab is visible.
+  // Uses requestAnimationFrame to wait for the browser paint cycle, then
+  // a 200ms fallback — this covers both localhost and CDN-served deployments
+  // where display:block hasn't propagated at call time.
+  const forceResize = () => {
+    if (!map) return;
+    map.invalidateSize({ animate: false });
+    // Second pass after layout settles
+    setTimeout(() => { if (map) map.invalidateSize({ animate: false }); }, 250);
+  };
+  requestAnimationFrame(() => requestAnimationFrame(forceResize));
 
   renderLeafletMap(onSelectVillage);
 }
