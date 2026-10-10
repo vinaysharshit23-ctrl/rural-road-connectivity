@@ -180,10 +180,10 @@
     <!-- Tab 3: Individual Village Spatial Map Inspector -->
     <section id="tab-map" class="tab-view">
       <!-- Village Selection & Destination Toggle Header -->
-      <div style="margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); padding: 1rem 1.4rem; border-radius: 16px; border: 1px solid var(--border-glass); flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-lg)">
+      <div style="margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 1rem 1.4rem; border: 2px solid var(--border); flex-wrap: wrap; gap: 1rem;">
         <div style="display: flex; align-items: center; gap: 0.85rem">
-          <span style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.05em">📍 Select Village Map:</span>
-          <select id="individualVillageSelect" class="filter-select" style="min-width: 280px; font-weight: 700; border-color: var(--accent-cyan); background: rgba(5, 8, 17, 0.95)">
+          <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.1em; border-left: 3px solid var(--coral); padding-left: 0.6rem;">📍 Select Village Map:</span>
+          <select id="individualVillageSelect" class="filter-select" style="min-width: 280px; font-weight: 700;">
             <!-- Populated dynamically -->
           </select>
         </div>
@@ -214,7 +214,7 @@
 
           <!-- Quick Map Type & Control Overlay -->
           <div class="map-controls-overlay" style="z-index: 500">
-            <div style="background: rgba(15, 23, 42, 0.92); border: 1px solid var(--border-glass-glow); padding: 0.35rem 0.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.35rem; backdrop-filter: blur(12px)">
+            <div style="background: #fff; border: 2px solid var(--border); padding: 0.35rem 0.5rem; display: flex; flex-direction: column; gap: 0.35rem;">
               <button class="map-layer-btn active" id="btnLayerSat" title="Realistic Satellite View (Esri Aerial)">
                 🛰️ Satellite View
               </button>
