@@ -85,7 +85,7 @@ export function renderVillageTable(villages, onInspectVillage) {
         <td>
           <div style="font-size: 0.82rem">
             <span style="color: var(--accent-rose)">${v.currentTravelTimeMin}m</span> ➔ 
-            <span style="color: var(--accent-emerald)">${v.postRoadTravelTimeMin}m</span> (Mandi)
+            <span style="color: var(--accent-emerald)">${v.postRoadTravelTimeMin}m</span> (Market)
           </div>
           <div style="font-size: 0.75rem; color: var(--accent-cyan); margin-top: 0.15rem">
             💼 Urban Hub: <strong>-${v.metrics.urbanTimeSavedHrs} hrs</strong> saved

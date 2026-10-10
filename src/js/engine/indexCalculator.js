@@ -6,7 +6,7 @@
  */
 
 export function calculateVillageMetrics(village) {
-  // 1. Mandi Market Travel Time Saved
+  // 1. Market Travel Time Saved
   const currentMandiHrs = village.currentTravelTimeMin / 60;
   const postMandiHrs = village.postRoadTravelTimeMin / 60;
   const timeSavedHrs = Math.max(0, currentMandiHrs - postMandiHrs);
