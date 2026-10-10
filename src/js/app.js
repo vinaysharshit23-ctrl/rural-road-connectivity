@@ -15,6 +15,7 @@ import { openVillageModal, setupModalControls } from './components/modal.js';
 
 let activeVillages = enrichVillagesData(INITIAL_VILLAGES);
 let currentMapDestMode = 'ALL';
+let mapEverInitialized = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   initApp();
@@ -65,9 +66,12 @@ function updateAllComponents() {
   renderDashboardKPIs(activeVillages);
   renderVillageTable(filtered, handleInspectVillage);
   renderCasRankingView(filtered, handleInspectVillage);
-  initMapViewer(filtered, (selectedVillage) => {
-    renderMapSidebar(selectedVillage);
-  }, currentMapDestMode);
+
+  // Map is initialized lazily on first tab-map show (see setupNavigationTabs).
+  // Re-render pins if already initialized.
+  if (mapEverInitialized) {
+    initMapViewer(filtered, renderMapSidebar, currentMapDestMode);
+  }
 
   if (filtered.length > 0) {
     renderMapSidebar(filtered[0]);
@@ -194,6 +198,7 @@ function setupNavigationTabs() {
       // Delay must be long enough for display:block to paint before Leaflet
       // reads the container dimensions — 150ms covers CDN-served deployments.
       setTimeout(() => {
+        mapEverInitialized = true;
         initMapViewer(filterVillages(), renderMapSidebar, currentMapDestMode);
       }, 150);
     }
