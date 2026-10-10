@@ -26,14 +26,14 @@ It ingests village-level data across four critical sectors and computes two comp
 - **Overview** — Hero landing page explaining the platform's mission and four evaluation pillars
 - **Priority Leaderboard** — Villages ranked by investment priority (MAI + 10-year ROI multiplier), filterable by district, road condition, and terrain
 - **CAS Accessibility Ranking** — Villages ranked by isolation severity; lowest CAS = most cut off; per-village 7-pillar breakdown
-- **Village Map Inspector** — Interactive Leaflet GIS map showing radial route diagrams to hospitals, APMC mandis, urban hubs, and KSRTC bus stops with road quality encoding
+- **Village Map Inspector** — Interactive Leaflet GIS map showing radial route diagrams to hospitals, APMC Markets, urban hubs, and KSRTC bus stops with road quality encoding
 - **Budget Simulator** — Allocate a state infrastructure budget and see which villages fit, with projected 10-year ROI and custom village evaluator
 
 ### Scoring Methodology
 
 **MAI** combines:
 - Post-harvest crop loss recovery from reduced spoilage
-- Agricultural income gain from APMC mandi access
+- Agricultural income gain from APMC Market access
 - Non-farm employment and job access multiplier
 - 10-year projected ROI per rupee of road investment
 
@@ -121,7 +121,7 @@ The current dataset (`villages.js`) is a synthetic illustrative dataset of ~30 v
 |-----------|--------|
 | Village list + population | [Census of India](https://censusindia.gov.in) |
 | Road type, condition, length | [PMGSY OMMAS](https://omms.nic.in) |
-| APMC mandi locations | [Agmarknet](https://agmarknet.gov.in) |
+| APMC Market locations | [Agmarknet](https://agmarknet.gov.in) |
 | Hospital / PHC locations | [Health Facility Registry (ABDM)](https://hfr.abdm.gov.in) |
 | GPS coordinates | [Bhuvan (ISRO)](https://bhuvan.nrsc.gov.in) |
 | Bus routes | KSRTC divisional offices (no public API) |

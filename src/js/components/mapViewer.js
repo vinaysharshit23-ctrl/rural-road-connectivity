@@ -2,7 +2,7 @@
  * Individual Village Map Inspector Component
  * High-performance, realistic Leaflet GIS Map Renderer.
  * Supports Esri World Imagery (Satellite), OpenStreetMap, CartoDB Dark Mode & Topographic Terrain maps.
- * Renders interactive village pins, multi-sector destination routes (APMC Mandis, Urban Hubs, Emergency Hospitals, Bus Stops),
+ * Renders interactive village pins, multi-sector destination routes (APMC Markets, Urban Hubs, Emergency Hospitals, Bus Stops),
  * bad track distance callouts, and animated layer transitions.
  */
 

@@ -1,7 +1,7 @@
 /**
  * Main Application Controller
  * Manages global application state, tab routing, destination toggles, state filters, and component wiring.
- * Supports Mandi Markets, Urban Job Hubs, District Emergency Hospitals AND Road Condition Categories.
+ * Supports APMC Markets, Urban Job Hubs, District Emergency Hospitals AND Road Condition Categories.
  */
 
 import { INITIAL_VILLAGES } from './data/villages.js';
@@ -267,7 +267,7 @@ function renderMapSidebar(v) {
       <span class="stat-val">${v.population.toLocaleString()}</span>
     </div>
     <div class="stat-row">
-      <span class="stat-label">Nearest APMC Mandi:</span>
+      <span class="stat-label">Nearest APMC Market:</span>
       <span class="stat-val" style="font-size: 0.78rem">${v.nearestMandi}</span>
     </div>
     <div class="stat-row">

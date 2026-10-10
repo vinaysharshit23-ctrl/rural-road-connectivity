@@ -45,7 +45,7 @@ function renderCasFormulaExplainer() {
         <div style="font-size: 1rem; font-weight: 700; color: var(--ink); letter-spacing: 0.01em; line-height: 1.8;">
           <span style="font-size: 1.1rem; font-weight: 800;">CAS Score</span> = 
           0.20 × S<sub>Urban</sub> + 0.18 × S<sub>Road</sub> + 0.15 × S<sub>Highway</sub> + 
-          0.16 × S<sub>Health</sub> + 0.11 × S<sub>Edu</sub> + 0.12 × S<sub>Mandi</sub> + 0.08 × S<sub>Transit</sub>
+          0.16 × S<sub>Health</sub> + 0.11 × S<sub>Edu</sub> + 0.12 × S<sub>Market</sub> + 0.08 × S<sub>Transit</sub>
         </div>
         <div style="font-size: 0.74rem; color: var(--text-2); margin-top: 0.4rem; font-family: var(--font-main);">
           Sum of weights = 1.00. Each Sub-Score ranges from <strong>0.0</strong> (Extreme Isolation) to <strong>100.0</strong> (High Access).
@@ -75,8 +75,8 @@ function renderCasFormulaExplainer() {
           <div style="color: var(--text-2); font-size: 0.74rem;">Secondary school & technical college access.</div>
         </div>
         <div style="padding: 0.85rem; border-right: 2px solid var(--border);">
-          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🌾 APMC Mandi — 12%</div>
-          <div style="color: var(--text-2); font-size: 0.74rem;">Mandi travel time & perishable spoilage penalty.</div>
+          <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🌾 APMC Market — 12%</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Market travel time & perishable spoilage penalty.</div>
         </div>
         <div style="padding: 0.85rem; grid-column: span 2;">
           <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🚌 KSRTC Public Transit — 8%</div>
@@ -175,7 +175,7 @@ function renderCasTableBody(villages, onInspectVillage) {
             ${primaryDeficitDriver}
           </div>
           <div style="font-size: 0.72rem; color: var(--text-muted)">
-            Pop: ${v.population.toLocaleString()} • Mandi: ${v.currentTravelTimeMin}m
+            Pop: ${v.population.toLocaleString()} • Market: ${v.currentTravelTimeMin}m
           </div>
         </td>
         <td>
