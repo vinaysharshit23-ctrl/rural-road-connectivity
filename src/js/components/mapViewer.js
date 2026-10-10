@@ -17,6 +17,14 @@ let currentTileName = 'satellite';
 let activeVillageGroup = null;
 let otherVillagesGroup = null;
 
+function showMapError(msg) {
+  const el = document.getElementById('leafletMap');
+  if (el) {
+    el.style.cssText = 'width:100%;height:620px;background:#fff;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:14px;color:#c00;border:2px solid #c00;padding:1rem;box-sizing:border-box;';
+    el.innerHTML = '<div><b>MAP ERROR:</b><br>' + msg + '</div>';
+  }
+}
+
 export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
   villagesData = villages;
   destinationMode = initialMode;
@@ -28,11 +36,11 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
   populateVillageDropdown(onSelectVillage);
 
   const mapContainer = document.getElementById('leafletMap');
-  if (!mapContainer) return;
+  if (!mapContainer) { showMapError('leafletMap div not found in DOM'); return; }
 
   const L = window.L;
   if (!L) {
-    console.error('Leaflet JS library (L) is not loaded.');
+    showMapError('Leaflet (window.L) is not loaded — leaflet.js script failed');
     return;
   }
 
@@ -53,7 +61,8 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
   }
 
   // Initialize Leaflet Map instance
-    // Default Center on Karnataka: [14.5244, 75.7218], zoom: 7
+  try {
+    // Default Center on Karnataka
     map = L.map('leafletMap', {
       zoomControl: false,
       attributionControl: false
@@ -89,6 +98,12 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
 
     setupLayerControls();
     setupMapInteractions(onSelectVillage);
+
+  } catch(e) {
+    showMapError('L.map() threw: ' + e.message);
+    map = null;
+    return;
+  }
 
   // Force Leaflet to recalculate container size after the tab is visible.
   const forceResize = () => {
