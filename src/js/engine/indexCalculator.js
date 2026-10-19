@@ -3,7 +3,32 @@
  * Computes Market Access Index (MAI), Urban Job & Education Commute Access,
  * Emergency Healthcare & Hospital Access, Total Annual Economic Benefit (₹ Lakhs),
  * and 10-Year ROI per ₹ Crore.
+ *
+ * Crop perishability rates: ICAR/NIAM post-harvest loss classifications by commodity group.
+ * Post-road bus frequency: PMGSY/Karnataka GO minimum of 2 Gramina Sarige trips/day
+ * for any newly connected habitation — not a per-village estimate.
  */
+
+/**
+ * Derive perishability rate from crop name using ICAR commodity classifications.
+ * Source: ICAR Post-Harvest Technology Division & NIAM post-harvest loss studies.
+ * Returns fraction 0–1.
+ */
+function getCropPerishabilityRate(cropName) {
+  if (!cropName) return 0.25; // default: mixed/unknown
+  const c = cropName.toLowerCase();
+  // Highly perishable horticulture (>40% loss without cold chain)
+  if (/tomato|banana|marigold|mango|grape|nimbu|lemon|vanilla|ginger|cardamom/.test(c)) return 0.55;
+  // Moderately perishable fruits & wet spices (25–40%)
+  if (/pomegranate|coconut|tender coconut|pepper|cocoa|rubber|silk|cocoon/.test(c)) return 0.35;
+  // Semi-perishable plantation crops (15–25%)
+  if (/coffee|arecanut|areca|sugarcane/.test(c)) return 0.22;
+  // Low-perishable oilseeds & pulses (8–15%)
+  if (/groundnut|sunflower|soybean|toor|tur|red gram|cotton|jowar|maize|ragi/.test(c)) return 0.10;
+  // Minimal perishability — dry grains, paddy, copra (< 8%)
+  if (/paddy|rice|copra|tamarind|turmeric|sandalwood/.test(c)) return 0.06;
+  return 0.20; // fallback: general crop mix
+}
 
 export function calculateVillageMetrics(village) {
   // 1. Market Travel Time Saved
@@ -27,7 +52,9 @@ export function calculateVillageMetrics(village) {
   // 4. Public Transport & Bus Connectivity Gains
   const walkToBusStopKm = village.walkToBusStopKm || village.roadLengthKm;
   const currentBusFreq = village.currentBusFrequencyPerDay || 0;
-  const projBusFreq = village.projectedBusFrequencyPerDay || 6;
+  // Post-road bus frequency: Karnataka PMGSY/KSRTC GO minimum — 2 Gramina Sarige trips/day
+  // for any newly connected habitation. Not a per-village estimate.
+  const projBusFreq = 2;
   const busFreqGain = Math.max(0, projBusFreq - currentBusFreq);
   
   // Public Transport Pass Beneficiaries (Students, Elderly, Women with Shakti Bus Pass)
@@ -35,8 +62,10 @@ export function calculateVillageMetrics(village) {
   const annualWalkTimeSavedHrs = Math.round((village.population * 0.35) * (walkToBusStopKm / 3.5) * 250 / 60);
 
   // 5. Agricultural Spoilage Prevention Benefit (Annual ₹ Lakhs)
+  // Perishability rate derived from ICAR commodity classification — not a per-village estimate field.
+  const cropPerishabilityRate = getCropPerishabilityRate(village.primaryCrop);
   const totalAgriValueLakhs = (village.annualAgriYieldTons * village.avgAgriValuePerTon) / 100000;
-  const perishableValueLakhs = totalAgriValueLakhs * (village.perishablePercent / 100);
+  const perishableValueLakhs = totalAgriValueLakhs * cropPerishabilityRate;
   const spoilageEfficiencyGain = Math.min(0.9, (timeSavedHrs / Math.max(1, currentMandiHrs)) * 0.85);
   const annualAgriSavedLakhs = perishableValueLakhs * spoilageEfficiencyGain;
 
@@ -94,8 +123,8 @@ export function calculateVillageMetrics(village) {
   const eduAccessPost = Math.max(50, Math.min(100, schoolBonus + (100 - ((village.postUrbanTravelTimeMin || 45) / 240) * 50)));
 
   // Pillar 6: Market Access Sub-Score (12% Weight)
-  const marketAccessPre = Math.max(5, Math.min(100, 100 - (village.currentTravelTimeMin / 240) * 75 - (village.perishablePercent * 0.15)));
-  const marketAccessPost = Math.max(50, Math.min(100, 100 - (village.postRoadTravelTimeMin / 240) * 75 - (village.perishablePercent * 0.05)));
+  const marketAccessPre = Math.max(5, Math.min(100, 100 - (village.currentTravelTimeMin / 240) * 75 - (cropPerishabilityRate * 30)));
+  const marketAccessPost = Math.max(50, Math.min(100, 100 - (village.postRoadTravelTimeMin / 240) * 75 - (cropPerishabilityRate * 10)));
 
   // Pillar 7: Public Transport & Bus Accessibility Sub-Score (8% Weight)
   const transitAccessPre = Math.max(0, Math.min(100, (currentBusFreq / 10) * 60 + (Math.max(0, 6 - walkToBusStopKm) / 6) * 40));
