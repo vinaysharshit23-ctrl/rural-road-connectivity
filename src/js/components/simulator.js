@@ -85,7 +85,6 @@ export function setupCustomVillageCalculator(onAddVillage) {
     const postRoadTravelTimeMin = parseInt(document.getElementById('inputPostTime').value);
     const primaryCrop = document.getElementById('inputCrop').value;
     const annualAgriYieldTons = parseFloat(document.getElementById('inputYield').value);
-    const perishablePercent = parseInt(document.getElementById('inputPerishable').value);
     const avgAgriValuePerTon = parseInt(document.getElementById('inputValuePerTon').value);
     const nearestMarket = document.getElementById('inputMarket').value;
     const hasHealthCenter = document.getElementById('inputHealth').checked;
@@ -112,21 +111,15 @@ export function setupCustomVillageCalculator(onAddVillage) {
       postRoadTravelTimeMin,
       primaryCrop,
       annualAgriYieldTons,
-      perishablePercent,
       avgAgriValuePerTon,
       nearestMarket,
       nearestUrbanHub: `${district} Regional Hub`,
       nearestHospitalHub: `${district} District Hospital`,
       ksrtcDivision: `KSRTC ${district} Division`,
       currentBusFrequencyPerDay: 0,
-      projectedBusFrequencyPerDay: 6,
       walkToBusStopKm: roadLengthKm,
       hasHealthCenter,
       hasSecondarySchool,
-      coordinates: {
-        x: Math.floor(Math.random() * 600) + 200,
-        y: Math.floor(Math.random() * 400) + 200
-      },
       lat: baseLat,
       lng: baseLng,
       junctionCoords: [baseLat + 0.015, baseLng - 0.012],

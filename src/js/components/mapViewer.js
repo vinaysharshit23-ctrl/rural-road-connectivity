@@ -407,7 +407,7 @@ function renderLeafletMap(onSelectVillage) {
       dashArray: '6, 4',
       opacity: 0.9
     });
-    busPolyline.bindTooltip(`🚌 KSRTC Bus Route (${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.projectedBusFrequencyPerDay} trips/day)`, { sticky: true });
+    busPolyline.bindTooltip(`🚌 KSRTC Bus Route (${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day)`, { sticky: true });
     activeVillageGroup.addLayer(busPolyline);
 
     const bPinIcon = L.divIcon({
@@ -417,7 +417,7 @@ function renderLeafletMap(onSelectVillage) {
       iconAnchor: [90, 14]
     });
     const bMarker = L.marker(bCoords, { icon: bPinIcon });
-    bMarker.bindPopup(`<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige Frequency: ${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.projectedBusFrequencyPerDay} trips/day<br/>Walk to Bus Stop: ${activeVillage.walkToBusStopKm} km`);
+    mMarker.bindPopup(`<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige Frequency: ${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day (PMGSY minimum)<br/>Walk to Bus Stop: ${activeVillage.walkToBusStopKm} km`);
     activeVillageGroup.addLayer(bMarker);
   }
 

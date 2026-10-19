@@ -76,7 +76,7 @@ function renderCasFormulaExplainer() {
         </div>
         <div style="padding: 0.85rem; border-right: 2px solid var(--border);">
           <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🌾 APMC Market — 12%</div>
-          <div style="color: var(--text-2); font-size: 0.74rem;">Market travel time & perishable spoilage penalty.</div>
+          <div style="color: var(--text-2); font-size: 0.74rem;">Market travel time & ICAR crop perishability classification.</div>
         </div>
         <div style="padding: 0.85rem; grid-column: span 2;">
           <div style="font-weight: 800; color: var(--ink); margin-bottom: 0.3rem; text-transform: uppercase; font-size: 0.75rem;">🚌 KSRTC Public Transit — 8%</div>
