@@ -214,7 +214,7 @@ export function openVillageModal(village) {
         </div>
         <div class="stat-row">
           <span class="stat-label">Market:</span>
-          <span class="stat-val" style="font-size: 0.75rem">${village.nearestMandi}</span>
+          <span class="stat-val" style="font-size: 0.75rem">${village.nearestMarket}</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">Travel Saved:</span>

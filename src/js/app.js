@@ -97,7 +97,7 @@ function filterVillages() {
       v.existingRoadType.toLowerCase().includes(query) ||
       (v.roadConditionLabel && v.roadConditionLabel.toLowerCase().includes(query)) ||
       v.primaryCrop.toLowerCase().includes(query) ||
-      v.nearestMandi.toLowerCase().includes(query) ||
+      v.nearestMarket.toLowerCase().includes(query) ||
       (v.nearestUrbanHub && v.nearestUrbanHub.toLowerCase().includes(query)) ||
       (v.nearestHospitalHub && v.nearestHospitalHub.toLowerCase().includes(query));
 
@@ -273,7 +273,7 @@ function renderMapSidebar(v) {
     </div>
     <div class="stat-row">
       <span class="stat-label">Nearest APMC Market:</span>
-      <span class="stat-val" style="font-size: 0.78rem">${v.nearestMandi}</span>
+      <span class="stat-val" style="font-size: 0.78rem">${v.nearestMarket}</span>
     </div>
     <div class="stat-row">
       <span class="stat-label">Nearest Hospital:</span>
