@@ -8,18 +8,22 @@ let casSortField = 'casCurrent';
 let casSortDir = 'asc'; // Ascending by default so most isolated (lowest CAS) is #1
 
 export function renderCasRankingView(villages, onInspectVillage) {
-  renderCasFormulaExplainer();
+  renderCasFormulaExplainer(villages);
   renderCasTableBody(villages, onInspectVillage);
   setupCasSorting(villages, onInspectVillage);
 }
 
-function renderCasFormulaExplainer() {
+function renderCasFormulaExplainer(villages = []) {
   const container = document.getElementById('casFormulaExplainerContainer');
   if (!container) return;
 
+  const avgCurrent = villages.length > 0
+    ? (villages.reduce((acc, v) => acc + (v.metrics?.accessibility ? v.metrics.accessibility.current : 25), 0) / villages.length).toFixed(1)
+    : '24.8';
+
   container.innerHTML = `
-    <div style="background: #fff; border: 2px solid var(--border); padding: 1.75rem; margin-bottom: 2rem;">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-glass-glow); border-radius: 20px; padding: 1.75rem; margin-bottom: 2rem; box-shadow: var(--shadow-lg)">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem">
         <div>
           <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--text-2); letter-spacing: 0.1em; margin-bottom: 0.2rem; border-left: 3px solid var(--ink); padding-left: 0.6rem;">
             🧮 Empirical Methodology & Mathematical Formulation
@@ -31,15 +35,15 @@ function renderCasFormulaExplainer() {
             Evaluates rural village isolation on a normalized scale of <strong>0.0 to 100.0</strong> (0.0 = Total Isolation, 100.0 = Optimal Accessibility) as a weighted linear combination of 7 multi-sector pillars.
           </p>
         </div>
-        <div style="background: #FFF3F0; border: 2px solid var(--coral); padding: 0.5rem 1rem; text-align: right; flex-shrink: 0;">
-          <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-2);">State Base Average</div>
-          <div style="font-family: var(--font-display); font-size: 1.6rem; color: var(--coral); letter-spacing: 0.04em;">24.8 / 100</div>
+        <div style="background: rgba(34, 211, 238, 0.12); border: 1px solid var(--border-glass-glow); padding: 0.5rem 1rem; border-radius: 12px; text-align: right">
+          <div style="font-size: 0.7rem; color: var(--text-muted)">Evaluated Habitations Average</div>
+          <div style="font-family: var(--font-mono); font-weight: 800; color: #ef4444; font-size: 1.1rem">${avgCurrent} / 100</div>
         </div>
       </div>
 
       <!-- Formula Equation Card -->
-      <div style="background: var(--bg-card2); border: 2px solid var(--border); padding: 1rem 1.4rem; margin-bottom: 1.25rem; font-family: var(--font-mono); text-align: center; border-left: 4px solid var(--ink);">
-        <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-glass-glow); border-radius: 14px; padding: 1.1rem 1.4rem; margin-bottom: 1.25rem; font-family: var(--font-mono); text-align: center; border-left: 4px solid var(--accent-cyan); box-shadow: 0 4px 20px rgba(0,0,0,0.4)">
+        <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem">
           📐 Mathematical Formula & Weight Equation
         </div>
         <div style="font-size: 1rem; font-weight: 700; color: var(--ink); letter-spacing: 0.01em; line-height: 1.8;">

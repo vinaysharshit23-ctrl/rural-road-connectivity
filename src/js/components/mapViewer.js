@@ -44,35 +44,22 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
     return;
   }
 
-  // Force an explicit pixel height BEFORE Leaflet reads the container,
-  // so it never sees a 0px box regardless of display:block propagation timing.
-  mapContainer.style.height = '620px';
-  mapContainer.style.minHeight = '620px';
+  const activeVillage = villagesData.find(v => v.id === activeVillageId) || villagesData[0];
+  const initialLat = activeVillage ? (activeVillage.lat || 14.2230) : 14.2230;
+  const initialLng = activeVillage ? (activeVillage.lng || 76.3980) : 76.3980;
 
-  // If a stale map instance exists (e.g. initialized into a hidden container),
-  // destroy it and start fresh so Leaflet reads the correct container size.
-  if (map) {
-    map.remove();
-    map = null;
-    currentTileLayer = null;
-    tileLayers = {};
-    activeVillageGroup = null;
-    otherVillagesGroup = null;
-  }
-
-  // Initialize Leaflet Map instance
-  try {
-    // Default Center on Karnataka
+  // Initialize Leaflet Map instance if not already initialized
+  if (!map) {
     map = L.map('leafletMap', {
       zoomControl: false,
       attributionControl: false
-    }).setView([14.2230, 76.3980], 11);
+    }).setView([initialLat, initialLng], 12);
 
     // 1. Define Realistic Tile Providers
     tileLayers = {
       satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 18,
-        attribution: 'Tiles &copy; Esri'
+        attribution: 'Tiles &copy; Esri World Imagery'
       }),
       street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -82,9 +69,9 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
         maxZoom: 19,
         attribution: '&copy; CartoDB'
       }),
-      topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxZoom: 17,
-        attribution: '&copy; OpenTopoMap'
+      topo: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri Topo'
       })
     };
 
@@ -105,14 +92,16 @@ export function initMapViewer(villages, onSelectVillage, initialMode = 'ALL') {
     return;
   }
 
-  // Force Leaflet to recalculate container size after the tab is visible.
-  const forceResize = () => {
-    if (!map) return;
-    map.invalidateSize({ animate: false });
-    setTimeout(() => { if (map) map.invalidateSize({ animate: false }); }, 500);
-    setTimeout(() => { if (map) map.invalidateSize({ animate: false }); }, 1000);
-  };
-  requestAnimationFrame(() => requestAnimationFrame(forceResize));
+  // Always force size recalculation and view center
+  setTimeout(() => {
+    if (map) {
+      map.invalidateSize();
+      const currentActive = villagesData.find(v => v.id === activeVillageId) || villagesData[0];
+      if (currentActive) {
+        map.setView([currentActive.lat || 14.2230, currentActive.lng || 76.3980], 12);
+      }
+    }
+  }, 100);
 
   renderLeafletMap(onSelectVillage);
 }
@@ -225,6 +214,9 @@ function renderLeafletMap(onSelectVillage) {
 
   const vLat = activeVillage.lat || 14.2230;
   const vLng = activeVillage.lng || 76.3980;
+  
+  map.setView([vLat, vLng], 12);
+
   const isSeverelyBad = activeVillage.roadConditionCategory === 'SEVERELY_BAD';
   const villageColor = isSeverelyBad ? '#ef4444' : '#f59e0b';
   const cas = activeVillage.metrics ? activeVillage.metrics.accessibility : { current: 25, projected: 88 };

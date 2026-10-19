@@ -8,6 +8,7 @@ import { INITIAL_VILLAGES } from './data/villages.js';
 import { enrichVillagesData } from './engine/indexCalculator.js';
 import { renderDashboardKPIs } from './components/dashboard.js';
 import { renderVillageTable, setupTableSorting } from './components/villageTable.js';
+import { renderVillageCardGrid } from './components/cardGrid.js';
 import { renderCasRankingView } from './components/casRanking.js';
 import { initMapViewer, setMapDestinationMode, setSelectedVillageOnMap } from './components/mapViewer.js';
 import { setupBudgetSimulator, setupCustomVillageCalculator } from './components/simulator.js';
@@ -15,7 +16,9 @@ import { openVillageModal, setupModalControls } from './components/modal.js';
 
 let activeVillages = enrichVillagesData(INITIAL_VILLAGES);
 let currentMapDestMode = 'ALL';
-let mapEverInitialized = false;
+let currentPillFilter = 'ALL';
+let currentMsSort = 'SCORE_DESC';
+let currentMsDistrict = 'ALL';
 
 document.addEventListener('DOMContentLoaded', () => {
   initApp();
@@ -44,18 +47,33 @@ function initApp() {
 
 function setupThemeSwitcher() {
   const themeBtns = document.querySelectorAll('[data-theme-btn]');
+  const savedTheme = localStorage.getItem('rrc_theme') || 'riverine';
+  
+  // Apply initial theme
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  
+  function applyActiveState(themeName) {
+    themeBtns.forEach(b => {
+      const isMatch = b.getAttribute('data-theme-btn') === themeName;
+      b.style.borderColor = isMatch ? '#ffffff' : 'transparent';
+      if (isMatch) {
+        b.classList.add('active');
+        b.style.transform = 'scale(1.15)';
+      } else {
+        b.classList.remove('active');
+        b.style.transform = 'scale(1)';
+      }
+    });
+  }
+
+  applyActiveState(savedTheme);
+
   themeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const selectedTheme = btn.getAttribute('data-theme-btn');
       document.documentElement.setAttribute('data-theme', selectedTheme);
-      
-      themeBtns.forEach(b => {
-        b.style.borderColor = 'transparent';
-        b.classList.remove('active');
-      });
-      
-      btn.style.borderColor = '#ffffff';
-      btn.classList.add('active');
+      localStorage.setItem('rrc_theme', selectedTheme);
+      applyActiveState(selectedTheme);
     });
   });
 }
@@ -63,7 +81,27 @@ function setupThemeSwitcher() {
 function updateAllComponents() {
   const filtered = filterVillages();
 
+  // Dynamic pill filter counts based on real ground-truth data
+  const pillAll = document.getElementById('pillAll');
+  const pillCritical = document.getElementById('pillCritical');
+  const pillHilly = document.getElementById('pillHilly');
+  const pillRiverine = document.getElementById('pillRiverine');
+  const pillRoi = document.getElementById('pillRoi');
+
+  const countAll = activeVillages.length;
+  const countCritical = activeVillages.filter(v => v.roadConditionCategory === 'SEVERELY_BAD').length;
+  const countHilly = activeVillages.filter(v => v.terrain && v.terrain.includes('Hilly')).length;
+  const countRiverine = activeVillages.filter(v => v.terrain && (v.terrain.includes('Riverine') || v.terrain.includes('Plains'))).length;
+  const countRoi = activeVillages.filter(v => v.metrics && v.metrics.roiPerCrore >= 2.5).length;
+
+  if (pillAll) pillAll.textContent = `All Habitations (${countAll})`;
+  if (pillCritical) pillCritical.textContent = `🔴 Critical Bad (${countCritical})`;
+  if (pillHilly) pillHilly.textContent = `⛰️ Hilly Malnad (${countHilly})`;
+  if (pillRiverine) pillRiverine.textContent = `🌊 Riverine / Plains (${countRiverine})`;
+  if (pillRoi) pillRoi.textContent = `📈 High ROI (${countRoi})`;
+
   renderDashboardKPIs(activeVillages);
+  renderVillageCardGrid(filtered, handleInspectVillage);
   renderVillageTable(filtered, handleInspectVillage);
   renderCasRankingView(filtered, handleInspectVillage);
 
@@ -80,16 +118,20 @@ function updateAllComponents() {
 
 function filterVillages() {
   const searchInput = document.getElementById('searchInput');
+  const msSearch = document.getElementById('msSearchInput');
   const conditionFilter = document.getElementById('conditionFilter');
   const stateFilter = document.getElementById('stateFilter');
   const terrainFilter = document.getElementById('terrainFilter');
 
-  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const query1 = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const query2 = msSearch ? msSearch.value.toLowerCase().trim() : '';
+  const query = query2 || query1;
+
   const selectedCondition = conditionFilter ? conditionFilter.value : 'ALL';
-  const selectedState = stateFilter ? stateFilter.value : 'ALL';
+  const selectedState = (currentMsDistrict !== 'ALL') ? currentMsDistrict : (stateFilter ? stateFilter.value : 'ALL');
   const selectedTerrain = terrainFilter ? terrainFilter.value : 'ALL';
 
-  return activeVillages.filter(v => {
+  let results = activeVillages.filter(v => {
     const matchesSearch = query === '' || 
       v.name.toLowerCase().includes(query) ||
       v.district.toLowerCase().includes(query) ||
@@ -102,30 +144,110 @@ function filterVillages() {
       (v.nearestHospitalHub && v.nearestHospitalHub.toLowerCase().includes(query));
 
     const matchesCondition = selectedCondition === 'ALL' || v.roadConditionCategory === selectedCondition;
-    const matchesState = selectedState === 'ALL' || v.state === selectedState;
+    const matchesDistrict = selectedState === 'ALL' || v.district === selectedState;
     const matchesTerrain = selectedTerrain === 'ALL' || v.terrain === selectedTerrain;
 
-    return matchesSearch && matchesCondition && matchesState && matchesTerrain;
+    // MotionSites Pill Filters
+    let matchesPill = true;
+    if (currentPillFilter === 'CRITICAL') {
+      matchesPill = v.roadConditionCategory === 'SEVERELY_BAD';
+    } else if (currentPillFilter === 'HILLY') {
+      matchesPill = v.terrain && v.terrain.includes('Hilly');
+    } else if (currentPillFilter === 'RIVERINE') {
+      matchesPill = v.terrain && (v.terrain.includes('Riverine') || v.terrain.includes('Plains'));
+    } else if (currentPillFilter === 'ROI') {
+      matchesPill = (v.metrics && v.metrics.roiPerCrore >= 2.5);
+    }
+
+    return matchesSearch && matchesCondition && matchesDistrict && matchesTerrain && matchesPill;
   });
+
+  // Sort results according to currentMsSort
+  results.sort((a, b) => {
+    if (currentMsSort === 'SCORE_DESC') {
+      return (b.metrics?.maiScore || 0) - (a.metrics?.maiScore || 0);
+    } else if (currentMsSort === 'ROI_DESC') {
+      return (b.metrics?.roiPerCrore || 0) - (a.metrics?.roiPerCrore || 0);
+    } else if (currentMsSort === 'TIME_DESC') {
+      return (b.metrics?.timeSavedHrs || 0) - (a.metrics?.timeSavedHrs || 0);
+    } else if (currentMsSort === 'POP_DESC') {
+      return (b.population || 0) - (a.population || 0);
+    } else if (currentMsSort === 'COST_ASC') {
+      return (a.estCostLakhs || 0) - (b.estCostLakhs || 0);
+    }
+    return 0;
+  });
+
+  return results;
 }
 
 function setupSearchAndFilters() {
   const searchInput = document.getElementById('searchInput');
+  const msSearch = document.getElementById('msSearchInput');
   const conditionFilter = document.getElementById('conditionFilter');
   const stateFilter = document.getElementById('stateFilter');
   const terrainFilter = document.getElementById('terrainFilter');
+  const districtSelect = document.getElementById('msDistrictSelect');
+  const sortSelect = document.getElementById('msSortSelect');
 
   const handleFilterChange = () => {
     const filtered = filterVillages();
+    renderVillageCardGrid(filtered, handleInspectVillage);
     renderVillageTable(filtered, handleInspectVillage);
     initMapViewer(filtered, renderMapSidebar, currentMapDestMode);
   };
 
-  if (searchInput) searchInput.addEventListener('input', handleFilterChange);
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      if (msSearch) msSearch.value = e.target.value;
+      handleFilterChange();
+    });
+  }
+
+  if (msSearch) {
+    msSearch.addEventListener('input', (e) => {
+      if (searchInput) searchInput.value = e.target.value;
+      handleFilterChange();
+    });
+  }
+
+  // MotionSites Filter Pill Buttons
+  const pillBtns = document.querySelectorAll('[data-pill-filter]');
+  pillBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      pillBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPillFilter = btn.getAttribute('data-pill-filter');
+      handleFilterChange();
+    });
+  });
+
+  if (districtSelect) {
+    districtSelect.addEventListener('change', (e) => {
+      currentMsDistrict = e.target.value;
+      if (stateFilter) stateFilter.value = e.target.value;
+      handleFilterChange();
+    });
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      currentMsSort = e.target.value;
+      handleFilterChange();
+    });
+  }
+
   if (conditionFilter) conditionFilter.addEventListener('change', handleFilterChange);
-  if (stateFilter) stateFilter.addEventListener('change', handleFilterChange);
+  if (stateFilter) {
+    stateFilter.addEventListener('change', (e) => {
+      currentMsDistrict = e.target.value;
+      if (districtSelect) districtSelect.value = e.target.value;
+      handleFilterChange();
+    });
+  }
   if (terrainFilter) terrainFilter.addEventListener('change', handleFilterChange);
 }
+
 
 function setupDestinationToggles() {
   const btnAll = document.getElementById('destAllBtn');
@@ -193,6 +315,8 @@ function setupNavigationTabs() {
 
     const targetView = document.getElementById(targetViewId);
     if (targetView) targetView.classList.add('active');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (targetViewId === 'tab-map') {
       // Delay must be long enough for display:block to paint before Leaflet

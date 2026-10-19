@@ -31,9 +31,9 @@ export function openVillageModal(village) {
     <div style="margin-bottom: 1.25rem">
       <div style="display: flex; justify-content: space-between; align-items: flex-start">
         <div>
-          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan); text-transform: uppercase">${village.id} • ${village.regionCode || 'INDIA'}</span>
+          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan); text-transform: uppercase">Census 2011: ${village.censusCode || village.id} • LGD: ${village.lgdCode || 'N/A'} • PMGSY Priority Link</span>
           <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff; margin-top: 0.2rem">${village.name}</h2>
-          <div style="color: var(--text-secondary); font-size: 0.9rem">${village.district} District, ${village.state}</div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem">${village.taluk ? village.taluk + ' Taluk, ' : ''}${village.district} District, ${village.state}</div>
         </div>
         <div style="text-align: right; display: flex; gap: 0.5rem">
           <div class="badge ${m.maiScore >= 75 ? 'mai-high' : (m.maiScore >= 50 ? 'mai-medium' : 'mai-standard')}" style="font-size: 0.85rem; padding: 0.4rem 0.75rem">
@@ -47,7 +47,7 @@ export function openVillageModal(village) {
     </div>
 
     <!-- 7-Pillar Comprehensive Accessibility Score (CAS) Matrix -->
-    <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-glass-glow); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35)">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem">
         <div>
           <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 0.05em">
@@ -306,7 +306,7 @@ export function openVillageModal(village) {
       </div>
 
       <!-- 🏛️ Government Action Plan & Strategy for KSRTC Expansion -->
-      <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 1rem; font-size: 0.82rem">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 14px; padding: 1.15rem; font-size: 0.82rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3)">
         <div style="font-size: 0.85rem; font-weight: 800; color: #fbbf24; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem">
           <span>🏛️ Actionable Government Interventions to Expand KSRTC Bus Access</span>
         </div>
