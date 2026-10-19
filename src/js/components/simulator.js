@@ -87,7 +87,7 @@ export function setupCustomVillageCalculator(onAddVillage) {
     const annualAgriYieldTons = parseFloat(document.getElementById('inputYield').value);
     const perishablePercent = parseInt(document.getElementById('inputPerishable').value);
     const avgAgriValuePerTon = parseInt(document.getElementById('inputValuePerTon').value);
-    const nearestMandi = document.getElementById('inputMandi').value;
+    const nearestMarket = document.getElementById('inputMarket').value;
     const hasHealthCenter = document.getElementById('inputHealth').checked;
     const hasSecondarySchool = document.getElementById('inputSchool').checked;
 
@@ -114,7 +114,7 @@ export function setupCustomVillageCalculator(onAddVillage) {
       annualAgriYieldTons,
       perishablePercent,
       avgAgriValuePerTon,
-      nearestMandi,
+      nearestMarket,
       nearestUrbanHub: `${district} Regional Hub`,
       nearestHospitalHub: `${district} District Hospital`,
       ksrtcDivision: `KSRTC ${district} Division`,

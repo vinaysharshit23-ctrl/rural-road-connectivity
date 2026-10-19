@@ -363,17 +363,17 @@ function renderLeafletMap(onSelectVillage) {
       dashArray: '6, 5',
       opacity: 0.85
     });
-    mandiPolyline.bindTooltip(`🌾 Crop Corridor to ${activeVillage.nearestMandi} (-${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : 1.5}h saved)`, { sticky: true });
+    mandiPolyline.bindTooltip(`🌾 Crop Corridor to ${activeVillage.nearestMarket} (-${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : 1.5}h saved)`, { sticky: true });
     activeVillageGroup.addLayer(mandiPolyline);
 
     const mPinIcon = L.divIcon({
       className: 'custom-m-pin',
-      html: `<div class="pin-badge" style="border-color: #a855f7">🌾 APMC: ${activeVillage.nearestMandi}</div>`,
+      html: `<div class="pin-badge" style="border-color: #a855f7">🌾 APMC: ${activeVillage.nearestMarket}</div>`,
       iconSize: [170, 28],
       iconAnchor: [85, 14]
     });
     const mMarker = L.marker(mCoords, { icon: mPinIcon });
-    mMarker.bindPopup(`<b>🌾 ${activeVillage.nearestMandi}</b><br/>Primary Crop: ${activeVillage.primaryCrop}<br/>Annual Yield: ${activeVillage.annualAgriYieldTons} Tons<br/>Spoilage Reduction: ${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0} Lakhs/yr`);
+    mMarker.bindPopup(`<b>🌾 ${activeVillage.nearestMarket}</b><br/>Primary Crop: ${activeVillage.primaryCrop}<br/>Annual Yield: ${activeVillage.annualAgriYieldTons} Tons<br/>Spoilage Reduction: ${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0} Lakhs/yr`);
     activeVillageGroup.addLayer(mMarker);
   }
 
