@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="cyber-violet">
+<html lang="en" data-theme="riverine">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,101 +14,218 @@
 </head>
 <body>
 
-  <!-- App Header & Navigation -->
-  <header class="app-header">
-    <div class="brand">
-      <div class="brand-icon">🛣️</div>
+  <!-- MotionSites Authentic Sticky Navbar -->
+  <nav class="ms-nav-container">
+    <div style="display: flex; align-items: center; gap: 1rem; flex-shrink: 0">
+      <div class="brand-icon" style="font-size: 1.4rem">🌊</div>
       <div class="brand-title">
-        <h1>Karnataka Rural Connectivity Index</h1>
-        <span>Economic ROI & Market Access Platform • Karnataka State Focus</span>
+        <h1 style="font-size: 1.05rem; font-weight: 900; letter-spacing: -0.02em; color: #fff; margin: 0">
+          <span style="background: linear-gradient(135deg, #22d3ee, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent">RIVR</span> ROAD CONNECTIVITY
+        </h1>
+        <span class="sub" style="font-size: 0.72rem; color: rgba(255,255,255,0.5); display: block">Karnataka PMGSY Access Protocol</span>
       </div>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 1rem">
-      <!-- Theme Switcher -->
-      <div style="display: flex; align-items: center; gap: 0.4rem; background: rgba(13, 20, 36, 0.85); padding: 0.25rem 0.6rem; border-radius: 12px; border: 1px solid var(--border-glass)">
-        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.2rem">🎨 Theme:</span>
-        <button class="theme-dot" data-theme-btn="obsidian-neon" title="Obsidian Neon (Cyber Blue & Emerald)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #38bdf8, #10b981); cursor: pointer; transition: transform 0.2s;"></button>
-        <button class="theme-dot active" data-theme-btn="cyber-violet" title="Cyber Violet (Electric Purple & Pink)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid #c084fc; background: linear-gradient(135deg, #a855f7, #ec4899); cursor: pointer; transition: transform 0.2s;"></button>
-        <button class="theme-dot" data-theme-btn="solar-amber" title="Solar Amber (Gold & Orange)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #fbbf24, #f97316); cursor: pointer; transition: transform 0.2s;"></button>
-        <button class="theme-dot" data-theme-btn="malnad-teal" title="Malnad Teal (Teal & Emerald)" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #2dd4bf, #10b981); cursor: pointer; transition: transform 0.2s;"></button>
+    <!-- MotionSites Navigation Pill Tabs -->
+    <div class="ms-nav-links nav-tabs">
+      <button class="ms-nav-link nav-tab active" data-tab="tab-home" id="navHomeBtn">
+        <span>Prompt Showcase</span>
+        <span class="ms-new-tag">New</span>
+      </button>
+      <button class="ms-nav-link nav-tab" data-tab="tab-map" id="navMapBtn">
+        <span>🗺️ Spatial Map</span>
+      </button>
+      <button class="ms-nav-link nav-tab" data-tab="tab-cas-ranking" id="navCasRankingBtn">
+        <span>🎯 CAS Index</span>
+      </button>
+      <button class="ms-nav-link nav-tab" data-tab="tab-simulator" id="navSimBtn">
+        <span>🧮 Budget Simulator</span>
+      </button>
+      <button class="ms-nav-link nav-tab" data-tab="tab-ranking" id="navRankingBtn">
+        <span>📊 Data Table</span>
+      </button>
+    </div>
+
+    <!-- Right Controls: Live Protocol & Theme Switcher -->
+    <div style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0">
+      <div class="rivr-live-chip">
+        <span class="pulse-dot"></span> LIVE NETWORK
       </div>
 
-      <nav class="nav-tabs">
-        <button class="nav-tab active" data-tab="tab-home" id="navHomeBtn">
-          🏠 Overview
-        </button>
-        <button class="nav-tab" data-tab="tab-ranking" id="navRankingBtn">
-          📊 Priority Leaderboard
-        </button>
-        <button class="nav-tab" data-tab="tab-cas-ranking" id="navCasRankingBtn">
-          🎯 CAS Accessibility Ranking
-        </button>
-        <button class="nav-tab" data-tab="tab-map" id="navMapBtn">
-          🗺️ Individual Village Map
-        </button>
-        <button class="nav-tab" data-tab="tab-simulator" id="navSimBtn">
-          🧮 Budget & ROI Simulator
-        </button>
-      </nav>
+      <div style="display: flex; align-items: center; gap: 0.35rem; background: rgba(22, 30, 40, 0.7); padding: 0.25rem 0.65rem; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.1)">
+        <button class="theme-dot active" data-theme-btn="riverine" title="Riverine (Flowing Aqua & Emerald)" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ffffff; background: linear-gradient(135deg, #22d3ee, #10b981); cursor: pointer; transition: transform 0.2s; box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);"></button>
+        <button class="theme-dot" data-theme-btn="obsidian-neon" title="Obsidian Neon (Cyber Blue & Emerald)" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #38bdf8, #10b981); cursor: pointer; transition: transform 0.2s;"></button>
+        <button class="theme-dot" data-theme-btn="cyber-violet" title="Cyber Violet (Electric Purple & Pink)" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #a855f7, #ec4899); cursor: pointer; transition: transform 0.2s;"></button>
+        <button class="theme-dot" data-theme-btn="solar-amber" title="Solar Amber (Gold & Orange)" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #fbbf24, #f97316); cursor: pointer; transition: transform 0.2s;"></button>
+        <button class="theme-dot" data-theme-btn="malnad-teal" title="Malnad Teal (Teal & Emerald)" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, #2dd4bf, #10b981); cursor: pointer; transition: transform 0.2s;"></button>
+      </div>
     </div>
-  </header>
+  </nav>
 
   <!-- Main Workspace Content -->
   <main class="main-content">
 
-    <!-- Tab 0: Introductory Landing Hero Page -->
+    <!-- Tab 0: MotionSites Signature Homepage (Hero + 4-Column Card Grid) -->
     <section id="tab-home" class="tab-view active">
-      <!-- Hero Banner -->
-      <div style="background: rgba(13, 20, 36, 0.85); border: 1px solid var(--border-glass-glow); border-radius: 24px; padding: 3rem 2.5rem; margin-bottom: 2rem; position: relative; overflow: hidden; box-shadow: var(--shadow-lg)">
-        <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%); pointer-events: none"></div>
-        <div style="position: absolute; bottom: -50px; left: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%); pointer-events: none"></div>
+      <!-- MotionSites Hero Header -->
+      <header class="ms-hero-section">
+        <span class="ms-badge-rainbow">
+          ✨ KARNATAKA CONNECTIVITY MATRIX • PMGSY PROTOCOL
+        </span>
 
-        <div style="max-width: 960px; position: relative; z-index: 2">
-          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.25rem">
-            ✨ KARNATAKA STATE RURAL ROAD CONNECTIVITY & MARKET ACCESS INDEX
+        <h1 class="ms-hero-title">
+          <div>PRIORITIZE RURAL ROADS</div>
+          <div>WITH AI <span class="relative inline-block"><span class="animate-gradient-shift">SUPERPOWERS</span><span class="gradient-glow-blur" aria-hidden="true">SUPERPOWERS</span></span></div>
+        </h1>
+
+        <p class="ms-hero-sub">
+          Empirical decision-support platform prioritizing real unconnected Karnataka habitations across agricultural APMC Mandi access, emergency hospital transit, and 10-year economic ROI (Census 2011, LGD & PMGSY).
+        </p>
+
+        <!-- MotionSites Quick CTA Action Pills -->
+        <div style="display: flex; gap: 0.85rem; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 2.75rem">
+          <button class="rivr-btn-primary cta-btn" data-target-tab="tab-map">
+            🗺️ Inspect Spatial Map ➔
+          </button>
+          <button class="rivr-btn-secondary cta-btn" data-target-tab="tab-cas-ranking">
+            🎯 View CAS Matrix ➔
+          </button>
+          <button class="rivr-btn-secondary cta-btn" data-target-tab="tab-simulator">
+            🧮 Budget Simulator ➔
+          </button>
+          <button class="rivr-btn-secondary cta-btn" data-target-tab="tab-ranking">
+            📊 View Data Table ➔
+          </button>
+        </div>
+      </header>
+
+      <!-- Signature MotionSites DeFi Metric Stats Row -->
+      <div class="rivr-widgets-grid" style="margin-bottom: 2.75rem">
+        <!-- Widget 1: APMC Agri Access -->
+        <div class="rivr-widget-card w-1">
+          <div class="rivr-widget-head">
+            <div class="rivr-widget-icon">🌾</div>
+            <span class="rivr-widget-pill" id="defiWidgetMandiPill">▲ +64.4% Gain</span>
+          </div>
+          <div class="rivr-widget-val" id="defiWidgetMandiVal">58 MIN</div>
+          <div class="rivr-widget-title">APMC Mandi Speedup</div>
+          <div class="rivr-widget-desc">Slashing post-harvest crop spoilage across Tur, Cotton & Paddy corridors.</div>
+        </div>
+
+        <!-- Widget 2: Economic ROI -->
+        <div class="rivr-widget-card w-2">
+          <div class="rivr-widget-head">
+            <div class="rivr-widget-icon">📈</div>
+            <span class="rivr-widget-pill" id="defiWidgetRoiPill" style="color: #38bdf8; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35);">2.84x Multiple</span>
+          </div>
+          <div class="rivr-widget-val" id="defiWidgetRoiVal">₹38.4 CR</div>
+          <div class="rivr-widget-title">10-Yr Wealth Created</div>
+          <div class="rivr-widget-desc">Empirical PMGSY capital optimization yielding ₹2.84 per ₹1 of state funds invested.</div>
+        </div>
+
+        <!-- Widget 3: Healthcare Transit -->
+        <div class="rivr-widget-card w-3">
+          <div class="rivr-widget-head">
+            <div class="rivr-widget-icon">🏥</div>
+            <span class="rivr-widget-pill" id="defiWidgetHealthPill" style="color: #f43f5e; background: rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.35);">● Golden Hour</span>
+          </div>
+          <div class="rivr-widget-val" id="defiWidgetHealthVal">18.2 MIN</div>
+          <div class="rivr-widget-title">ICU Emergency Transit</div>
+          <div class="rivr-widget-desc" id="defiWidgetHealthDesc">Slashing monsoon ambulance transit delays from 84 days down to zero cutoff.</div>
+        </div>
+
+        <!-- Widget 4: KSRTC Mobility -->
+        <div class="rivr-widget-card w-4">
+          <div class="rivr-widget-head">
+            <div class="rivr-widget-icon">🚌</div>
+            <span class="rivr-widget-pill" id="defiWidgetBusPill">● Shakti Yojna</span>
+          </div>
+          <div class="rivr-widget-val" id="defiWidgetBusVal">34.2K</div>
+          <div class="rivr-widget-title">Daily Bus Commuters</div>
+          <div class="rivr-widget-desc">Unlocking Gramina Sarige bus frequency and free travel for rural women.</div>
+        </div>
+      </div>
+
+      <!-- MotionSites Filter Pill Toolbar -->
+      <div class="ms-filter-bar">
+        <div class="ms-pill-group">
+          <button type="button" class="ms-pill active" data-pill-filter="ALL" id="pillAll">All Habitations</button>
+          <button type="button" class="ms-pill" data-pill-filter="CRITICAL" id="pillCritical">🔴 Critical Bad</button>
+          <button type="button" class="ms-pill" data-pill-filter="HILLY" id="pillHilly">⛰️ Hilly Malnad</button>
+          <button type="button" class="ms-pill" data-pill-filter="RIVERINE" id="pillRiverine">🌊 Riverine / Plains</button>
+          <button type="button" class="ms-pill" data-pill-filter="ROI" id="pillRoi">📈 High ROI (>2.5x)</button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+          <div class="search-box" style="min-width: 220px; margin: 0">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="msSearchInput" placeholder="Search village, crop, mandi..." />
           </div>
 
-          <h1 style="font-size: 2.5rem; font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 1rem; letter-spacing: -0.02em">
-            Karnataka Rural Connectivity Index
-          </h1>
-
-          <!-- Classy Tagline -->
-          <div style="font-size: 1.35rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #38bdf8 50%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.15rem; line-height: 1.4">
-            “Bridging the Last Mile: Transforming Rural Isolation into Economic Growth & Life-Saving Access Across Karnataka.”
+          <div class="relative">
+            <select id="msDistrictSelect" class="ms-dropdown-btn" style="appearance: none; -webkit-appearance: none; padding-right: 28px; cursor: pointer; outline: none">
+              <option value="ALL">All Districts ▾</option>
+              <option value="Chitradurga">Chitradurga</option>
+              <option value="Shivamogga">Shivamogga</option>
+              <option value="Tumakuru">Tumakuru</option>
+              <option value="Kalaburagi">Kalaburagi</option>
+              <option value="Hassan">Hassan</option>
+              <option value="Raichur">Raichur</option>
+              <option value="Chamarajanagar">Chamarajanagar</option>
+              <option value="Vijayapura">Vijayapura</option>
+              <option value="Chikkamagaluru">Chikkamagaluru</option>
+              <option value="Kolar">Kolar</option>
+              <option value="Belagavi">Belagavi</option>
+              <option value="Davangere">Davangere</option>
+              <option value="Uttara Kannada">Uttara Kannada</option>
+              <option value="Yadgir">Yadgir</option>
+              <option value="Dakshina Kannada">Dakshina Kannada</option>
+            </select>
           </div>
 
-          <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; max-width: 880px">
-            A specialized decision-support platform for infrastructure planners to prioritize last-mile rural road construction. By combining empirical economic ROI analytics, APMC agricultural mandi access, emergency hospital transit times, and KSRTC public bus mobility, the platform transforms raw geographic data into actionable infrastructure investment roadmaps.
-          </p>
-
-          <!-- Quick Action CTA Buttons -->
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap">
-            <button class="btn-primary cta-btn" data-target-tab="tab-ranking" style="width: auto; padding: 0.85rem 1.6rem; margin-top: 0; display: inline-flex; align-items: center; gap: 0.5rem">
-              📊 Explore Priority Leaderboard ➔
-            </button>
-            <button class="btn-inspect cta-btn" data-target-tab="tab-cas-ranking" style="padding: 0.85rem 1.4rem; font-size: 0.9rem">
-              🎯 View CAS Accessibility Ranking ➔
-            </button>
-            <button class="btn-inspect cta-btn" data-target-tab="tab-map" style="padding: 0.85rem 1.4rem; font-size: 0.9rem">
-              🗺️ Inspect Individual Village Maps ➔
-            </button>
-            <button class="btn-inspect cta-btn" data-target-tab="tab-simulator" style="padding: 0.85rem 1.4rem; font-size: 0.9rem">
-              🧮 Launch Budget Simulator ➔
-            </button>
+          <div class="relative">
+            <select id="msSortSelect" class="ms-dropdown-btn" style="appearance: none; -webkit-appearance: none; padding-right: 28px; cursor: pointer; outline: none">
+              <option value="SCORE_DESC">Sort: Priority Score ▾</option>
+              <option value="ROI_DESC">Sort: ROI (High ➔ Low) ▾</option>
+              <option value="TIME_DESC">Sort: Time Saved ▾</option>
+              <option value="POP_DESC">Sort: Population ▾</option>
+              <option value="COST_ASC">Sort: Cost (Low ➔ High) ▾</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <!-- Core Impact Pillars Showcase Cards -->
-      <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 0.08em; margin-bottom: 1rem">
-        📌 Four Pillars of Rural Infrastructure Evaluation
+      <!-- MotionSites 4-Column Showcase Card Grid -->
+      <div class="ms-cards-grid" id="villageCardGrid">
+        <!-- Rendered dynamically by cardGrid.js -->
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem">
+      <!-- MotionSites Feature Promo Banner (Design Rocket style) -->
+      <div class="ms-promo-banner">
+        <span style="color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em">
+          PMGSY CAPITAL ALLOCATOR • PHASE IV
+        </span>
+        <h2 style="color: #ffffff; font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 800; max-width: 650px; line-height: 1.2; margin: 0">
+          Maximize Rural Economic Impact With Strategic Capital Allocation.
+        </h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; max-width: 620px; line-height: 1.55; margin: 0">
+          Empirically test budget reallocations across 50 rural habitations. Run real-time ROI simulations, compare Mandi access gains, and balance healthcare transit with state budget constraints.
+        </p>
+        <button class="ms-promo-cta-btn cta-btn" data-target-tab="tab-simulator">
+          Launch Budget Simulator ➔
+        </button>
+      </div>
+
+      <!-- Core Impact Pillars Showcase Cards (MotionSites 3xl Floating Cards) -->
+      <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: var(--accent-cyan); letter-spacing: 0.08em; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem">
+        <span>📌 Four Pillars of Rural Infrastructure Evaluation</span>
+        <span style="font-size: 0.72rem; color: var(--accent-emerald); font-weight: 600; text-transform: none; letter-spacing: normal">• Multi-Sector Weighted Index</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2.5rem">
         <!-- Pillar 1 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
+        <div class="riverine-floating-card pillar-1">
+          <div style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; box-shadow: 0 0 14px rgba(16, 185, 129, 0.25)">
             🌾
           </div>
           <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">APMC Agricultural Access</h3>
@@ -118,8 +235,8 @@
         </div>
 
         <!-- Pillar 2 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
+        <div class="riverine-floating-card pillar-2">
+          <div style="width: 44px; height: 44px; background: rgba(34, 211, 238, 0.18); border: 1px solid rgba(34, 211, 238, 0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; box-shadow: 0 0 14px rgba(34, 211, 238, 0.25)">
             🏙️
           </div>
           <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">Urban Jobs & Higher Education</h3>
@@ -129,8 +246,8 @@
         </div>
 
         <!-- Pillar 3 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
+        <div class="riverine-floating-card pillar-3">
+          <div style="width: 44px; height: 44px; background: rgba(244, 63, 94, 0.18); border: 1px solid rgba(244, 63, 94, 0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; box-shadow: 0 0 14px rgba(244, 63, 94, 0.25)">
             🏥
           </div>
           <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">Emergency Hospital Transit</h3>
@@ -140,8 +257,8 @@
         </div>
 
         <!-- Pillar 4 -->
-        <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 18px; padding: 1.5rem; transition: all 0.3s ease">
-          <div style="width: 44px; height: 44px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem">
+        <div class="riverine-floating-card pillar-4">
+          <div style="width: 44px; height: 44px; background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; box-shadow: 0 0 14px rgba(56, 189, 248, 0.25)">
             🚌
           </div>
           <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem">KSRTC Bus Access & Shakti Yojna</h3>
@@ -186,6 +303,9 @@
             <option value="Kolar">Kolar</option>
             <option value="Belagavi">Belagavi</option>
             <option value="Davangere">Davangere</option>
+            <option value="Uttara Kannada">Uttara Kannada</option>
+            <option value="Yadgir">Yadgir</option>
+            <option value="Dakshina Kannada">Dakshina Kannada</option>
           </select>
 
           <select id="terrainFilter" class="filter-select">
@@ -471,6 +591,31 @@
     </section>
 
   </main>
+
+  <!-- MotionSites Authentic Footer -->
+  <footer class="ms-footer">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span style="font-size: 1.1rem">🌊</span>
+        <span style="font-weight: 800; color: #fff; font-size: 0.95rem">RIVR Road Connectivity</span>
+        <span class="ms-new-tag">v2.4 Active</span>
+      </div>
+      <span>© MotionSites AI & Karnataka PMGSY Infrastructure Protocol 2026. All rights reserved.</span>
+      <div style="display: flex; gap: 14px; font-size: 0.75rem; margin-top: 4px">
+        <a href="#tab-home" style="color: var(--accent-cyan); text-decoration: none">Prompt Showcase</a>
+        <a href="#tab-map" style="color: var(--text-secondary); text-decoration: none">Spatial GIS Map</a>
+        <a href="#tab-cas-ranking" style="color: var(--text-secondary); text-decoration: none">CAS Accessibility Matrix</a>
+        <a href="#tab-simulator" style="color: var(--text-secondary); text-decoration: none">Budget Simulator</a>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 14px">
+      <div class="rivr-live-chip">
+        <span class="pulse-dot"></span> LIVE KARNATAKA GRID
+      </div>
+    </div>
+  </footer>
+
 
   <!-- Village Inspection Modal -->
   <div class="modal-overlay" id="villageModalOverlay">

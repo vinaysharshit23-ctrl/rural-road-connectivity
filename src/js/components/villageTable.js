@@ -57,7 +57,7 @@ export function renderVillageTable(villages, onInspectVillage) {
         <td style="font-family: var(--font-mono); color: var(--text-muted); font-size: 0.8rem">#${index + 1}</td>
         <td>
           <div style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem">${v.name}</div>
-          <div style="font-size: 0.78rem; color: var(--text-secondary)">${v.district}, ${v.state}</div>
+          <div style="font-size: 0.78rem; color: var(--text-secondary)">${v.taluk ? v.taluk + ' Taluk, ' : ''}${v.district} • <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-cyan)">Census: ${v.censusCode || v.id}</span></div>
         </td>
         <td>
           <div style="background: ${conditionBg}; border: 1px solid ${conditionBorder}; color: ${conditionText}; padding: 0.3rem 0.6rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 600">
@@ -72,7 +72,7 @@ export function renderVillageTable(villages, onInspectVillage) {
           <span class="badge ${badgeClass}">MAI: ${v.metrics.maiScore}</span>
         </td>
         <td>
-          <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); padding: 0.35rem 0.6rem; border-radius: 8px">
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-glass); padding: 0.35rem 0.6rem; border-radius: 8px">
             <div style="font-size: 0.85rem; font-weight: 700; color: #ef4444">
               ${cas.current} <span style="font-size: 0.72rem; color: var(--text-muted)">/ 100</span>
             </div>
