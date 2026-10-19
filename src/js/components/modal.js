@@ -123,7 +123,7 @@ export function openVillageModal(village) {
         <!-- Pillar 6: Markets -->
         <div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem">
-            <span style="color: #cbd5e1">🌾 APMC Mandi Access Sub-Score:</span>
+            <span style="color: #cbd5e1">🌾 APMC Market Access Sub-Score:</span>
             <span style="font-weight: 700"><span style="color: #ef4444">${cas.breakdown.market.pre}/100</span> ➔ <span style="color: var(--accent-emerald)">${cas.breakdown.market.post}/100</span> <span style="font-size: 0.72rem; color: var(--text-muted)">(${village.currentTravelTimeMin}m ➔ ${village.postRoadTravelTimeMin}m)</span></span>
           </div>
           <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden">
@@ -213,7 +213,7 @@ export function openVillageModal(village) {
           <span class="stat-val" style="font-size: 0.78rem">${village.primaryCrop}</span>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Mandi:</span>
+          <span class="stat-label">Market:</span>
           <span class="stat-val" style="font-size: 0.75rem">${village.nearestMandi}</span>
         </div>
         <div class="stat-row">

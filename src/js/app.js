@@ -1,7 +1,7 @@
 /**
  * Main Application Controller
  * Manages global application state, tab routing, destination toggles, state filters, and component wiring.
- * Supports Mandi Markets, Urban Job Hubs, District Emergency Hospitals AND Road Condition Categories.
+ * Supports APMC Markets, Urban Job Hubs, District Emergency Hospitals AND Road Condition Categories.
  */
 
 import { INITIAL_VILLAGES } from './data/villages.js';
@@ -104,9 +104,12 @@ function updateAllComponents() {
   renderVillageCardGrid(filtered, handleInspectVillage);
   renderVillageTable(filtered, handleInspectVillage);
   renderCasRankingView(filtered, handleInspectVillage);
-  initMapViewer(filtered, (selectedVillage) => {
-    renderMapSidebar(selectedVillage);
-  }, currentMapDestMode);
+
+  // Map is initialized lazily on first tab-map show (see setupNavigationTabs).
+  // Re-render pins if already initialized.
+  if (mapEverInitialized) {
+    initMapViewer(filtered, renderMapSidebar, currentMapDestMode);
+  }
 
   if (filtered.length > 0) {
     renderMapSidebar(filtered[0]);
@@ -316,9 +319,12 @@ function setupNavigationTabs() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (targetViewId === 'tab-map') {
+      // Delay must be long enough for display:block to paint before Leaflet
+      // reads the container dimensions — 150ms covers CDN-served deployments.
       setTimeout(() => {
+        mapEverInitialized = true;
         initMapViewer(filterVillages(), renderMapSidebar, currentMapDestMode);
-      }, 50);
+      }, 150);
     }
   };
 
@@ -352,38 +358,35 @@ function renderMapSidebar(v) {
     <div class="village-name-head">${v.name}</div>
     <div class="village-location-sub">${v.district}, ${v.state}</div>
 
-    <div style="background: ${isSeverelyBad ? 'rgba(244,63,94,0.12)' : 'rgba(245,158,11,0.12)'}; border: 1px solid ${isSeverelyBad ? 'rgba(244,63,94,0.35)' : 'rgba(245,158,11,0.35)'}; padding: 0.65rem 0.85rem; border-radius: 8px; margin-bottom: 0.85rem">
-      <div style="font-size: 0.72rem; text-transform: uppercase; color: ${isSeverelyBad ? '#fb7185' : '#fbbf24'}">Existing Road Condition</div>
-      <div style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-top: 0.15rem">
+    <div style="background: ${isSeverelyBad ? '#FFF3F0' : '#FFFBF0'}; border: 2px solid ${isSeverelyBad ? 'var(--coral)' : '#C08000'}; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem;">
+      <div style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.06em; color: ${isSeverelyBad ? 'var(--coral)' : '#B07800'};">Existing Road Condition</div>
+      <div style="font-size: 0.9rem; font-weight: 700; color: var(--ink); margin-top: 0.15rem;">
         ${isSeverelyBad ? '🔴 Severely Bad (Critical)' : '🟠 Bad Surface (Poor Gravel)'}
       </div>
-      <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem">
+      <div style="font-size: 0.72rem; color: var(--text-2); margin-top: 0.1rem;">
         ${v.existingRoadType} • Cut off ${v.monsoonIsolationDays}d/yr
       </div>
     </div>
 
     <!-- Urban Road Route Breakdown Card -->
-    <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 0.75rem 0.85rem; margin-bottom: 1rem">
-      <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent-cyan); display: flex; align-items: center; justify-content: space-between">
+    <div style="background: var(--bg-card2); border: 2px solid var(--border-soft); padding: 0.75rem 0.85rem; margin-bottom: 1rem;">
+      <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-2); display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem;">
         <span>🏙️ Urban Hub Access Route</span>
-        <span style="font-size: 0.7rem; color: #cbd5e1">${v.urbanHubDistKm} km total</span>
+        <span style="font-size: 0.7rem; color: var(--text-3);">${v.urbanHubDistKm} km total</span>
       </div>
-      <div style="font-size: 0.85rem; font-weight: 700; color: #fff; margin: 0.3rem 0 0.4rem">
+      <div style="font-size: 0.88rem; font-weight: 800; color: var(--ink); margin-bottom: 0.4rem;">
         ${v.nearestUrbanHub}
       </div>
-
-      <!-- Segment Visualizer -->
-      <div style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; background: rgba(15,23,42,0.6); padding: 0.45rem 0.6rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 0.4rem">
-        <span style="color: ${isSeverelyBad ? '#ef4444' : '#f59e0b'}; font-weight: 700">🔴 ${v.roadLengthKm}km bad track</span>
-        <span style="color: var(--text-muted)">➔</span>
-        <span style="color: var(--accent-cyan); font-weight: 600">🌐 ${highwayDist}km Highway</span>
+      <div style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; background: #fff; border: 1px solid var(--border-soft); padding: 0.4rem 0.6rem; margin-bottom: 0.4rem; font-family: var(--font-mono);">
+        <span style="color: ${isSeverelyBad ? 'var(--coral)' : '#B07800'}; font-weight: 700;">${v.roadLengthKm}km bad track</span>
+        <span style="color: var(--text-3);">→</span>
+        <span style="color: var(--ink); font-weight: 600;">${highwayDist}km Highway</span>
       </div>
-
-      <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.2rem">
-        <span>Current Travel: <strong style="color: #ef4444">${v.currentUrbanTravelTimeMin} mins</strong></span>
-        <span>Post-Road: <strong style="color: var(--accent-emerald)">${v.postUrbanTravelTimeMin} mins</strong></span>
+      <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-2); margin-top: 0.2rem;">
+        <span>Current: <strong style="color: var(--coral);">${v.currentUrbanTravelTimeMin} mins</strong></span>
+        <span>Post-Road: <strong style="color: #2A6B50;">${v.postUrbanTravelTimeMin} mins</strong></span>
       </div>
-      <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.35rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.35rem">
+      <div style="font-size: 0.7rem; color: var(--text-2); margin-top: 0.35rem; border-top: 1px solid var(--border-soft); padding-top: 0.35rem;">
         🎯 <strong>Access to:</strong> ${v.primaryUrbanOpportunity}
       </div>
     </div>
@@ -393,7 +396,7 @@ function renderMapSidebar(v) {
       <span class="stat-val">${v.population.toLocaleString()}</span>
     </div>
     <div class="stat-row">
-      <span class="stat-label">Nearest APMC Mandi:</span>
+      <span class="stat-label">Nearest APMC Market:</span>
       <span class="stat-val" style="font-size: 0.78rem">${v.nearestMandi}</span>
     </div>
     <div class="stat-row">

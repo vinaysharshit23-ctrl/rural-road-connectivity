@@ -24,40 +24,39 @@ export function setupBudgetSimulator(villages, onUpdateCallback) {
     const res = optimizeBudgetAllocation(villages, budgetLakhs);
 
     simResultsContainer.innerHTML = `
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem">
-        <div style="background: rgba(9,13,22,0.6); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-glass)">
-          <div style="font-size: 0.78rem; color: var(--text-muted)">Selected Funded Roads</div>
-          <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-emerald)">${res.selectedVillages.length} Villages</div>
-          <div style="font-size: 0.75rem; color: var(--text-secondary)">Out of ${villages.length} candidates</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-bottom: 1.5rem;">
+        <div style="background: #fff; padding: 1rem;">
+          <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2);">Selected Funded Roads</div>
+          <div style="font-family: var(--font-display); font-size: 2rem; color: var(--ink); letter-spacing: 0.02em;">${res.selectedVillages.length} Villages</div>
+          <div style="font-size: 0.75rem; color: var(--text-2);">Out of ${villages.length} candidates</div>
         </div>
-
-        <div style="background: rgba(9,13,22,0.6); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-glass)">
-          <div style="font-size: 0.78rem; color: var(--text-muted)">Connected Population</div>
-          <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan)">${res.totalPopulation.toLocaleString()}</div>
-          <div style="font-size: 0.75rem; color: var(--text-secondary)">Avg ${res.avgTimeSavedMin} mins saved/trip</div>
-        </div>
-      </div>
-
-      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem">
-          <span style="font-weight: 700; color: var(--accent-emerald)">10-Year Economic Benefit</span>
-          <span style="font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; color: var(--accent-emerald)">₹ ${res.totalBenefitLakhs} Lakhs</span>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--text-secondary)">
-          🚀 <strong>+${res.benefitImprovementPct}% higher economic yield</strong> compared to traditional population-only project allocation!
+        <div style="background: #fff; padding: 1rem;">
+          <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-2);">Connected Population</div>
+          <div style="font-family: var(--font-display); font-size: 2rem; color: var(--coral); letter-spacing: 0.02em;">${res.totalPopulation.toLocaleString()}</div>
+          <div style="font-size: 0.75rem; color: var(--text-2);">Avg ${res.avgTimeSavedMin} mins saved/trip</div>
         </div>
       </div>
 
-      <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text-primary)">Funded Priority Road List:</h4>
-      <div style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem">
+      <div style="background: #F0F8F4; border: 2px solid #2A6B50; padding: 1.25rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-weight: 800; color: #2A6B50; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.04em;">10-Year Economic Benefit</span>
+          <span style="font-family: var(--font-display); font-size: 1.6rem; color: #2A6B50; letter-spacing: 0.03em;">₹ ${res.totalBenefitLakhs} Lakhs</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-2);">
+          🚀 <strong>+${res.benefitImprovementPct}% higher economic yield</strong> vs traditional population-only allocation
+        </div>
+      </div>
+
+      <h4 style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; color: var(--text-2);">Funded Priority Road List:</h4>
+      <div style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; background: var(--border);">
         ${res.selectedVillages.map(v => `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.65rem 0.85rem; background: rgba(18,26,43,0.8); border-radius: 8px; font-size: 0.85rem">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.65rem 0.85rem; background: #fff; font-size: 0.85rem;">
             <div>
-              <strong style="color: var(--text-primary)">${v.name}</strong> 
-              <span style="color: var(--text-muted)">(${v.district})</span>
+              <strong style="color: var(--ink);">${v.name}</strong>
+              <span style="color: var(--text-2);"> (${v.district})</span>
             </div>
-            <div style="font-family: var(--font-mono); color: var(--accent-cyan)">
-              ₹${v.estCostLakhs}L <span style="color: var(--accent-emerald); font-size: 0.78rem">(${v.metrics.roiPerCrore}x)</span>
+            <div style="font-family: var(--font-mono); color: var(--ink); font-weight: 700;">
+              ₹${v.estCostLakhs}L <span style="color: #2A6B50; font-size: 0.78rem;">(${v.metrics.roiPerCrore}x)</span>
             </div>
           </div>
         `).join('')}

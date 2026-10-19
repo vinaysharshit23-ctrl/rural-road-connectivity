@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Karnataka Rural Road Connectivity & Market Access Index</title>
-  <meta name="description" content="Prioritizing unconnected rural villages across Karnataka by economic ROI, travel time saved to agricultural Mandis, urban employment hubs & emergency hospitals." />
-  
-  <link rel="stylesheet" href="./src/lib/leaflet.css" />
+  <title>Rural Road Connectivity & Market Access Index</title>
+  <meta name="description" content="Prioritizing unconnected rural villages by economic ROI, travel time saved to agricultural Mandis, urban employment hubs & emergency hospitals." />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <link rel="stylesheet" href="./src/css/style.css" />
   <link rel="stylesheet" href="./src/css/components.css" />
   <link rel="stylesheet" href="./src/css/map.css" />
-  <script src="./src/lib/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 <body>
 
@@ -193,6 +193,17 @@
             </select>
           </div>
         </div>
+        <div class="atrium-hero-right">
+          <div class="atrium-cell coral"><div class="cell-stat"><span class="cell-val">MAI</span><span class="cell-lbl">Market Accessibility Index</span></div></div>
+          <div class="atrium-cell dark"><div class="cell-stat"><span class="cell-val">30+</span><span class="cell-lbl">Villages Ranked</span></div></div>
+          <div class="atrium-cell sky"><div class="cell-stat"><span class="cell-val">CAS</span><span class="cell-lbl">Accessibility Score</span></div></div>
+          <div class="atrium-cell white" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">7</span><span class="cell-lbl">Isolation Pillars</span></div></div>
+          <div class="atrium-cell coral" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">ROI</span><span class="cell-lbl">10-Year Return</span></div></div>
+          <div class="atrium-cell paper" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val" style="font-size:1.8rem">&#8377;/km</span><span class="cell-lbl">Cost-Benefit</span></div></div>
+          <div class="atrium-cell yellow" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">4</span><span class="cell-lbl">Data Sectors</span></div></div>
+          <div class="atrium-cell white" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val">5</span><span class="cell-lbl">Platform Modules</span></div></div>
+          <div class="atrium-cell dark" style="border-top:2px solid var(--border)"><div class="cell-stat"><span class="cell-val" style="font-size:1.6rem">GIS</span><span class="cell-lbl">Village Map Inspector</span></div></div>
+        </div>
       </div>
 
       <!-- MotionSites 4-Column Showcase Card Grid -->
@@ -268,7 +279,6 @@
         </div>
       </div>
     </section>
-
     <!-- Tab 1: Village Ranking Leaderboard -->
     <section id="tab-ranking" class="tab-view">
       <!-- KPI Summary Grid -->
@@ -282,7 +292,7 @@
 
         <div class="filters-group">
           <!-- Road Condition Filter -->
-          <select id="conditionFilter" class="filter-select" style="border-color: rgba(244, 63, 94, 0.4)">
+          <select id="conditionFilter" class="filter-select" style="border-color: var(--coral)">
             <option value="ALL">All Road Conditions</option>
             <option value="SEVERELY_BAD">🔴 Severely Bad (Critical)</option>
             <option value="BAD">🟠 Bad (Poor Surface)</option>
@@ -344,10 +354,10 @@
       <div id="casFormulaExplainerContainer"></div>
 
       <!-- CAS Dedicated Ranking Table Container -->
-      <div style="margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); padding: 0.65rem 1rem; border-radius: 10px">
-        <div style="font-size: 0.82rem; font-weight: 700; color: #fca5a5; display: flex; align-items: center; gap: 0.4rem">
+      <div style="margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: #FFF3F0; border: 2px solid #E8533A; padding: 0.65rem 1rem;">
+        <div style="font-size: 0.82rem; font-weight: 700; color: #C03020; display: flex; align-items: center; gap: 0.4rem">
           <span>📌 Leaderboard Sorting Rule:</span>
-          <span style="color: #fff; font-weight: 500">Ranked strictly by <strong>Lowest Current Accessibility Score (Pre-Road Baseline)</strong>. Rank #1 = Most Severely Isolated Village.</span>
+          <span style="color: var(--ink); font-weight: 500">Ranked strictly by <strong>Lowest Current Accessibility Score (Pre-Road Baseline)</strong>. Rank #1 = Most Severely Isolated Village.</span>
         </div>
       </div>
 
@@ -358,7 +368,7 @@
               <th data-cas-sort="casCurrent">Isolation Rank ⇳</th>
               <th data-cas-sort="name">Village & District ⇳</th>
               <th>Existing Road Condition</th>
-              <th data-cas-sort="casCurrent" style="color: #fb7185">Current CAS Baseline (Lowest = #1) ⇳</th>
+              <th data-cas-sort="casCurrent" style="color: #fff;">Current CAS Baseline (Lowest = #1) ⇳</th>
               <th data-cas-sort="casProjected">Post-Road Projected CAS ⇳</th>
               <th data-cas-sort="casGain">Net CAS Gain (Δ) ⇳</th>
               <th>Primary Isolation Deficit Driver</th>
@@ -373,10 +383,10 @@
     <!-- Tab 3: Individual Village Spatial Map Inspector -->
     <section id="tab-map" class="tab-view">
       <!-- Village Selection & Destination Toggle Header -->
-      <div style="margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); padding: 1rem 1.4rem; border-radius: 16px; border: 1px solid var(--border-glass); flex-wrap: wrap; gap: 1rem; box-shadow: var(--shadow-lg)">
+      <div style="margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 1rem 1.4rem; border: 2px solid var(--border); flex-wrap: wrap; gap: 1rem;">
         <div style="display: flex; align-items: center; gap: 0.85rem">
-          <span style="font-size: 0.85rem; font-weight: 800; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.05em">📍 Select Village Map:</span>
-          <select id="individualVillageSelect" class="filter-select" style="min-width: 280px; font-weight: 700; border-color: var(--accent-cyan); background: rgba(5, 8, 17, 0.95)">
+          <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.1em; border-left: 3px solid var(--coral); padding-left: 0.6rem;">📍 Select Village Map:</span>
+          <select id="individualVillageSelect" class="filter-select" style="min-width: 280px; font-weight: 700;">
             <!-- Populated dynamically -->
           </select>
         </div>
@@ -389,7 +399,7 @@
             🏙️ Urban Hub Route
           </button>
           <button class="nav-tab" id="destMandiBtn" style="padding: 0.45rem 0.85rem; font-size: 0.8rem">
-            🌾 APMC Mandi
+            🌾 APMC Market
           </button>
           <button class="nav-tab" id="destHospitalBtn" style="padding: 0.45rem 0.85rem; font-size: 0.8rem">
             🏥 Emergency Hospital
@@ -401,13 +411,13 @@
       </div>
 
       <div class="map-view-container">
-        <div class="canvas-wrapper" style="position: relative; overflow: hidden; min-height: 600px">
+        <div class="canvas-wrapper" style="position: relative; height: 620px; min-height: 620px">
           <!-- Leaflet Realistic GIS Container -->
-          <div id="leafletMap" style="width: 100%; height: 100%; min-height: 600px; border-radius: 18px; z-index: 1"></div>
+          <div id="leafletMap" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 1;"></div>
 
           <!-- Quick Map Type & Control Overlay -->
           <div class="map-controls-overlay" style="z-index: 500">
-            <div style="background: rgba(15, 23, 42, 0.92); border: 1px solid var(--border-glass-glow); padding: 0.35rem 0.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.35rem; backdrop-filter: blur(12px)">
+            <div style="background: #fff; border: 2px solid var(--border); padding: 0.35rem 0.5rem; display: flex; flex-direction: column; gap: 0.35rem;">
               <button class="map-layer-btn active" id="btnLayerSat" title="Realistic Satellite View (Esri Aerial)">
                 🛰️ Satellite View
               </button>
@@ -431,14 +441,13 @@
             </div>
           </div>
 
-          <!-- Map Legend Overlay -->
           <div class="map-legend" style="z-index: 500">
-            <div class="legend-item"><span class="legend-dot" style="background: #ef4444; box-shadow: 0 0 8px #ef4444"></span> 🔴 Severely Isolated Village</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #f59e0b; box-shadow: 0 0 8px #f59e0b"></span> 🟠 Bad Potholed Track</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #a855f7; box-shadow: 0 0 8px #a855f7"></span> 🌾 APMC Mandi</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #38bdf8; box-shadow: 0 0 8px #38bdf8"></span> 🏙️ Urban Hub</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #f43f5e; box-shadow: 0 0 8px #f43f5e"></span> 🏥 Emergency Hospital</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #eab308; box-shadow: 0 0 8px #eab308"></span> 🚌 KSRTC Bus Stop</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span> 🔴 Severely Isolated</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span> 🟠 Bad Track</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #a855f7;"></span> 🌾 APMC Market</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span> 🏙️ Urban Hub</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #f43f5e;"></span> 🏥 Hospital</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #eab308;"></span> 🚌 KSRTC Stop</div>
           </div>
         </div>
 
@@ -499,7 +508,7 @@
               <label for="inputDistrict">District & State</label>
               <div style="display: flex; gap: 0.5rem">
                 <input type="text" id="inputDistrict" class="form-input" placeholder="District (e.g. Shivamogga)" required />
-                <input type="text" id="inputState" class="form-input" value="Karnataka" readonly style="background: rgba(255,255,255,0.05)" />
+                <input type="text" id="inputState" class="form-input" value="Karnataka" readonly style="background: var(--bg-card2); color: var(--text-2);" />
               </div>
             </div>
 
@@ -527,12 +536,12 @@
             </div>
 
             <div class="form-group">
-              <label for="inputCurrentTime">Current Mandi Travel (mins)</label>
+              <label for="inputCurrentTime">Current Market Travel (mins)</label>
               <input type="number" id="inputCurrentTime" class="form-input" placeholder="150" required />
             </div>
 
             <div class="form-group">
-              <label for="inputPostTime">Post-Road Mandi Travel (mins)</label>
+              <label for="inputPostTime">Post-Road Market Travel (mins)</label>
               <input type="number" id="inputPostTime" class="form-input" placeholder="25" required />
             </div>
 
@@ -567,7 +576,7 @@
             </div>
 
             <div class="form-group">
-              <label for="inputMandi">Nearest APMC Mandi</label>
+              <label for="inputMandi">Nearest APMC Market</label>
               <input type="text" id="inputMandi" class="form-input" placeholder="Chitradurga / Shivamogga APMC" required />
             </div>
 

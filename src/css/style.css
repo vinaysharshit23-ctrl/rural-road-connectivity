@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Bebas+Neue&display=swap');
 
 :root, [data-theme="riverine"] {
   /* Riverine Theme - MotionSites Fluid Aquatic Palette */
@@ -49,9 +49,9 @@
   --border-glass: rgba(255, 255, 255, 0.08);
   --border-glass-glow: rgba(56, 189, 248, 0.35);
 
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --font-display: 'Bebas Neue', 'Arial Black', Impact, sans-serif;
+  --font-main:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
 
   --accent-emerald: #10b981;
   --accent-emerald-glow: rgba(16, 185, 129, 0.25);
@@ -153,8 +153,8 @@
 
 body {
   font-family: var(--font-main);
-  background-color: var(--bg-dark);
-  color: var(--text-primary);
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -195,11 +195,11 @@ body::after {
   100% { transform: scale(1) translate(15px, -15px); }
 }
 
-/* Custom Modern Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-card2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--coral); }
 
 ::-webkit-scrollbar-track {
   background: var(--bg-dark);
@@ -228,7 +228,6 @@ body::after {
 
 .app-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
@@ -241,12 +240,12 @@ body::after {
   transition: all 0.3s ease;
 }
 
+/* Brand / Logo */
 .brand {
   display: flex;
   align-items: center;
   gap: 0.85rem;
 }
-
 .brand-icon {
   width: 40px;
   height: 40px;
@@ -261,7 +260,6 @@ body::after {
   box-shadow: 0 0 18px rgba(34, 211, 238, 0.4);
   animation: riverFloatSlow 8s ease-in-out infinite;
 }
-
 .brand-title h1 {
   font-size: 1.15rem;
   font-weight: 800;
@@ -295,7 +293,6 @@ body::after {
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
-
 .nav-tab {
   padding: 0.5rem 1.15rem;
   border: none;
@@ -363,14 +360,22 @@ body::after {
   padding: 1rem 1.5rem 3rem 1.5rem;
 }
 
-/* View Sections */
-.tab-view {
-  display: none;
-  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Tab views */
+.tab-view { display: none; animation: fadeUp .25s ease forwards; }
+.tab-view.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.tab-view.active {
-  display: block;
+/* ── HERO — Atrium MTL layout ───────────────────────────── */
+.atrium-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: calc(100vh - 72px);
+  border-bottom: 2px solid var(--border);
+  margin: -2rem -2.5rem 2.5rem;
 }
 
 @keyframes fadeIn {
