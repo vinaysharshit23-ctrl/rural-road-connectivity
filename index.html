@@ -402,5 +402,47 @@
   </div>
 
   <script type="module" src="./src/js/app.js"></script>
+
+  <script>
+    /* Bento grid: count-up animation for numeric cell-val spans */
+    (function () {
+      function countUp(el, target, suffix, duration) {
+        const start = performance.now();
+        function tick(now) {
+          const p = Math.min((now - start) / duration, 1);
+          // ease-out cubic
+          const ease = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(ease * target) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+          else {
+            el.textContent = target + suffix;
+            el.classList.add('counted');
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function initCounters() {
+        document.querySelectorAll('.atrium-hero-right .cell-val').forEach(function (el) {
+          const raw = el.textContent.trim();
+          const match = raw.match(/^(\d+)(\+?)$/);
+          if (!match) return;
+          const target = parseInt(match[1], 10);
+          const suffix = match[2] || '';
+          el.textContent = '0' + suffix;
+          // wait for the cell's fade-in delay before counting
+          const cellEl = el.closest('.atrium-cell');
+          const delay = parseFloat(getComputedStyle(cellEl).animationDelay) * 1000 || 0;
+          setTimeout(function () { countUp(el, target, suffix, 900); }, delay + 200);
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCounters);
+      } else {
+        initCounters();
+      }
+    })();
+  </script>
 </body>
 </html>
