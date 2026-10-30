@@ -439,40 +439,48 @@ body {
 
 
 /* ── Bento grid entrance animation ─────────────────────────────────── */
-@keyframes cellFadeUp {
-  from { opacity: 0; transform: translateY(28px) scale(0.96); }
-  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+/* ── Bento grid vertical-reveal animation ───────────────────────────── */
+
+/* Content slides UP from below the cell floor — curtain-reveal effect */
+@keyframes cellContentRise {
+  from { transform: translateY(110%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 @keyframes cellPop {
   0%   { transform: scale(1); }
-  45%  { transform: scale(1.04); }
+  45%  { transform: scale(1.06); }
   100% { transform: scale(1); }
 }
 
+/* Cell itself: static, just clips the rising content */
 .atrium-cell {
-  opacity: 0;
-  animation: cellFadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  overflow: hidden;   /* clips .cell-stat while it rises */
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.22s ease;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .atrium-cell { animation: none; opacity: 1; }
+/* The inner content wrapper that actually animates */
+.atrium-cell .cell-stat {
+  animation: cellContentRise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* stagger each cell */
-.atrium-hero-right .atrium-cell:nth-child(1) { animation-delay: 0.05s; }
-.atrium-hero-right .atrium-cell:nth-child(2) { animation-delay: 0.12s; }
-.atrium-hero-right .atrium-cell:nth-child(3) { animation-delay: 0.19s; }
-.atrium-hero-right .atrium-cell:nth-child(4) { animation-delay: 0.26s; }
-.atrium-hero-right .atrium-cell:nth-child(5) { animation-delay: 0.33s; }
-.atrium-hero-right .atrium-cell:nth-child(6) { animation-delay: 0.40s; }
-.atrium-hero-right .atrium-cell:nth-child(7) { animation-delay: 0.47s; }
-.atrium-hero-right .atrium-cell:nth-child(8) { animation-delay: 0.54s; }
-.atrium-hero-right .atrium-cell:nth-child(9) { animation-delay: 0.61s; }
+@media (prefers-reduced-motion: reduce) {
+  .atrium-cell .cell-stat { animation: none; }
+}
 
-/* hover lift */
+/* Stagger each cell's inner content */
+.atrium-hero-right .atrium-cell:nth-child(1) .cell-stat { animation-delay: 0.05s; }
+.atrium-hero-right .atrium-cell:nth-child(2) .cell-stat { animation-delay: 0.13s; }
+.atrium-hero-right .atrium-cell:nth-child(3) .cell-stat { animation-delay: 0.21s; }
+.atrium-hero-right .atrium-cell:nth-child(4) .cell-stat { animation-delay: 0.29s; }
+.atrium-hero-right .atrium-cell:nth-child(5) .cell-stat { animation-delay: 0.37s; }
+.atrium-hero-right .atrium-cell:nth-child(6) .cell-stat { animation-delay: 0.45s; }
+.atrium-hero-right .atrium-cell:nth-child(7) .cell-stat { animation-delay: 0.53s; }
+.atrium-hero-right .atrium-cell:nth-child(8) .cell-stat { animation-delay: 0.61s; }
+.atrium-hero-right .atrium-cell:nth-child(9) .cell-stat { animation-delay: 0.69s; }
+
+/* hover lift on the cell */
 .atrium-cell:hover {
   transform: scale(1.035);
   box-shadow: 0 8px 32px rgba(0,0,0,0.13);
@@ -482,5 +490,5 @@ body {
 
 /* number counter pulse when it finishes counting */
 .cell-val.counted {
-  animation: cellPop 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: cellPop 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
