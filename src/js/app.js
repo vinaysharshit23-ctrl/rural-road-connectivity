@@ -40,6 +40,58 @@ function initApp() {
   });
 
   setupModalControls();
+  initBentoAnimation();
+}
+
+/* ── Bento grid: scroll-triggered whole-section slide-up + count-up ── */
+function countUp(el, target, suffix, duration) {
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(ease * target) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+    else { el.textContent = target + suffix; el.classList.add('counted'); }
+  }
+  requestAnimationFrame(tick);
+}
+
+function runBentoCounters() {
+  document.querySelectorAll('.atrium-hero-right .cell-val').forEach(el => {
+    if (el.classList.contains('counted')) return;
+    const raw = el.textContent.trim();
+    const match = raw.match(/^(\d+)(\+?)$/);
+    if (!match) return;
+    const target = parseInt(match[1], 10);
+    const suffix = match[2] || '';
+    el.textContent = '0' + suffix;
+    countUp(el, target, suffix, 900);
+  });
+}
+
+function initBentoAnimation() {
+  const section = document.querySelector('.atrium-hero-right');
+  if (!section) return;
+
+  // Respect prefers-reduced-motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    section.classList.add('bento-visible');
+    runBentoCounters();
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !section.classList.contains('bento-visible')) {
+        section.classList.add('bento-visible');
+        // Fire count-up after the 750ms slide-up animation finishes
+        setTimeout(runBentoCounters, 760);
+        observer.unobserve(section);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  observer.observe(section);
 }
 
 function setupThemeSwitcher() {
