@@ -87,7 +87,7 @@ body {
   background: #FFFFFF;
   border-bottom: 2px solid var(--border);
   padding: 0 2.5rem;
-  height: 72px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -104,8 +104,8 @@ body {
   flex-shrink: 0;
 }
 .brand-icon {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
