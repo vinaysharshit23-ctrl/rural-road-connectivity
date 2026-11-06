@@ -398,12 +398,12 @@ body {
 .pillar-card:hover { background: var(--bg-card2); }
 .pillar-icon {
   width: 56px; height: 56px;
-  background: var(--ink);
-  border-radius: 4px;
+  background: none;
+  border-radius: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem;
+  font-size: 2.4rem;
   margin-bottom: 1rem;
-  padding: 12px;
+  padding: 0;
 }
 .pillar-card h3 {
   font-family: var(--font-main);
