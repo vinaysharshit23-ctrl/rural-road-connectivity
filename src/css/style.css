@@ -397,12 +397,13 @@ body {
 .pillar-card:last-child { border-right: none; }
 .pillar-card:hover { background: var(--bg-card2); }
 .pillar-icon {
-  width: 44px; height: 44px;
+  width: 48px; height: 48px;
   background: var(--ink);
-  border-radius: 0;
+  border-radius: 4px;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.3rem;
   margin-bottom: 1rem;
+  padding: 8px;
 }
 .pillar-card h3 {
   font-family: var(--font-main);
