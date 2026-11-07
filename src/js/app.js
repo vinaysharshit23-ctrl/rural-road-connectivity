@@ -43,7 +43,7 @@ function initApp() {
   initBentoAnimation();
 }
 
-/* ── Bento grid: scroll-triggered whole-section slide-up + count-up ── */
+/* ── Bento grid: count-up for numeric cells (animation is pure CSS now) ── */
 function countUp(el, target, suffix, duration) {
   const start = performance.now();
   function tick(now) {
@@ -57,7 +57,9 @@ function countUp(el, target, suffix, duration) {
 }
 
 function runBentoCounters() {
-  document.querySelectorAll('.atrium-hero-right .cell-val').forEach(el => {
+  // Only run on the first set of cells (not the duplicates)
+  const cells = document.querySelectorAll('.atrium-hero-right .atrium-cell:nth-child(-n+9) .cell-val');
+  cells.forEach(el => {
     if (el.classList.contains('counted')) return;
     const raw = el.textContent.trim();
     const match = raw.match(/^(\d+)(\+?)$/);
@@ -70,28 +72,10 @@ function runBentoCounters() {
 }
 
 function initBentoAnimation() {
-  const section = document.querySelector('.atrium-hero-right');
-  if (!section) return;
-
-  // Respect prefers-reduced-motion
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    section.classList.add('bento-visible');
-    runBentoCounters();
-    return;
-  }
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !section.classList.contains('bento-visible')) {
-        section.classList.add('bento-visible');
-        // Fire count-up after the 750ms slide-up animation finishes
-        setTimeout(runBentoCounters, 760);
-        observer.unobserve(section);
-      }
-    });
-  }, { threshold: 0.15 });
-
-  observer.observe(section);
+  // Animation is now a pure CSS infinite cycle (bentoCycle keyframe).
+  // Just fire count-up on load.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  setTimeout(runBentoCounters, 400);
 }
 
 function setupThemeSwitcher() {
