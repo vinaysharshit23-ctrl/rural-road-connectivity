@@ -201,6 +201,7 @@ body {
   min-height: calc(100vh - 72px);
   border-bottom: 2px solid var(--border);
   margin: -2rem -2.5rem 2.5rem;
+  align-items: stretch;
 }
 
 /* Left: headline + lede + CTAs */
@@ -452,10 +453,11 @@ body {
 
 /* ── Bento grid — infinite vertical auto-cycling ticker ─────────────── */
 
-/* Outer wrapper clips the grid so only one "page" (3 rows) shows at a time */
+/* Outer wrapper clips the grid so only one "page" shows at a time — fills the full hero column */
 .atrium-hero-right-wrap {
   overflow: hidden;
-  height: 480px; /* exactly 3 rows × 160px */
+  align-self: stretch;   /* stretch to full hero column height */
+  height: 100%;          /* fill whatever height the hero gives it */
 }
 
 /* Inner ticker: 6 rows (original 3 + duplicate 3 for seamless loop) */
