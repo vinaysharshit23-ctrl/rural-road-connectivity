@@ -155,37 +155,33 @@ export function calculateVillageMetrics(village) {
   const accessibilityGain = parseFloat((projectedAccessibilityScore - currentAccessibilityScore).toFixed(1));
 
   // 13. MAI — Market Access Index (pure market economic benefit score)
-  // Measures the ECONOMIC VALUE locked away from markets due to road absence.
-  // Four components, all market/crop-derived. Scale 0–100.
-  // Higher MAI = more market economic benefit unlocked by building the road.
+  // Exactly 3 components — all market/crop-derived. Scale 0–100.
+  // Answers: "How much agricultural market value is locked away from this village?"
   //
-  // Component 1: Annual crop value at stake (40% weight)
-  //   Total agri value the village produces × ICAR perishability rate
-  //   → how much crop value is currently at risk of loss / unsold
-  //   Normalised against ₹500 Lakhs/year as a realistic upper bound for 10 villages
+  // Component 1: Crop value at risk (50% weight)
+  //   Annual crop production value × ICAR perishability rate for that crop type
+  //   = the money farmers are losing right now due to road absence
+  //   Source: annualAgriYieldTons × avgAgriValuePerTon (Agmarknet) × perishability (ICAR)
+  //   Normalised against ₹500 Lakhs/year as practical upper bound for this dataset
   const cropValueAtRisk = totalAgriValueLakhs * cropPerishabilityRate;
-  const cropValueScore = Math.min(100, (cropValueAtRisk / 500) * 100) * 0.40;
+  const cropValueScore = Math.min(100, (cropValueAtRisk / 500) * 100) * 0.50;
 
-  // Component 2: Market travel barrier (30% weight)
-  //   Current travel time to APMC mandi — how hard it is to reach the market
-  //   A village with 140-min current travel scores higher than one with 40 min
+  // Component 2: Travel time to APMC mandi — market barrier (30% weight)
+  //   How long it currently takes to reach the nearest APMC market
+  //   Higher current travel time = bigger barrier to selling crops
+  //   Source: currentTravelTimeMin (derived from OMMAS road type + GPS distance)
   //   Normalised against 240 min as a practical maximum
   const marketBarrierScore = Math.min(100, (village.currentTravelTimeMin / 240) * 100) * 0.30;
 
-  // Component 3: Farming population scale (20% weight)
-  //   How many people depend on selling crops (est. 65% of rural population = farmers)
+  // Component 3: Farming population (20% weight)
+  //   Number of people whose livelihoods depend on market access
+  //   Estimated at 65% of Census 2011 village population (rural agriculture dependency)
   //   Normalised against 5000 people
   const farmingPop = village.population * 0.65;
   const farmingPopScore = Math.min(100, (farmingPop / 5000) * 100) * 0.20;
 
-  // Component 4: Monsoon crop loss window (10% weight)
-  //   Days per year when the road is impassable and crops cannot reach the mandi
-  //   Directly from OMMAS monsoon isolation days
-  //   Normalised against 120 days (maximum in dataset)
-  const monsoonCropLossScore = Math.min(100, (village.monsoonIsolationDays / 120) * 100) * 0.10;
-
   const maiScore = Math.min(99.9, Math.max(1.0,
-    cropValueScore + marketBarrierScore + farmingPopScore + monsoonCropLossScore
+    cropValueScore + marketBarrierScore + farmingPopScore
   ));
 
   return {
