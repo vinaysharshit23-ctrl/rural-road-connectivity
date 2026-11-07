@@ -315,7 +315,7 @@ body {
 .atrium-hero-right {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: repeat(6, 160px); /* 3 real rows + 3 duplicate rows */
   gap: 0;
 }
 .atrium-cell {
@@ -450,37 +450,43 @@ body {
 }
 
 
-/* ── Bento grid — whole-section vertical slide-up ────────────────────── */
+/* ── Bento grid — infinite vertical auto-cycling ticker ─────────────── */
 
-@keyframes sectionSlideUp {
-  from {
-    transform: translateY(80px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+/* Outer wrapper clips the grid so only one "page" (3 rows) shows at a time */
+.atrium-hero-right-wrap {
+  overflow: hidden;
+  height: 480px; /* exactly 3 rows × 160px */
 }
 
-/* Section starts hidden; JS adds .bento-visible to trigger the rise */
+/* Inner ticker: 6 rows (original 3 + duplicate 3 for seamless loop) */
 .atrium-hero-right {
-  opacity: 0;
-  transform: translateY(80px);
-  will-change: transform, opacity;
+  will-change: transform;
+  animation: bentoCycle 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-.atrium-hero-right.bento-visible {
-  animation: sectionSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+/* Pause on hover */
+.atrium-hero-right-wrap:hover .atrium-hero-right {
+  animation-play-state: paused;
+}
+
+/* Cycle: sit on row 1-3, smoothly slide to row 4-6 (duplicate), jump back */
+@keyframes bentoCycle {
+  0%   { transform: translateY(0); }
+  35%  { transform: translateY(0); }           /* hold top page */
+  50%  { transform: translateY(-50%); }        /* slide to bottom page */
+  85%  { transform: translateY(-50%); }        /* hold bottom page */
+  100% { transform: translateY(0); }           /* snap back (invisible — duplicate) */
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .atrium-hero-right,
-  .atrium-hero-right.bento-visible {
-    opacity: 1;
-    transform: none;
+  .atrium-hero-right {
     animation: none;
   }
+  .atrium-hero-right-wrap {
+    overflow: visible;
+    height: auto;
+  }
+}
 }
 
 /* Cell itself: static container, no per-cell animation */
