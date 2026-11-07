@@ -1,8 +1,9 @@
 /**
  * Economic Calculator Engine for Rural Road Connectivity
- * Computes Market Access Index (MAI), Urban Job & Education Commute Access,
- * Emergency Healthcare & Hospital Access, Total Annual Economic Benefit (₹ Lakhs),
- * and 10-Year ROI per ₹ Crore.
+ * Computes Market Access Index (MAI) — a pure market economic benefit score measuring
+ * the crop/agricultural value locked away from APMC markets due to road absence.
+ * Also computes CAS (Composite Accessibility Score, 7-pillar isolation measure),
+ * Total Annual Economic Benefit (₹ Lakhs), and 10-Year ROI per ₹ Crore.
  *
  * Crop perishability rates: ICAR/NIAM post-harvest loss classifications by commodity group.
  * Post-road bus frequency: PMGSY/Karnataka GO minimum of 2 Gramina Sarige trips/day
@@ -153,16 +154,35 @@ export function calculateVillageMetrics(village) {
 
   const accessibilityGain = parseFloat((projectedAccessibilityScore - currentAccessibilityScore).toFixed(1));
 
-  // 13. Overall MAI & Connectivity Score
-  const popScore = Math.min(100, (village.population / 6000) * 100) * 0.12;
-  const timeScore = Math.min(100, (timeSavedPercent / 85) * 100) * 0.12;
-  const urbanScore = Math.min(100, (urbanTimeSavedPercent / 80) * 100) * 0.12;
-  const hospitalScore = Math.min(100, (hospitalTimeSavedPercent / 80) * 100) * 0.18;
-  const publicTransportScore = Math.min(100, ((busFreqGain + (walkToBusStopKm * 1.5)) / 12) * 100) * 0.15;
-  const roiScore = Math.min(100, (roiPerCrore / 4.0) * 100) * 0.21;
-  const isolationScore = Math.min(100, (isolationMultiplier / 1.8) * 100) * 0.10;
+  // 13. MAI — Market Access Index (pure market economic benefit score)
+  // Exactly 3 components — all market/crop-derived. Scale 0–100.
+  // Answers: "How much agricultural market value is locked away from this village?"
+  //
+  // Component 1: Crop value at risk (50% weight)
+  //   Annual crop production value × ICAR perishability rate for that crop type
+  //   = the money farmers are losing right now due to road absence
+  //   Source: annualAgriYieldTons × avgAgriValuePerTon (Agmarknet) × perishability (ICAR)
+  //   Normalised against ₹500 Lakhs/year as practical upper bound for this dataset
+  const cropValueAtRisk = totalAgriValueLakhs * cropPerishabilityRate;
+  const cropValueScore = Math.min(100, (cropValueAtRisk / 500) * 100) * 0.50;
 
-  const maiScore = Math.min(99.9, Math.max(1.0, popScore + timeScore + urbanScore + hospitalScore + publicTransportScore + roiScore + isolationScore));
+  // Component 2: Travel time to APMC mandi — market barrier (30% weight)
+  //   How long it currently takes to reach the nearest APMC market
+  //   Higher current travel time = bigger barrier to selling crops
+  //   Source: currentTravelTimeMin (derived from OMMAS road type + GPS distance)
+  //   Normalised against 240 min as a practical maximum
+  const marketBarrierScore = Math.min(100, (village.currentTravelTimeMin / 240) * 100) * 0.30;
+
+  // Component 3: Farming population (20% weight)
+  //   Number of people whose livelihoods depend on market access
+  //   Estimated at 65% of Census 2011 village population (rural agriculture dependency)
+  //   Normalised against 5000 people
+  const farmingPop = village.population * 0.65;
+  const farmingPopScore = Math.min(100, (farmingPop / 5000) * 100) * 0.20;
+
+  const maiScore = Math.min(99.9, Math.max(1.0,
+    cropValueScore + marketBarrierScore + farmingPopScore
+  ));
 
   return {
     timeSavedHrs: parseFloat(timeSavedHrs.toFixed(2)),
