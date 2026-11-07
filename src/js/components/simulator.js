@@ -136,6 +136,6 @@ export function setupCustomVillageCalculator(onAddVillage) {
     }
 
     form.reset();
-    alert(`🎉 Added "${name}" into Connectivity Database! Market Access Index: ${newVillage.metrics.maiScore}`);
+    alert(`🎉 Added "${name}" into Connectivity Database! Market Access Index (MAI): ${newVillage.metrics.maiScore}`);
   });
 }
