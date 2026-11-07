@@ -14,7 +14,7 @@ It ingests village-level data across four critical sectors and computes two comp
 
 | Score | What It Measures |
 |-------|-----------------|
-| **MAI** (Market Accessibility Index) | Economic ROI from connecting the village — crop loss recovery, income gain, job access |
+| **MAI** (Market Access Index) | Market economic benefit score — crop value at risk, travel barrier to APMC mandi, farming population affected |
 | **CAS** (Comprehensive Accessibility Score) | Isolation severity across 7 pillars — urban access, road quality, highways, healthcare, education, markets, transit |
 
 ---
