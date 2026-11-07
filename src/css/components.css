@@ -136,9 +136,11 @@
   background: #fff;
   border: 2px solid var(--border);
   border-radius: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
   box-shadow: none;
   backdrop-filter: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .custom-table { width: 100%; border-collapse: collapse; text-align: left; }

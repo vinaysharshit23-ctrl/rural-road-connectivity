@@ -54,7 +54,7 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   line-height: 1.5;
 }
 
@@ -486,7 +486,6 @@ body {
     overflow: visible;
     height: auto;
   }
-}
 }
 
 /* Cell itself: static container, no per-cell animation */
