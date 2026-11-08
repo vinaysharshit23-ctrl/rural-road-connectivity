@@ -34,6 +34,7 @@
         <button class="nav-tab"        data-tab="tab-ranking"     id="navRankingBtn">Priority Leaderboard</button>
         <button class="nav-tab"        data-tab="tab-cas-ranking" id="navCasRankingBtn">CAS Ranking</button>
         <button class="nav-tab"        data-tab="tab-map"         id="navMapBtn">Village Map</button>
+        <button class="nav-tab"        data-tab="tab-actions"     id="navActionsBtn">Recommended Actions</button>
         <button class="nav-tab"        data-tab="tab-simulator"   id="navSimBtn">Budget Simulator</button>
       </nav>
 
@@ -56,8 +57,8 @@
           <h1 class="atrium-headline">A RURAL<br>CONNECTIVITY<br>INFRASTRUCTURE<br>PLANNER</h1>
           <p class="atrium-lede">Thousands of villages remain cut off from markets, hospitals, and employment. With limited budgets, planners need to know <strong>which villages to connect first</strong> and what the return on investment would be.<br><br>This platform answers exactly that &mdash; ranked, data-backed, ready for RDPR, PMGSY, and district planners.</p>
           <div class="atrium-cta-row">
-            <button class="atrium-btn cta-btn" data-target-tab="tab-ranking"><span class="ab-disc">&rarr;</span>Priority Leaderboard</button>
-            <button class="atrium-link cta-btn" data-target-tab="tab-cas-ranking">CAS Ranking <span class="ab-disc">&rarr;</span></button>
+            <button class="atrium-btn cta-btn" data-target-tab="tab-actions"><span class="ab-disc">&rarr;</span>Recommended Actions</button>
+            <button class="atrium-link cta-btn" data-target-tab="tab-ranking">Priority Leaderboard <span class="ab-disc">&rarr;</span></button>
             <button class="atrium-link cta-btn" data-target-tab="tab-simulator">Budget Simulator <span class="ab-disc">&rarr;</span></button>
           </div>
         </div>
@@ -277,7 +278,46 @@
       </div>
     </section>
 
-    <!-- Tab 3: Budget & ROI Simulator -->
+    <!-- Tab 4: Recommended Actions & Priority Directives -->
+    <section id="tab-actions" class="tab-view">
+      <section id="actionSummaryContainer"></section>
+
+      <!-- Filter bar (reuses the same filter IDs as ranking, but scoped here) -->
+      <div class="controls-bar" style="margin-bottom: 1.5rem;">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="actionSearchInput" placeholder="Search by village, district, crop, or road condition..." />
+        </div>
+        <div class="filters-group">
+          <select id="actionTierFilter" class="filter-select">
+            <option value="ALL">All Priority Tiers</option>
+            <option value="CRITICAL">🔴 Critical — Connect Immediately</option>
+            <option value="HIGH">🟠 High — Phase 1</option>
+            <option value="MODERATE">🟢 Moderate — Phase 2</option>
+            <option value="LOW">⚪ Low — Phase 3</option>
+          </select>
+          <select id="actionDistrictFilter" class="filter-select">
+            <option value="ALL">All Districts</option>
+            <option value="Kalaburagi">Kalaburagi</option>
+            <option value="Shivamogga">Shivamogga</option>
+            <option value="Tumakuru">Tumakuru</option>
+            <option value="Chitradurga">Chitradurga</option>
+            <option value="Hassan">Hassan</option>
+            <option value="Raichur">Raichur</option>
+            <option value="Chamarajanagar">Chamarajanagar</option>
+            <option value="Vijayapura">Vijayapura</option>
+            <option value="Chikkamagaluru">Chikkamagaluru</option>
+            <option value="Kolar">Kolar</option>
+            <option value="Belagavi">Belagavi</option>
+            <option value="Davangere">Davangere</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="actionTableContainer"></div>
+    </section>
+
+    <!-- Tab 5: Budget & ROI Simulator -->
     <section id="tab-simulator" class="tab-view">
       <div class="simulator-layout">
 
