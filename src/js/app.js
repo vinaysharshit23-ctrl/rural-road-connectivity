@@ -9,6 +9,7 @@ import { enrichVillagesData } from './engine/indexCalculator.js';
 import { renderDashboardKPIs } from './components/dashboard.js';
 import { renderVillageTable, setupTableSorting } from './components/villageTable.js';
 import { renderCasRankingView } from './components/casRanking.js';
+import { renderActionPlanView } from './components/actionPlan.js';
 import { initMapViewer, setMapDestinationMode, setSelectedVillageOnMap } from './components/mapViewer.js';
 import { setupBudgetSimulator, setupCustomVillageCalculator } from './components/simulator.js';
 import { openVillageModal, setupModalControls } from './components/modal.js';
@@ -28,6 +29,7 @@ function initApp() {
   setupNavigationTabs();
   setupDestinationToggles();
   setupSearchAndFilters();
+  setupActionFilters();
 
   setupTableSorting(() => {
     renderVillageTable(filterVillages(), handleInspectVillage);
@@ -102,6 +104,7 @@ function updateAllComponents() {
   renderDashboardKPIs(activeVillages);
   renderVillageTable(filtered, handleInspectVillage);
   renderCasRankingView(filtered, handleInspectVillage);
+  renderActionPlanView(filterActionVillages(), handleInspectVillage);
 
   // Map is initialized lazily on first tab-map show (see setupNavigationTabs).
   // Re-render pins if already initialized.
@@ -143,6 +146,60 @@ function filterVillages() {
 
     return matchesSearch && matchesCondition && matchesState && matchesTerrain;
   });
+}
+
+/* ── Action tab filters (independent from ranking tab filters) ── */
+function filterActionVillages() {
+  const searchInput = document.getElementById('actionSearchInput');
+  const tierFilter = document.getElementById('actionTierFilter');
+  const districtFilter = document.getElementById('actionDistrictFilter');
+
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const selectedTier = tierFilter ? tierFilter.value : 'ALL';
+  const selectedDistrict = districtFilter ? districtFilter.value : 'ALL';
+
+  return activeVillages.filter(v => {
+    const matchesSearch = query === '' ||
+      v.name.toLowerCase().includes(query) ||
+      v.district.toLowerCase().includes(query) ||
+      v.existingRoadType.toLowerCase().includes(query) ||
+      v.primaryCrop.toLowerCase().includes(query) ||
+      v.nearestMarket.toLowerCase().includes(query);
+
+    const matchesDistrict = selectedDistrict === 'ALL' || v.district === selectedDistrict;
+
+    // Tier filtering: compute urgency to determine tier
+    let matchesTier = selectedTier === 'ALL';
+    if (!matchesTier) {
+      const m = v.metrics || {};
+      const cas = m.accessibility || { current: 50 };
+      const urgency = ((100 - cas.current) / 100 * 35) +
+                      ((m.maiScore || 0) / 100 * 30) +
+                      (Math.min(100, m.roiPerCrore || 0) / 100 * 20) +
+                      (Math.min(120, v.monsoonIsolationDays || 0) / 120 * 15);
+
+      if (selectedTier === 'CRITICAL') matchesTier = urgency >= 65;
+      else if (selectedTier === 'HIGH') matchesTier = urgency >= 45 && urgency < 65;
+      else if (selectedTier === 'MODERATE') matchesTier = urgency >= 30 && urgency < 45;
+      else if (selectedTier === 'LOW') matchesTier = urgency < 30;
+    }
+
+    return matchesSearch && matchesDistrict && matchesTier;
+  });
+}
+
+function setupActionFilters() {
+  const searchInput = document.getElementById('actionSearchInput');
+  const tierFilter = document.getElementById('actionTierFilter');
+  const districtFilter = document.getElementById('actionDistrictFilter');
+
+  const handleFilterChange = () => {
+    renderActionPlanView(filterActionVillages(), handleInspectVillage);
+  };
+
+  if (searchInput) searchInput.addEventListener('input', handleFilterChange);
+  if (tierFilter) tierFilter.addEventListener('change', handleFilterChange);
+  if (districtFilter) districtFilter.addEventListener('change', handleFilterChange);
 }
 
 function setupSearchAndFilters() {
