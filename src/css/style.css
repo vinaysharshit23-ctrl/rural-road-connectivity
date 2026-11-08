@@ -86,8 +86,8 @@ body {
   z-index: 200;
   background: var(--bg);
   border-bottom: 1px solid var(--border-soft);
-  padding: 0 2.5rem;
-  height: 124px;
+  padding: 0 1.5rem;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -104,8 +104,8 @@ body {
   flex-shrink: 0;
 }
 .brand-icon {
-  width: 120px;
-  height: 120px;
+  width: 84px;
+  height: 84px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -114,7 +114,7 @@ body {
 .brand-title h1 {
   font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
   font-weight: 900;
-  font-size: 1.6rem;
+  font-size: 1.25rem;
   letter-spacing: .02em;
   color: #1B2B4B;
   background: none;
@@ -143,13 +143,13 @@ body {
   border-radius: 0;
 }
 .nav-tab {
-  padding: .55rem 1.1rem;
+  padding: .45rem .75rem;
   border: none;
   background: transparent;
   color: var(--text-2);
   font-family: var(--font-main);
   font-weight: 600;
-  font-size: .82rem;
+  font-size: .75rem;
   border-radius: 0;
   cursor: pointer;
   transition: color .15s, background .15s;
