@@ -397,17 +397,57 @@ function renderLeafletMap(onSelectVillage) {
     document.getElementById('leafletMap').appendChild(leg);
   }
 
-  // ── Core async route drawer ──────────────────────────────────────────────
-  // Fetches one OSRM route (village → destination) and splits it at
-  // roadLengthKm distance from the village:
-  //   kutcha  (first N km): dashed red/amber — the MISSING LINK chokepoint
-  //   highway (remainder):  solid colored    — existing paved road
-  // No junction waypoint is used — the split point on the actual route is
-  // the natural highway join, determined by the village's roadLengthKm.
-  function drawRoute({ modeKey, destCoords, destLabel, destPopupHtml, highwayColor, tooltipText }) {
-    if (destinationMode !== 'ALL' && destinationMode !== modeKey) return;
+  // ── Route drawing ───────────────────────────────────────────────────────
+  // The kutcha "missing link" is the same physical road regardless of which
+  // destination the villager is heading to — draw it ONCE from the first
+  // active destination's route, then draw each highway segment separately.
+  //
+  // Strategy:
+  //   1. Pick the first visible destination to derive the kutcha coords.
+  //   2. Draw the shared kutcha line + highway join marker once.
+  //   3. For every destination: draw only its highway segment + dest pin.
 
-    // Place destination pin immediately (no async wait needed)
+  const destinations = [
+    {
+      modeKey: 'MANDI', destCoords: mCoords,
+      destLabel: `🌾 APMC: ${activeVillage.nearestMarket}`,
+      destPopupHtml: `<b>🌾 ${activeVillage.nearestMarket}</b><br/>Crop: ${activeVillage.primaryCrop}<br/>Yield: ${activeVillage.annualAgriYieldTons} T/yr<br/>Spoilage saved: ₹${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0}L/yr`,
+      highwayColor: '#a855f7',
+      tooltipText: `Crop corridor to ${activeVillage.nearestMarket} · ${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : '?'} hrs saved`
+    },
+    {
+      modeKey: 'URBAN', destCoords: uCoords,
+      destLabel: `🏙️ ${activeVillage.nearestUrbanHub || 'Urban Hub'}`,
+      destPopupHtml: `<b>🏙️ ${activeVillage.nearestUrbanHub}</b><br/>Commute saved: ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : '?'} hrs<br/>${activeVillage.primaryUrbanOpportunity || 'Jobs & Higher Education'}`,
+      highwayColor: '#38bdf8',
+      tooltipText: `State highway to ${activeVillage.nearestUrbanHub || 'Urban Hub'} · ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : '?'} hrs saved`
+    },
+    {
+      modeKey: 'HOSPITAL', destCoords: hCoords,
+      destLabel: `🏥 ${activeVillage.nearestHospitalHub}`,
+      destPopupHtml: `<b>🏥 ${activeVillage.nearestHospitalHub}</b><br/>Emergency transit saved: ${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : '?'} hrs<br/>${activeVillage.primaryHealthcareServices}`,
+      highwayColor: '#f43f5e',
+      tooltipText: `Ambulance corridor to ${activeVillage.nearestHospitalHub} · ${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : '?'} hrs saved`
+    },
+    {
+      modeKey: 'BUS', destCoords: bCoords,
+      destLabel: `🚌 ${activeVillage.ksrtcDivision || 'KSRTC Stop'}`,
+      destPopupHtml: `<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige: ${activeVillage.currentBusFrequencyPerDay} → ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day<br/>Walk to stop: ${activeVillage.walkToBusStopKm} km`,
+      highwayColor: '#eab308',
+      tooltipText: `KSRTC Gramina Sarige route · ${activeVillage.currentBusFrequencyPerDay} → ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day`
+    }
+  ];
+
+  const visibleDests = destinations.filter(d =>
+    destinationMode === 'ALL' || destinationMode === d.modeKey
+  );
+
+  if (visibleDests.length === 0) return;
+
+  const kutchaKm = activeVillage.roadLengthKm || 5;
+
+  // Place all destination pins immediately (no async wait)
+  visibleDests.forEach(({ destCoords, destLabel, destPopupHtml, highwayColor }) => {
     const destIcon = L.divIcon({
       className: '',
       html: `<div class="pin-badge" style="border-color:${highwayColor}">${destLabel}</div>`,
@@ -416,84 +456,54 @@ function renderLeafletMap(onSelectVillage) {
     const destMarker = L.marker(destCoords, { icon: destIcon });
     if (destPopupHtml) destMarker.bindPopup(destPopupHtml);
     activeVillageGroup.addLayer(destMarker);
+  });
 
-    const [dLat, dLng] = destCoords;
-    const kutchaKm = activeVillage.roadLengthKm || 5;
+  // Use the first visible destination to derive the shared kutcha segment,
+  // then draw each destination's highway independently.
+  const primaryDest = visibleDests[0];
+  const [pLat, pLng] = primaryDest.destCoords;
 
-    getRouteLegs(vLat, vLng, null, null, dLat, dLng, null, kutchaKm).then(({ kutcha, highway }) => {
-      if (!map || !activeVillageGroup) return; // tab may have switched
+  getRouteLegs(vLat, vLng, null, null, pLat, pLng, null, kutchaKm).then(({ kutcha }) => {
+    if (!map || !activeVillageGroup) return;
 
-      // Dashed red/amber kutcha segment — the missing link
-      const kutchaLine = L.polyline(kutcha, {
-        color: villageColor,
-        weight: 5,
-        dashArray: '10, 7',
-        opacity: 1,
-        lineCap: 'round'
-      });
-      kutchaLine.bindTooltip(
-        `🔴 KUTCHA MISSING LINK — ${activeVillage.roadLengthKm} km · ${activeVillage.existingRoadType} · max ${activeVillage.maxCurrentSpeedKmh} km/h · ${activeVillage.monsoonIsolationDays} days/yr cut off`,
-        { sticky: true }
-      );
-      activeVillageGroup.addLayer(kutchaLine);
-
-      // Mark the highway join point (last point of kutcha = first of highway)
-      if (kutcha.length > 1) {
-        const joinPt = kutcha[kutcha.length - 1];
-        const jIcon = L.divIcon({
-          className: '',
-          html: `<div style="background:${villageColor};color:#fff;font-size:10px;font-weight:700;padding:3px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35);">🛑 Highway Join</div>`,
-          iconSize: [110, 22], iconAnchor: [55, 11]
-        });
-        activeVillageGroup.addLayer(L.marker(joinPt, { icon: jIcon }));
-      }
-
-      // Solid colored highway segment
-      const highwayLine = L.polyline(highway, {
-        color: highwayColor,
-        weight: 4,
-        opacity: 0.9,
-        lineCap: 'round'
-      });
-      highwayLine.bindTooltip(`✅ EXISTING HIGHWAY — ${tooltipText}`, { sticky: true });
-      activeVillageGroup.addLayer(highwayLine);
+    // ── Draw kutcha ONCE ───────────────────────────────────────────────────
+    const kutchaLine = L.polyline(kutcha, {
+      color: villageColor,
+      weight: 5,
+      dashArray: '10, 7',
+      opacity: 1,
+      lineCap: 'round'
     });
-  }
+    kutchaLine.bindTooltip(
+      `🔴 KUTCHA MISSING LINK — ${activeVillage.roadLengthKm} km · ${activeVillage.existingRoadType} · max ${activeVillage.maxCurrentSpeedKmh} km/h · ${activeVillage.monsoonIsolationDays} days/yr cut off`,
+      { sticky: true }
+    );
+    activeVillageGroup.addLayer(kutchaLine);
 
-  // ── Route A: Urban Job Hub ───────────────────────────────────────────────
-  drawRoute({
-    modeKey: 'URBAN', destCoords: uCoords,
-    destLabel: `🏙️ ${activeVillage.nearestUrbanHub || 'Urban Hub'}`,
-    destPopupHtml: `<b>🏙️ ${activeVillage.nearestUrbanHub}</b><br/>Commute saved: ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : '?'} hrs<br/>${activeVillage.primaryUrbanOpportunity || 'Jobs & Higher Education'}`,
-    highwayColor: '#38bdf8',
-    tooltipText: `State highway to ${activeVillage.nearestUrbanHub || 'Urban Hub'} · ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : '?'} hrs saved`
-  });
+    // ── Highway Join marker at the split point ─────────────────────────────
+    const joinPt = kutcha[kutcha.length - 1];
+    const jIcon = L.divIcon({
+      className: '',
+      html: `<div style="background:${villageColor};color:#fff;font-size:10px;font-weight:700;padding:3px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35);">🛑 Highway Join</div>`,
+      iconSize: [110, 22], iconAnchor: [55, 11]
+    });
+    activeVillageGroup.addLayer(L.marker(joinPt, { icon: jIcon }));
 
-  // ── Route B: APMC Mandi ──────────────────────────────────────────────────
-  drawRoute({
-    modeKey: 'MANDI', destCoords: mCoords,
-    destLabel: `🌾 APMC: ${activeVillage.nearestMarket}`,
-    destPopupHtml: `<b>🌾 ${activeVillage.nearestMarket}</b><br/>Crop: ${activeVillage.primaryCrop}<br/>Yield: ${activeVillage.annualAgriYieldTons} T/yr<br/>Spoilage saved: ₹${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0}L/yr`,
-    highwayColor: '#a855f7',
-    tooltipText: `Crop corridor to ${activeVillage.nearestMarket} · ${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : '?'} hrs saved`
-  });
-
-  // ── Route C: Emergency Hospital ──────────────────────────────────────────
-  drawRoute({
-    modeKey: 'HOSPITAL', destCoords: hCoords,
-    destLabel: `🏥 ${activeVillage.nearestHospitalHub}`,
-    destPopupHtml: `<b>🏥 ${activeVillage.nearestHospitalHub}</b><br/>Emergency transit saved: ${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : '?'} hrs<br/>${activeVillage.primaryHealthcareServices}`,
-    highwayColor: '#f43f5e',
-    tooltipText: `Ambulance corridor to ${activeVillage.nearestHospitalHub} · ${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : '?'} hrs saved`
-  });
-
-  // ── Route D: KSRTC Bus Stop ──────────────────────────────────────────────
-  drawRoute({
-    modeKey: 'BUS', destCoords: bCoords,
-    destLabel: `🚌 ${activeVillage.ksrtcDivision || 'KSRTC Stop'}`,
-    destPopupHtml: `<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige: ${activeVillage.currentBusFrequencyPerDay} → ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day<br/>Walk to stop: ${activeVillage.walkToBusStopKm} km`,
-    highwayColor: '#eab308',
-    tooltipText: `KSRTC Gramina Sarige route · ${activeVillage.currentBusFrequencyPerDay} → ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day`
+    // ── Draw one highway segment per visible destination ───────────────────
+    visibleDests.forEach(({ destCoords, highwayColor, tooltipText }) => {
+      const [dLat, dLng] = destCoords;
+      getRouteLegs(vLat, vLng, null, null, dLat, dLng, null, kutchaKm).then(({ highway }) => {
+        if (!map || !activeVillageGroup) return;
+        const highwayLine = L.polyline(highway, {
+          color: highwayColor,
+          weight: 4,
+          opacity: 0.9,
+          lineCap: 'round'
+        });
+        highwayLine.bindTooltip(`✅ EXISTING HIGHWAY — ${tooltipText}`, { sticky: true });
+        activeVillageGroup.addLayer(highwayLine);
+      });
+    });
   });
 
   // Open active village marker popup automatically
