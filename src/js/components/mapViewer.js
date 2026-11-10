@@ -61,12 +61,35 @@ async function fetchOsrmRoute(fromLat, fromLng, toLat, toLng) {
   }
 }
 
-async function getRouteLegs(vLat, vLng, jLat, jLng, dLat, dLng, prefix) {
-  const [kutchaCoords, highwayCoords] = await Promise.all([
-    fetchOsrmRoute(vLat, vLng, jLat, jLng),
-    fetchOsrmRoute(jLat, jLng, dLat, dLng)
-  ]);
-  return { kutcha: kutchaCoords, highway: highwayCoords };
+// Haversine distance in km between two [lat,lng] points
+function haversineKm([lat1, lng1], [lat2, lng2]) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Fetch a single village→destination route and split it at kutchaLengthKm.
+// The first segment (kutcha) = dashed missing link; the rest (highway) = existing road.
+async function getRouteLegs(vLat, vLng, jLat, jLng, dLat, dLng, _prefix, kutchaLengthKm = 5) {
+  const allCoords = await fetchOsrmRoute(vLat, vLng, dLat, dLng);
+
+  // Walk the polyline accumulating distance until we reach kutchaLengthKm
+  let accumulated = 0;
+  let splitIdx = allCoords.length - 1; // fallback: entire route is kutcha
+  for (let i = 1; i < allCoords.length; i++) {
+    accumulated += haversineKm(allCoords[i - 1], allCoords[i]);
+    if (accumulated >= kutchaLengthKm) {
+      splitIdx = i;
+      break;
+    }
+  }
+
+  const kutcha  = [[vLat, vLng], ...allCoords.slice(0, splitIdx + 1)];
+  const highway = allCoords.slice(splitIdx);
+  return { kutcha, highway };
 }
 
 function showMapError(msg) {
@@ -375,9 +398,12 @@ function renderLeafletMap(onSelectVillage) {
   }
 
   // ── Core async route drawer ──────────────────────────────────────────────
-  // Draws two segments per destination:
-  //   kutcha (village→junction): dashed, red/amber — the MISSING LINK chokepoint
-  //   highway (junction→dest):   solid, colored    — existing paved road
+  // Fetches one OSRM route (village → destination) and splits it at
+  // roadLengthKm distance from the village:
+  //   kutcha  (first N km): dashed red/amber — the MISSING LINK chokepoint
+  //   highway (remainder):  solid colored    — existing paved road
+  // No junction waypoint is used — the split point on the actual route is
+  // the natural highway join, determined by the village's roadLengthKm.
   function drawRoute({ modeKey, destCoords, destLabel, destPopupHtml, highwayColor, tooltipText }) {
     if (destinationMode !== 'ALL' && destinationMode !== modeKey) return;
 
@@ -391,19 +417,14 @@ function renderLeafletMap(onSelectVillage) {
     if (destPopupHtml) destMarker.bindPopup(destPopupHtml);
     activeVillageGroup.addLayer(destMarker);
 
-    const [jLat, jLng] = jCoords;
     const [dLat, dLng] = destCoords;
+    const kutchaKm = activeVillage.roadLengthKm || 5;
 
-    getRouteLegs(vLat, vLng, jLat, jLng, dLat, dLng).then(({ kutcha, highway }) => {
+    getRouteLegs(vLat, vLng, null, null, dLat, dLng, null, kutchaKm).then(({ kutcha, highway }) => {
       if (!map || !activeVillageGroup) return; // tab may have switched
 
-      // Ensure the kutcha line starts exactly at the village pin (OSRM snaps
-      // its origin to the nearest driveable road, which can be offset from the
-      // village marker — prepending the exact village coords closes that gap).
-      const kutchaCoords = [[vLat, vLng], ...kutcha];
-
       // Dashed red/amber kutcha segment — the missing link
-      const kutchaLine = L.polyline(kutchaCoords, {
+      const kutchaLine = L.polyline(kutcha, {
         color: villageColor,
         weight: 5,
         dashArray: '10, 7',
@@ -416,13 +437,16 @@ function renderLeafletMap(onSelectVillage) {
       );
       activeVillageGroup.addLayer(kutchaLine);
 
-      // Junction pin
-      const jIcon = L.divIcon({
-        className: '',
-        html: `<div style="background:${villageColor};color:#fff;font-size:10px;font-weight:700;padding:3px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35);">🛑 Highway Junction</div>`,
-        iconSize: [120, 22], iconAnchor: [60, 11]
-      });
-      activeVillageGroup.addLayer(L.marker([jLat, jLng], { icon: jIcon }));
+      // Mark the highway join point (last point of kutcha = first of highway)
+      if (kutcha.length > 1) {
+        const joinPt = kutcha[kutcha.length - 1];
+        const jIcon = L.divIcon({
+          className: '',
+          html: `<div style="background:${villageColor};color:#fff;font-size:10px;font-weight:700;padding:3px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35);">🛑 Highway Join</div>`,
+          iconSize: [110, 22], iconAnchor: [55, 11]
+        });
+        activeVillageGroup.addLayer(L.marker(joinPt, { icon: jIcon }));
+      }
 
       // Solid colored highway segment
       const highwayLine = L.polyline(highway, {
