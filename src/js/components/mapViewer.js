@@ -2,8 +2,13 @@
  * Individual Village Map Inspector Component
  * High-performance, realistic Leaflet GIS Map Renderer.
  * Supports Esri World Imagery (Satellite), OpenStreetMap, CartoDB Dark Mode & Topographic Terrain maps.
- * Renders interactive village pins, multi-sector destination routes (APMC Markets, Urban Hubs, Emergency Hospitals, Bus Stops),
- * bad track distance callouts, and animated layer transitions.
+ *
+ * ROUTING: Uses OSRM public API (router.project-osrm.org) for real road-network routing.
+ * Each route is split into two segments:
+ *   1. Village → Highway Junction: dashed red/amber polyline = the kutcha "missing link"
+ *   2. Junction → Destination: solid colored polyline = existing paved highway
+ * Falls back to straight-line vectors if OSRM is unavailable or times out.
+ * Routes are cached per village (osrmCache) to avoid re-fetching on mode switches.
  */
 
 let map = null;
@@ -16,6 +21,53 @@ let currentTileName = 'satellite';
 
 let activeVillageGroup = null;
 let otherVillagesGroup = null;
+
+/* ── OSRM Routing Cache & Helpers ───────────────────────────────────────────
+ * osrmCache: Map<cacheKey, [LatLng[]]> — decoded polyline coordinates per route leg.
+ * fetchOsrmRoute(origin, dest) → Promise<LatLng[]>
+ *   Calls OSRM public API, decodes geometry, returns [[lat,lng], ...].
+ *   Rejects on network error or no-route (caller falls back to straight line).
+ * getRouteLegs(origin, junction, dest, cacheKeyPrefix) → Promise<{kutcha, highway}>
+ *   Returns two arrays: kutcha (village→junction) and highway (junction→dest).
+ * ─────────────────────────────────────────────────────────────────────────── */
+const osrmCache = new Map();
+
+const OSRM_BASE = 'https://router.project-osrm.org/route/v1/driving';
+
+async function fetchOsrmRoute(fromLat, fromLng, toLat, toLng) {
+  const key = `${fromLat.toFixed(4)},${fromLng.toFixed(4)}-${toLat.toFixed(4)},${toLng.toFixed(4)}`;
+  if (osrmCache.has(key)) return osrmCache.get(key);
+
+  const url = `${OSRM_BASE}/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson&steps=false`;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 6000); // 6s timeout
+
+  try {
+    const resp = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!resp.ok) throw new Error('OSRM HTTP ' + resp.status);
+    const data = await resp.json();
+    if (!data.routes || !data.routes[0]) throw new Error('No route returned');
+    // GeoJSON coords are [lng, lat] — flip to [lat, lng] for Leaflet
+    const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+    osrmCache.set(key, coords);
+    return coords;
+  } catch (e) {
+    clearTimeout(timer);
+    // Return straight line as fallback
+    const fallback = [[fromLat, fromLng], [toLat, toLng]];
+    osrmCache.set(key, fallback);
+    return fallback;
+  }
+}
+
+async function getRouteLegs(vLat, vLng, jLat, jLng, dLat, dLng, prefix) {
+  const [kutchaCoords, highwayCoords] = await Promise.all([
+    fetchOsrmRoute(vLat, vLng, jLat, jLng),
+    fetchOsrmRoute(jLat, jLng, dLat, dLng)
+  ]);
+  return { kutcha: kutchaCoords, highway: highwayCoords };
+}
 
 function showMapError(msg) {
   const el = document.getElementById('leafletMap');
@@ -304,122 +356,116 @@ function renderLeafletMap(onSelectVillage) {
   activeVillageGroup.addLayer(activeMarker);
 
   // 3. Define Relative Geographic Destination Coordinates
-  const jCoords = activeVillage.junctionCoords || [vLat + 0.015, vLng - 0.012];
-  const uCoords = activeVillage.urbanCoords || [vLat + 0.045, vLng + 0.035];
-  const mCoords = activeVillage.mandiCoords || [vLat + 0.025, vLng + 0.028];
-  const hCoords = activeVillage.hospitalCoords || [vLat - 0.022, vLng - 0.032];
-  const bCoords = activeVillage.busCoords || [vLat + 0.008, vLng + 0.015];
+  const jCoords = activeVillage.junctionCoords  || [vLat + 0.015, vLng - 0.012];
+  const uCoords = activeVillage.urbanCoords     || [vLat + 0.045, vLng + 0.035];
+  const mCoords = activeVillage.mandiCoords     || [vLat + 0.025, vLng + 0.028];
+  const hCoords = activeVillage.hospitalCoords  || [vLat - 0.022, vLng - 0.032];
+  const bCoords = activeVillage.busCoords       || [vLat + 0.008, vLng + 0.015];
 
-  // --- DESTINATION ROUTES & POLYLINES ---
-
-  // Route A: Urban Job Hub & Highway Corridor
-  if (destinationMode === 'ALL' || destinationMode === 'URBAN') {
-    // 1. Unpaved Bad Track Polyline (Village ➔ Highway Junction)
-    const badTrackPolyline = L.polyline([[vLat, vLng], jCoords], {
-      color: villageColor,
-      weight: 4.5,
-      dashArray: '8, 6',
-      opacity: 0.95
-    });
-
-    badTrackPolyline.bindTooltip(`🔴 ${activeVillage.roadLengthKm}km Unpaved Bad Track (${activeVillage.maxCurrentSpeedKmh} km/h max speed)`, { sticky: true });
-    activeVillageGroup.addLayer(badTrackPolyline);
-
-    // 2. Highway Junction Node Marker
-    const jMarkerIcon = L.divIcon({
-      className: 'custom-j-pin',
-      html: `<div class="pin-badge" style="border-color: ${villageColor}; font-size: 0.7rem">🛑 Highway Junction</div>`,
-      iconSize: [120, 24],
-      iconAnchor: [60, 12]
-    });
-    activeVillageGroup.addLayer(L.marker(jCoords, { icon: jMarkerIcon }));
-
-    // 3. Paved Highway Polyline (Junction ➔ Urban Hub)
-    const highwayPolyline = L.polyline([jCoords, uCoords], {
-      color: '#38bdf8',
-      weight: 4,
-      opacity: 0.9
-    });
-    highwayPolyline.bindTooltip(`🌐 State Highway to ${activeVillage.nearestUrbanHub || 'Urban Hub'} (-${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs saved)`, { sticky: true });
-    activeVillageGroup.addLayer(highwayPolyline);
-
-    // 4. Urban Hub Marker
-    const uPinIcon = L.divIcon({
-      className: 'custom-u-pin',
-      html: `<div class="pin-badge" style="border-color: #38bdf8">🏙️ ${activeVillage.nearestUrbanHub || 'Urban Hub'}</div>`,
-      iconSize: [180, 28],
-      iconAnchor: [90, 14]
-    });
-    const uMarker = L.marker(uCoords, { icon: uPinIcon });
-    uMarker.bindPopup(`<b>🏙️ ${activeVillage.nearestUrbanHub}</b><br/>Commute Saved: ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : 2} hrs<br/>Opportunities: ${activeVillage.primaryUrbanOpportunity || 'Jobs & Higher Education'}`);
-    activeVillageGroup.addLayer(uMarker);
+  // ── Route legend (injected once into the map container DOM) ─────────────
+  if (!document.getElementById('osrm-route-legend')) {
+    const leg = document.createElement('div');
+    leg.id = 'osrm-route-legend';
+    leg.style.cssText = 'position:absolute;bottom:128px;left:12px;z-index:500;background:rgba(255,255,255,.95);border:2px solid #1A1A1A;padding:8px 12px;font-family:Inter,sans-serif;font-size:11px;line-height:1.8;pointer-events:none;';
+    leg.innerHTML = '<b style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px;">Route Legend</b>'
+      + '<div><svg width="28" height="8" style="vertical-align:middle;margin-right:6px"><line x1="0" y1="4" x2="28" y2="4" stroke="#ef4444" stroke-width="3" stroke-dasharray="7,4"/></svg>Kutcha missing link</div>'
+      + '<div><svg width="28" height="8" style="vertical-align:middle;margin-right:6px"><line x1="0" y1="4" x2="28" y2="4" stroke="#22c55e" stroke-width="3"/></svg>Existing highway/road</div>'
+      + '<div style="font-size:10px;color:#888;margin-top:3px;">Routed via OSRM · fallback: straight line</div>';
+    document.getElementById('leafletMap').appendChild(leg);
   }
 
-  // Route B: APMC Agricultural Mandi Corridor (Purple Line)
-  if (destinationMode === 'ALL' || destinationMode === 'MANDI') {
-    const mandiPolyline = L.polyline([[vLat, vLng], mCoords], {
-      color: '#a855f7',
-      weight: 3.5,
-      dashArray: '6, 5',
-      opacity: 0.85
-    });
-    mandiPolyline.bindTooltip(`🌾 Crop Corridor to ${activeVillage.nearestMarket} (-${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : 1.5}h saved)`, { sticky: true });
-    activeVillageGroup.addLayer(mandiPolyline);
+  // ── Core async route drawer ──────────────────────────────────────────────
+  // Draws two segments per destination:
+  //   kutcha (village→junction): dashed, red/amber — the MISSING LINK chokepoint
+  //   highway (junction→dest):   solid, colored    — existing paved road
+  function drawRoute({ modeKey, destCoords, destLabel, destPopupHtml, highwayColor, tooltipText }) {
+    if (destinationMode !== 'ALL' && destinationMode !== modeKey) return;
 
-    const mPinIcon = L.divIcon({
-      className: 'custom-m-pin',
-      html: `<div class="pin-badge" style="border-color: #a855f7">🌾 APMC: ${activeVillage.nearestMarket}</div>`,
-      iconSize: [170, 28],
-      iconAnchor: [85, 14]
+    // Place destination pin immediately (no async wait needed)
+    const destIcon = L.divIcon({
+      className: '',
+      html: `<div class="pin-badge" style="border-color:${highwayColor}">${destLabel}</div>`,
+      iconSize: [200, 28], iconAnchor: [100, 14]
     });
-    const mMarker = L.marker(mCoords, { icon: mPinIcon });
-    mMarker.bindPopup(`<b>🌾 ${activeVillage.nearestMarket}</b><br/>Primary Crop: ${activeVillage.primaryCrop}<br/>Annual Yield: ${activeVillage.annualAgriYieldTons} Tons<br/>Spoilage Reduction: ${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0} Lakhs/yr`);
-    activeVillageGroup.addLayer(mMarker);
+    const destMarker = L.marker(destCoords, { icon: destIcon });
+    if (destPopupHtml) destMarker.bindPopup(destPopupHtml);
+    activeVillageGroup.addLayer(destMarker);
+
+    const [jLat, jLng] = jCoords;
+    const [dLat, dLng] = destCoords;
+
+    getRouteLegs(vLat, vLng, jLat, jLng, dLat, dLng).then(({ kutcha, highway }) => {
+      if (!map || !activeVillageGroup) return; // tab may have switched
+
+      // Dashed red/amber kutcha segment — the missing link
+      const kutchaLine = L.polyline(kutcha, {
+        color: villageColor,
+        weight: 5,
+        dashArray: '10, 7',
+        opacity: 1,
+        lineCap: 'round'
+      });
+      kutchaLine.bindTooltip(
+        `🔴 KUTCHA MISSING LINK — ${activeVillage.roadLengthKm} km · ${activeVillage.existingRoadType} · max ${activeVillage.maxCurrentSpeedKmh} km/h · ${activeVillage.monsoonIsolationDays} days/yr cut off`,
+        { sticky: true }
+      );
+      activeVillageGroup.addLayer(kutchaLine);
+
+      // Junction pin
+      const jIcon = L.divIcon({
+        className: '',
+        html: `<div style="background:${villageColor};color:#fff;font-size:10px;font-weight:700;padding:3px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35);">🛑 Highway Junction</div>`,
+        iconSize: [120, 22], iconAnchor: [60, 11]
+      });
+      activeVillageGroup.addLayer(L.marker([jLat, jLng], { icon: jIcon }));
+
+      // Solid colored highway segment
+      const highwayLine = L.polyline(highway, {
+        color: highwayColor,
+        weight: 4,
+        opacity: 0.9,
+        lineCap: 'round'
+      });
+      highwayLine.bindTooltip(`✅ EXISTING HIGHWAY — ${tooltipText}`, { sticky: true });
+      activeVillageGroup.addLayer(highwayLine);
+    });
   }
 
-  // Route C: Emergency Hospital ICU Corridor (Rose/Red Line)
-  if (destinationMode === 'ALL' || destinationMode === 'HOSPITAL') {
-    const hospitalPolyline = L.polyline([[vLat, vLng], hCoords], {
-      color: '#f43f5e',
-      weight: 3.5,
-      dashArray: '4, 4',
-      opacity: 0.9
-    });
-    hospitalPolyline.bindTooltip(`🏥 Ambulance Transit to ${activeVillage.nearestHospitalHub} (-${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs saved)`, { sticky: true });
-    activeVillageGroup.addLayer(hospitalPolyline);
+  // ── Route A: Urban Job Hub ───────────────────────────────────────────────
+  drawRoute({
+    modeKey: 'URBAN', destCoords: uCoords,
+    destLabel: `🏙️ ${activeVillage.nearestUrbanHub || 'Urban Hub'}`,
+    destPopupHtml: `<b>🏙️ ${activeVillage.nearestUrbanHub}</b><br/>Commute saved: ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : '?'} hrs<br/>${activeVillage.primaryUrbanOpportunity || 'Jobs & Higher Education'}`,
+    highwayColor: '#38bdf8',
+    tooltipText: `State highway to ${activeVillage.nearestUrbanHub || 'Urban Hub'} · ${activeVillage.metrics ? activeVillage.metrics.urbanTimeSavedHrs : '?'} hrs saved`
+  });
 
-    const hPinIcon = L.divIcon({
-      className: 'custom-h-pin',
-      html: `<div class="pin-badge" style="border-color: #f43f5e">🏥 ${activeVillage.nearestHospitalHub}</div>`,
-      iconSize: [190, 28],
-      iconAnchor: [95, 14]
-    });
-    const hMarker = L.marker(hCoords, { icon: hPinIcon });
-    hMarker.bindPopup(`<b>🏥 ${activeVillage.nearestHospitalHub}</b><br/>Emergency Saved: -${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : 2} hrs<br/>Services: ${activeVillage.primaryHealthcareServices}`);
-    activeVillageGroup.addLayer(hMarker);
-  }
+  // ── Route B: APMC Mandi ──────────────────────────────────────────────────
+  drawRoute({
+    modeKey: 'MANDI', destCoords: mCoords,
+    destLabel: `🌾 APMC: ${activeVillage.nearestMarket}`,
+    destPopupHtml: `<b>🌾 ${activeVillage.nearestMarket}</b><br/>Crop: ${activeVillage.primaryCrop}<br/>Yield: ${activeVillage.annualAgriYieldTons} T/yr<br/>Spoilage saved: ₹${activeVillage.metrics ? activeVillage.metrics.annualAgriSavedLakhs : 0}L/yr`,
+    highwayColor: '#a855f7',
+    tooltipText: `Crop corridor to ${activeVillage.nearestMarket} · ${activeVillage.metrics ? activeVillage.metrics.timeSavedHrs : '?'} hrs saved`
+  });
 
-  // Route D: KSRTC Public Bus Route (Gold/Amber Line)
-  if (destinationMode === 'ALL' || destinationMode === 'BUS') {
-    const busPolyline = L.polyline([[vLat, vLng], bCoords], {
-      color: '#eab308',
-      weight: 3.5,
-      dashArray: '6, 4',
-      opacity: 0.9
-    });
-    busPolyline.bindTooltip(`🚌 KSRTC Bus Route (${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day)`, { sticky: true });
-    activeVillageGroup.addLayer(busPolyline);
+  // ── Route C: Emergency Hospital ──────────────────────────────────────────
+  drawRoute({
+    modeKey: 'HOSPITAL', destCoords: hCoords,
+    destLabel: `🏥 ${activeVillage.nearestHospitalHub}`,
+    destPopupHtml: `<b>🏥 ${activeVillage.nearestHospitalHub}</b><br/>Emergency transit saved: ${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : '?'} hrs<br/>${activeVillage.primaryHealthcareServices}`,
+    highwayColor: '#f43f5e',
+    tooltipText: `Ambulance corridor to ${activeVillage.nearestHospitalHub} · ${activeVillage.metrics ? activeVillage.metrics.hospitalTimeSavedHrs : '?'} hrs saved`
+  });
 
-    const bPinIcon = L.divIcon({
-      className: 'custom-b-pin',
-      html: `<div class="pin-badge" style="border-color: #eab308">🚌 ${activeVillage.ksrtcDivision || 'KSRTC Stop'}</div>`,
-      iconSize: [180, 28],
-      iconAnchor: [90, 14]
-    });
-    const bMarker = L.marker(bCoords, { icon: bPinIcon });
-    mMarker.bindPopup(`<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige Frequency: ${activeVillage.currentBusFrequencyPerDay} ➔ ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day (PMGSY minimum)<br/>Walk to Bus Stop: ${activeVillage.walkToBusStopKm} km`);
-    activeVillageGroup.addLayer(bMarker);
-  }
+  // ── Route D: KSRTC Bus Stop ──────────────────────────────────────────────
+  drawRoute({
+    modeKey: 'BUS', destCoords: bCoords,
+    destLabel: `🚌 ${activeVillage.ksrtcDivision || 'KSRTC Stop'}`,
+    destPopupHtml: `<b>🚌 ${activeVillage.ksrtcDivision || 'KSRTC Bus Stop'}</b><br/>Gramina Sarige: ${activeVillage.currentBusFrequencyPerDay} → ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day<br/>Walk to stop: ${activeVillage.walkToBusStopKm} km`,
+    highwayColor: '#eab308',
+    tooltipText: `KSRTC Gramina Sarige route · ${activeVillage.currentBusFrequencyPerDay} → ${activeVillage.metrics ? activeVillage.metrics.projBusFreq : 2} trips/day`
+  });
 
   // Open active village marker popup automatically
   setTimeout(() => {
