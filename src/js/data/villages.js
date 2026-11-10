@@ -55,10 +55,10 @@ export const INITIAL_VILLAGES = [
     lat: 17.4615,
     lng: 77.4208,
     junctionCoords: [17.4780, 77.4020],
-    mandiCoords: [17.3290, 76.8200],
-    urbanCoords: [17.3290, 76.8200],
-    hospitalCoords: [17.3310, 76.8180],
-    busCoords: [17.4680, 77.4120],
+    mandiCoords: [17.3290, 76.8200],   // Kalaburagi APMC Pulse Yard
+    urbanCoords: [17.3290, 76.8200],   // Kalaburagi city centre
+    hospitalCoords: [17.3380, 76.8197], // GIMS Super Specialty Hospital Kalaburagi
+    busCoords: [17.3262, 76.8173],     // Kalaburagi Bus Station
     regionCode: "KA-KB"
   },
   {
@@ -102,10 +102,10 @@ export const INITIAL_VILLAGES = [
     lat: 13.6892,
     lng: 75.2450,
     junctionCoords: [13.7050, 75.2270],
-    mandiCoords: [13.6860, 75.2420],
-    urbanCoords: [13.9299, 75.5680],
-    hospitalCoords: [13.9270, 75.5660],
-    busCoords: [13.6930, 75.2380],
+    mandiCoords: [13.6954, 75.2384],   // Thirthahalli APMC town centre
+    urbanCoords: [13.9299, 75.5680],   // Shivamogga city
+    hospitalCoords: [13.9305, 75.5658], // McGann Teaching Hospital Shivamogga
+    busCoords: [13.6954, 75.2384],     // Thirthahalli bus stand
     regionCode: "KA-SM"
   },
   {
@@ -149,10 +149,10 @@ export const INITIAL_VILLAGES = [
     lat: 13.1235,
     lng: 75.5194,
     junctionCoords: [13.1390, 75.5010],
-    mandiCoords: [13.1200, 75.5160],
-    urbanCoords: [13.3153, 75.7754],
-    hospitalCoords: [13.1215, 75.5140],
-    busCoords: [13.1280, 75.5120],
+    mandiCoords: [13.1308, 75.5604],   // Mudigere town APMC
+    urbanCoords: [13.3153, 75.7754],   // Chikkamagaluru town
+    hospitalCoords: [13.1308, 75.5604], // Mudigere Taluk Hospital
+    busCoords: [13.1308, 75.5604],     // Mudigere bus stand
     regionCode: "KA-CK"
   },
   {
@@ -196,10 +196,10 @@ export const INITIAL_VILLAGES = [
     lat: 15.3972,
     lng: 74.3375,
     junctionCoords: [15.4130, 74.3195],
-    mandiCoords: [15.3940, 74.3340],
-    urbanCoords: [14.8013, 74.1288],
-    hospitalCoords: [15.2760, 74.6220],
-    busCoords: [15.4030, 74.3290],
+    mandiCoords: [15.2760, 74.6220],   // Dandeli APMC
+    urbanCoords: [14.8013, 74.1288],   // Karwar town
+    hospitalCoords: [15.2760, 74.6220], // Dandeli Taluk Govt Hospital
+    busCoords: [15.2760, 74.6220],     // Dandeli bus stand
     regionCode: "KA-UK"
   },
   {
@@ -243,10 +243,10 @@ export const INITIAL_VILLAGES = [
     lat: 16.4230,
     lng: 76.9312,
     junctionCoords: [16.4390, 76.9130],
-    mandiCoords: [16.4200, 76.9280],
-    urbanCoords: [16.2120, 77.3560],
-    hospitalCoords: [16.4180, 76.9260],
-    busCoords: [16.4290, 76.9240],
+    mandiCoords: [16.3832, 76.9552],   // Devadurga APMC town
+    urbanCoords: [16.2120, 77.3560],   // Raichur city
+    hospitalCoords: [16.3832, 76.9552], // Devadurga Taluk Hospital
+    busCoords: [16.3832, 76.9552],     // Devadurga bus stand
     regionCode: "KA-RC"
   },
   {
@@ -290,10 +290,10 @@ export const INITIAL_VILLAGES = [
     lat: 17.0242,
     lng: 75.7605,
     junctionCoords: [17.0400, 75.7425],
-    mandiCoords: [17.0220, 75.7570],
-    urbanCoords: [16.8302, 75.7100],
-    hospitalCoords: [17.0200, 75.7540],
-    busCoords: [17.0300, 75.7540],
+    mandiCoords: [17.1756, 75.9541],   // Indi town APMC
+    urbanCoords: [16.8302, 75.7100],   // Vijayapura (Bijapur) city
+    hospitalCoords: [17.1756, 75.9541], // Indi Taluk General Hospital
+    busCoords: [17.1756, 75.9541],     // Indi bus stand
     regionCode: "KA-VP"
   },
   {
@@ -337,10 +337,10 @@ export const INITIAL_VILLAGES = [
     lat: 12.8935,
     lng: 75.7118,
     junctionCoords: [12.9090, 75.6938],
-    mandiCoords: [12.8910, 75.7080],
-    urbanCoords: [13.0050, 76.0980],
-    hospitalCoords: [12.8890, 75.7050],
-    busCoords: [12.8990, 75.7050],
+    mandiCoords: [12.9440, 75.7840],   // Sakleshpur town APMC
+    urbanCoords: [13.0050, 76.0980],   // Hassan city
+    hospitalCoords: [12.9440, 75.7840], // Sakleshpur Taluk Hospital
+    busCoords: [12.9440, 75.7840],     // Sakleshpur bus stand
     regionCode: "KA-HS"
   },
   {
@@ -384,10 +384,10 @@ export const INITIAL_VILLAGES = [
     lat: 13.4112,
     lng: 78.3204,
     junctionCoords: [13.4270, 78.3024],
-    mandiCoords: [13.4090, 78.3170],
-    urbanCoords: [13.1367, 78.1298],
-    hospitalCoords: [13.1340, 78.1270],
-    busCoords: [13.4170, 78.3140],
+    mandiCoords: [13.3375, 78.2111],   // Srinivasapur Mango APMC town
+    urbanCoords: [13.1367, 78.1298],   // Kolar town
+    hospitalCoords: [13.1340, 78.1270], // SNR District Hospital Kolar
+    busCoords: [13.3375, 78.2111],     // Srinivasapur bus stand
     regionCode: "KA-KL"
   },
   {
@@ -431,10 +431,10 @@ export const INITIAL_VILLAGES = [
     lat: 15.7815,
     lng: 76.7408,
     junctionCoords: [15.7970, 76.7228],
-    mandiCoords: [15.7620, 76.7540],
-    urbanCoords: [16.2120, 77.3560],
-    hospitalCoords: [15.7600, 76.7520],
-    busCoords: [15.7870, 76.7338],
+    mandiCoords: [15.7620, 76.7540],   // Sindhanur APMC Paddy Mandi
+    urbanCoords: [16.2120, 77.3560],   // Raichur city
+    hospitalCoords: [15.7620, 76.7540], // Sindhanur Taluk Hospital
+    busCoords: [15.7620, 76.7540],     // Sindhanur bus stand
     regionCode: "KA-RC"
   },
   {
@@ -478,10 +478,10 @@ export const INITIAL_VILLAGES = [
     lat: 13.0605,
     lng: 75.3912,
     junctionCoords: [13.0760, 75.3732],
-    mandiCoords: [13.0580, 75.3878],
-    urbanCoords: [12.9141, 74.8560],
-    hospitalCoords: [13.0560, 75.3848],
-    busCoords: [13.0660, 75.3848],
+    mandiCoords: [13.0028, 75.2820],   // Belthangady town APMC
+    urbanCoords: [12.9141, 74.8560],   // Mangaluru city
+    hospitalCoords: [13.0028, 75.2820], // Belthangady Taluk Hospital
+    busCoords: [13.0028, 75.2820],     // Belthangady bus stand
     regionCode: "KA-DK"
   }
 ];

@@ -336,11 +336,11 @@ function renderLeafletMap(onSelectVillage) {
     html: `
       <div style="position: relative; display: flex; align-items: center; justify-content: center;">
         <div class="${isSeverelyBad ? 'pulse-ring-bad' : 'pulse-ring-amber'}"></div>
-        <div style="background: ${villageColor}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 16px ${villageColor}; z-index: 2"></div>
+        <div style="background: ${villageColor}; width: 32px; height: 32px; border-radius: 50%; border: 4px solid #ffffff; box-shadow: 0 0 24px ${villageColor}, 0 0 8px rgba(0,0,0,0.6); z-index: 2"></div>
       </div>
     `,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18]
+    iconSize: [48, 48],
+    iconAnchor: [24, 24]
   });
 
   const activeMarker = L.marker([vLat, vLng], { icon: mainPinIcon, zIndexOffset: 1000 });
