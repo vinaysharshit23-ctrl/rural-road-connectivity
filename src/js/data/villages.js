@@ -481,7 +481,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [13.0028, 75.2820],   // Belthangady town APMC
     urbanCoords: [12.9141, 74.8560],   // Mangaluru city
     hospitalCoords: [13.0028, 75.2820], // Belthangady Taluk Hospital
-    busCoords: [13.0028, 75.2820],     // Belthangady bus stand
+    busCoords: [12.9141, 74.8560],     // KSRTC Dakshina Kannada Division Mangaluru
     regionCode: "KA-DK"
   }
 ];
