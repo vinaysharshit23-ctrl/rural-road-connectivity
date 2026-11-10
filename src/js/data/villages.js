@@ -199,7 +199,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [15.2760, 74.6220],   // Dandeli APMC
     urbanCoords: [14.8013, 74.1288],   // Karwar town
     hospitalCoords: [15.2760, 74.6220], // Dandeli Taluk Govt Hospital
-    busCoords: [15.2760, 74.6220],     // Dandeli bus stand
+    busCoords: [14.8013, 74.1288],     // KSRTC Uttara Kannada Division Karwar
     regionCode: "KA-UK"
   },
   {
@@ -246,7 +246,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [16.3832, 76.9552],   // Devadurga APMC town
     urbanCoords: [16.2120, 77.3560],   // Raichur city
     hospitalCoords: [16.3832, 76.9552], // Devadurga Taluk Hospital
-    busCoords: [16.3832, 76.9552],     // Devadurga bus stand
+    busCoords: [16.2120, 77.3560],     // KSRTC Raichur Division
     regionCode: "KA-RC"
   },
   {
@@ -340,7 +340,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [12.9440, 75.7840],   // Sakleshpur town APMC
     urbanCoords: [13.0050, 76.0980],   // Hassan city
     hospitalCoords: [12.9440, 75.7840], // Sakleshpur Taluk Hospital
-    busCoords: [12.9440, 75.7840],     // Sakleshpur bus stand
+    busCoords: [13.0050, 76.0980],     // KSRTC Hassan Division
     regionCode: "KA-HS"
   },
   {
@@ -387,7 +387,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [13.3375, 78.2111],   // Srinivasapur Mango APMC town
     urbanCoords: [13.1367, 78.1298],   // Kolar town
     hospitalCoords: [13.1340, 78.1270], // SNR District Hospital Kolar
-    busCoords: [13.3375, 78.2111],     // Srinivasapur bus stand
+    busCoords: [13.1367, 78.1298],     // KSRTC Kolar Division
     regionCode: "KA-KL"
   },
   {
@@ -434,7 +434,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [15.7620, 76.7540],   // Sindhanur APMC Paddy Mandi
     urbanCoords: [16.2120, 77.3560],   // Raichur city
     hospitalCoords: [15.7620, 76.7540], // Sindhanur Taluk Hospital
-    busCoords: [15.7620, 76.7540],     // Sindhanur bus stand
+    busCoords: [16.2120, 77.3560],     // KSRTC Raichur Division
     regionCode: "KA-RC"
   },
   {
