@@ -105,7 +105,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [13.6954, 75.2384],   // Thirthahalli APMC town centre
     urbanCoords: [13.9299, 75.5680],   // Shivamogga city
     hospitalCoords: [13.9305, 75.5658], // McGann Teaching Hospital Shivamogga
-    busCoords: [13.6954, 75.2384],     // Thirthahalli bus stand
+    busCoords: [13.9299, 75.5680],     // KSRTC Shivamogga Division
     regionCode: "KA-SM"
   },
   {
