@@ -397,8 +397,13 @@ function renderLeafletMap(onSelectVillage) {
     getRouteLegs(vLat, vLng, jLat, jLng, dLat, dLng).then(({ kutcha, highway }) => {
       if (!map || !activeVillageGroup) return; // tab may have switched
 
+      // Ensure the kutcha line starts exactly at the village pin (OSRM snaps
+      // its origin to the nearest driveable road, which can be offset from the
+      // village marker — prepending the exact village coords closes that gap).
+      const kutchaCoords = [[vLat, vLng], ...kutcha];
+
       // Dashed red/amber kutcha segment — the missing link
-      const kutchaLine = L.polyline(kutcha, {
+      const kutchaLine = L.polyline(kutchaCoords, {
         color: villageColor,
         weight: 5,
         dashArray: '10, 7',
