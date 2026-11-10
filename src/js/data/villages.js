@@ -152,7 +152,7 @@ export const INITIAL_VILLAGES = [
     mandiCoords: [13.1308, 75.5604],   // Mudigere town APMC
     urbanCoords: [13.3153, 75.7754],   // Chikkamagaluru town
     hospitalCoords: [13.1308, 75.5604], // Mudigere Taluk Hospital
-    busCoords: [13.1308, 75.5604],     // Mudigere bus stand
+    busCoords: [13.3153, 75.7754],     // KSRTC Chikkamagaluru Division
     regionCode: "KA-CK"
   },
   {
@@ -291,9 +291,9 @@ export const INITIAL_VILLAGES = [
     lng: 75.7605,
     junctionCoords: [17.0400, 75.7425],
     mandiCoords: [17.1756, 75.9541],   // Indi town APMC
-    urbanCoords: [16.8302, 75.7100],   // Vijayapura (Bijapur) city
+    urbanCoords: [16.8275, 75.7253],   // Vijayapura (Bijapur) city
     hospitalCoords: [17.1756, 75.9541], // Indi Taluk General Hospital
-    busCoords: [17.1756, 75.9541],     // Indi bus stand
+    busCoords: [16.8275, 75.7253],     // KSRTC Vijayapura Division
     regionCode: "KA-VP"
   },
   {
