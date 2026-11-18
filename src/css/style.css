@@ -457,11 +457,13 @@ body {
 .atrium-hero-right-wrap {
   overflow: hidden;
   align-self: stretch;   /* stretch to full hero column height */
-  height: 100%;          /* fill whatever height the hero gives it */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Inner ticker: 6 rows (original 3 + duplicate 3 for seamless loop) */
 .atrium-hero-right {
+  flex: 1;               /* fill the flex wrapper height */
   will-change: transform;
   animation: bentoCycle 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
