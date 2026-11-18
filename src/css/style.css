@@ -312,13 +312,7 @@ body {
 }
 .atrium-link:hover .ab-disc { background: var(--coral); }
 
-/* Right: bento photo/accent grid */
-.atrium-hero-right {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: repeat(6, 160px); /* 3 real rows + 3 duplicate rows */
-  gap: 0;
-}
+/* Right: bento photo/accent grid — defined in ticker section below */
 .atrium-cell {
   border-left: 2px solid var(--border);
   border-bottom: 2px solid var(--border);
@@ -453,17 +447,19 @@ body {
 
 /* ── Bento grid — infinite vertical auto-cycling ticker ─────────────── */
 
-/* Outer wrapper clips the grid so only one "page" shows at a time — fills the full hero column */
+/* Outer wrapper clips the grid so only one "page" (3 rows) shows at a time */
 .atrium-hero-right-wrap {
   overflow: hidden;
-  align-self: stretch;   /* stretch to full hero column height */
-  display: flex;
-  flex-direction: column;
+  align-self: stretch;
 }
 
 /* Inner ticker: 6 rows (original 3 + duplicate 3 for seamless loop) */
 .atrium-hero-right {
-  flex: 1;               /* fill the flex wrapper height */
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: repeat(6, 1fr); /* rows share available height equally */
+  gap: 0;
+  height: 200%;          /* 6 rows = 2× the visible clip window */
   will-change: transform;
   animation: bentoCycle 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
